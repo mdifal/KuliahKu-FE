@@ -17,6 +17,7 @@ const Color delivery = Color(0xFF822F72);
 const Color disable = Color(0xFFF3F3F3);
 const Color hint = Color(0xFFBABABA);
 const Color facebookColor = Color(0xFF1976D2);
+const Color lightBlue = Color(0xFF4B7EFF);
 
 // // TextStyle
 // TextStyle mainTextStyle = GoogleFonts.poppins(color: mainColor);
