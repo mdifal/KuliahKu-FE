@@ -6,23 +6,30 @@ class CustomButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
 
-  const CustomButton({Key? key, this.label, this.backgroundColor, this.textColor}) : super(key: key);
+  const CustomButton(
+      {Key? key, this.label, this.backgroundColor, this.textColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        minimumSize:
-            Size(150, 50),
-      ),
-      child: Text(
-        label!,
-        style: TextStyle(color: textColor), // Warna teks putih
-      ),
-    );
+    return Container(
+        margin: EdgeInsets.all(5),
+        child: ElevatedButton(
+          onPressed: () {
+            // Logika untuk saat tombol ditekan
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(12), // Ubah nilai sesuai kebutuhan Anda
+            ),
+            backgroundColor: backgroundColor,
+            minimumSize: Size(150, 50),
+          ),
+          child: Text(
+            label!,
+            style: TextStyle(color: textColor), // Warna teks putih
+          ),
+        ));
   }
 }

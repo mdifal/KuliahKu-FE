@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.all(8),
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -36,6 +37,7 @@ class CustomTextField extends StatelessWidget {
         if (password)
           PasswordField(
             passwordDecoration: PasswordDecoration(
+              inputPadding: EdgeInsets.symmetric(horizontal: 12, vertical:1) ,
                 hintStyle: TextStyle(
               fontSize: 12,
               color: grey,
@@ -82,7 +84,7 @@ class CustomTextField extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 12, vertical: 21),
+                  EdgeInsets.symmetric(horizontal: 12, vertical:1) ,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
