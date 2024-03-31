@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/shared/images.dart';
+import 'package:kuliahku/ui/shared/images.dart';
+import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/widgets/text_field.dart';
+import 'package:kuliahku/ui/widgets/button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -13,109 +18,97 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF436CD3), // Mengatur warna latar belakang
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 300, // Sesuaikan dengan tinggi yang diinginkan
-              child: Image.asset(
-                'assets/gambar_landingpage.png',
-                fit: BoxFit
-                    .cover, // Opsional: mengatur gambar agar memenuhi ukuran kotak
+    return MaterialApp(
+      home: Scaffold(
+        body: Container(
+          color: mainColor,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Image.asset(
+                  background_landing,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-            ),
-            Column(
-              children: <Widget>[
-                const SizedBox(height: 80.0),
-                RichText(
-                  text: TextSpan(
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.all(30.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextSpan(
-                        text: 'Kuliah',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                      Center(child: Column(children: [
+                        Text('Login', style: TextStyle(
+                            fontSize: 20,
+                            color: mainColor,
+                            fontWeight: FontWeight.w600
+                        ),),
+                        Text('Login untuk melanjutkan perjalananmu!', style: TextStyle(
+                            fontSize: 12,
+                            color: black,
+                            fontWeight: FontWeight.w400
+                        ),)
+                      ],),),
+                      SizedBox(height: 20),
+                      CustomTextField(
+                        label: "Username",
+                        password: false,
+                        placeholder: "Enter your Username",
+                      ),
+                      SizedBox(height: 10),
+                      CustomTextField(
+                        label: "Password",
+                        password: true,
+                        placeholder: "Enter your password",
+                      ),
+                      SizedBox(height: 80),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Belum punya akun? ',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Sign Up',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: mainColor, // Mengatur warna teks menjadi kuning
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      TextSpan(
-                        text: 'Ku',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Color(
-                              0xFFFFCB46), // Mengatur warna teks menjadi kuning
-                        ),
-                      ),
+                      SizedBox(height: 10),
+                      CustomButton(label:"Log In", backgroundColor: yellow , textColor : black)
                     ],
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Nikmati kuliahmu, nikmati hidupmu!',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white, // Mengatur warna teks menjadi kuning
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30.0),
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
               ),
-            ),
-            const SizedBox(height: 12.0),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 12.0),
-            OverflowBar(
-              alignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                  child: const Text('CANCEL'),
-                  onPressed: () {
-                    _usernameController.clear();
-                    _passwordController.clear();
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.brown[900],
-                    shape: const BeveledRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  child: const Text('NEXT'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.brown[900],
-                    backgroundColor: Colors.pink[100],
-                    elevation: 8.0,
-                    shape: const BeveledRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
