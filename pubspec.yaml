@@ -58,7 +58,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-  - assets/images
+  - assets/images/gambar_landingpage.png
+  - assets/images/gambar_addnewsemester.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
