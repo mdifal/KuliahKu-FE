@@ -15,8 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text("aplikasi hello world")),
-        body: Center(
-          child: Container(
+        body: Container(
             padding: EdgeInsets.all(30.0),
             decoration: BoxDecoration(
               color: white,
@@ -28,9 +27,20 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text("hai"), CustomTextField(label : "username", password: false,)]),
+                children: [
+                  Text("hai"),
+                  CustomTextField(
+                    label: "Full Name",
+                    password: false,
+                    placeholder: "Enter your full name",
+                  ),
+                  CustomTextField(
+                    label: "Full Name",
+                    password: true,
+                    placeholder: "Enter your full name",
+                  )
+                ]),
           ),
-        ), //Cent
       ),
     );
   }
