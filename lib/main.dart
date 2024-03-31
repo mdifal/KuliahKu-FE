@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:kuliahku/ui/views/login.dart';
+import 'package:kuliahku/ui/views/register.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -112,6 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToLogin(context); // Panggil fungsi navigasi
+              },
+              child: Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToRegister(context); // Panggil fungsi navigasi
+              },
+              child: Text('register'),
+            ),
           ],
         ),
       ),
@@ -123,3 +138,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+void _navigateToLogin(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => LoginPage()),
+  );
+}
+
+void _navigateToRegister(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => RegisterPage()),
+  );
+}
+
