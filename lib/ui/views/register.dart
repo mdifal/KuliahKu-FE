@@ -20,15 +20,15 @@ class _RegisterPageState extends State<RegisterPage> {
           color: mainColor,
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: Image.asset(
-                      background_landing,
-                    ),
-                  ),
-                ],
+               Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Image.asset(
+                background_landing,
+                width: MediaQuery.of(context).size.width,
               ),
+            ),
               Positioned(
                 bottom: 0,
                 left: 0,
