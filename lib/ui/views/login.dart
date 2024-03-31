@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/images.dart';
+import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/widgets/button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF436CD3), // Mengatur warna latar belakang
+      backgroundColor: mainColor, // Mengatur warna latar belakang
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -40,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontFamily: 'Poppins',
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: white,
                         ),
                       ),
                       TextSpan(
@@ -49,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontFamily: 'Poppins',
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFFFFCB46), // Mengatur warna teks menjadi kuning
+                          color: yellow, // Mengatur warna teks menjadi kuning
                         ),
                       ),
                     ],
@@ -62,32 +64,15 @@ class _LoginPageState extends State<LoginPage> {
                     fontFamily: 'Poppins',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,// Mengatur warna teks menjadi kuning
+                    color: white,// Mengatur warna teks menjadi kuning
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 30.0),
-            ElevatedButton(
-              onPressed: () {
-                // Tambahkan logika untuk tombol Login di sini
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(150, 50), // Mengatur ukuran tombol menjadi lebih lebar
-              ),
-              child: Text('Login'),
-            ),
+            CustomButton(label: 'login', color: white),
             const SizedBox(height: 30.0),
-            ElevatedButton(
-              onPressed: () {
-                // Tambahkan logika untuk tombol Create Account di sini
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.yellow, // Mengatur warna tombol menjadi kuning
-                minimumSize: Size(150, 50), // Mengatur ukuran tombol menjadi lebih lebar
-              ),
-              child: Text('Create Account'),
-            ),
+            CustomButton(label: 'create account', color: yellow)
           ],
         ),
       ),
