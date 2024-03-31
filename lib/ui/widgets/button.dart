@@ -3,9 +3,10 @@ import 'package:kuliahku/ui/shared/style.dart';
 
 class CustomButton extends StatelessWidget {
   final String? label;
-  final Color? color;
+  final Color? backgroundColor;
+  final Color? textColor;
 
-  const CustomButton({Key? key, this.label, this.color}) : super(key: key);
+  const CustomButton({Key? key, this.label, this.backgroundColor, this.textColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +15,14 @@ class CustomButton extends StatelessWidget {
         
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
+        backgroundColor: backgroundColor,
         minimumSize:
             Size(150, 50),
       ),
-      child: Text(label!),
+      child: Text(
+        label!,
+        style: TextStyle(color: textColor), // Warna teks putih
+      ),
     );
   }
 }
