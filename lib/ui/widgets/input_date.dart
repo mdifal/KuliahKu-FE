@@ -29,7 +29,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start, // Align label ke kiri
         children: [
           Text(
             widget.label ?? 'Input Tanggal',
@@ -39,6 +39,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Align row ke tengah
             children: [
               // Dropdown untuk tanggal
               DropdownButton<String>(
@@ -76,7 +77,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
                   return DropdownMenuItem<String>(
                     value: ( _months.indexOf(month) + 1 ).toString().padLeft(2, '0'),
                     child: SizedBox(
-                      width: 130, // Lebar item dropdown
+                      width: 100, // Lebar item dropdown
                       child: Text(
                         month,
                         textAlign: TextAlign.center,
