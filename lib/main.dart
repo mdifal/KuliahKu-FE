@@ -5,6 +5,7 @@ import 'package:kuliahku/ui/views/login.dart';
 import 'package:kuliahku/ui/views/register.dart';
 import 'package:kuliahku/ui/views/make_new_semester.dart';
 import 'package:kuliahku/ui/views/timer.dart';
+import 'package:kuliahku/ui/views/add_plan.dart';
 
 void main() {
   runApp(const MyApp());
@@ -147,6 +148,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 _navigateToTimer(context); // Panggil fungsi navigasi
               },
               child: Text('Timer'),
+            ),ElevatedButton(
+              onPressed: () {
+                _navigateToAddPlan(context); // Panggil fungsi navigasi
+              },
+              child: Text('Add Plan'),
             ),
           ],
         ),
@@ -191,6 +197,13 @@ void _navigateToAddNewSemester(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
+  );
+}
+
+void _navigateToAddPlan(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => AddPlanPage()),
   );
 }
 
