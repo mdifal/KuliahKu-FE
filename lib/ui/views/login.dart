@@ -1,8 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:kuliahku/ui/shared/images.dart';
-import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/widgets/button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mainColor, // Mengatur warna latar belakang
+      backgroundColor: Color(0xFF436CD3), // Mengatur warna latar belakang
       body: SafeArea(
         child: ListView(
           children: <Widget>[
@@ -26,8 +22,9 @@ class _LoginPageState extends State<LoginPage> {
               width: MediaQuery.of(context).size.width,
               height: 300, // Sesuaikan dengan tinggi yang diinginkan
               child: Image.asset(
-                background_landing,
-                fit: BoxFit.cover, // Opsional: mengatur gambar agar memenuhi ukuran kotak
+                'assets/gambar_landingpage.png',
+                fit: BoxFit
+                    .cover, // Opsional: mengatur gambar agar memenuhi ukuran kotak
               ),
             ),
             Column(
@@ -42,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                           fontFamily: 'Poppins',
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
-                          color: white,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
@@ -51,7 +48,8 @@ class _LoginPageState extends State<LoginPage> {
                           fontFamily: 'Poppins',
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
-                          color: yellow, // Mengatur warna teks menjadi kuning
+                          color: Color(
+                              0xFFFFCB46), // Mengatur warna teks menjadi kuning
                         ),
                       ),
                     ],
@@ -64,15 +62,59 @@ class _LoginPageState extends State<LoginPage> {
                     fontFamily: 'Poppins',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: white,// Mengatur warna teks menjadi kuning
+                    color: Colors.white, // Mengatur warna teks menjadi kuning
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 30.0),
-            CustomButton(label: 'login', color: white),
-            const SizedBox(height: 30.0),
-            CustomButton(label: 'create account', color: yellow)
+            TextField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+              ),
+            ),
+            const SizedBox(height: 12.0),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 12.0),
+            OverflowBar(
+              alignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('CANCEL'),
+                  onPressed: () {
+                    _usernameController.clear();
+                    _passwordController.clear();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.brown[900],
+                    shape: const BeveledRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  child: const Text('NEXT'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.brown[900],
+                    backgroundColor: Colors.pink[100],
+                    elevation: 8.0,
+                    shape: const BeveledRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
