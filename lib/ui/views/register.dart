@@ -20,15 +20,9 @@ class _RegisterPageState extends State<RegisterPage> {
           color: mainColor,
           child: Stack(
             children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: Image.asset(
-                      background_landing,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ],
+              Image.asset(
+                background_landing,
+                fit: BoxFit.cover,
               ),
               Positioned(
                 bottom: 0,
@@ -47,18 +41,26 @@ class _RegisterPageState extends State<RegisterPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Center(child: Column(children: [
-                        Text('Create Your Account', style: TextStyle(
-                          fontSize: 20,
-                          color: mainColor,
-                          fontWeight: FontWeight.w600
-                        ),),
-                        Text('Buat akun untuk memulai perjalananmu!', style: TextStyle(
-                          fontSize: 12,
-                          color: black,
-                          fontWeight: FontWeight.w400
-                        ),)
-                      ],),),
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Create Your Account',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: mainColor,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              'Buat akun untuk memulai perjalananmu!',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: black,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          ],
+                        ),
+                      ),
                       CustomTextField(
                         label: "Full Name",
                         password: false,
@@ -104,7 +106,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   fontFamily: 'Poppins',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: mainColor, // Mengatur warna teks menjadi kuning
+                                  color:
+                                      mainColor, // Mengatur warna teks menjadi kuning
                                 ),
                               ),
                             ],
@@ -112,7 +115,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      CustomButton(label:"Sign Up", backgroundColor: yellow , textColor : black)
+                      CustomButton(
+                          label: "Sign Up",
+                          backgroundColor: yellow,
+                          textColor: black)
                     ],
                   ),
                 ),
