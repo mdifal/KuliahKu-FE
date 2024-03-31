@@ -36,7 +36,7 @@ class _LandingPageState extends State<LandingPage> { // Perhatikan perubahan _Lo
                         text: 'Kuliah',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 32,
+                          fontSize: 52,
                           fontWeight: FontWeight.w600,
                           color: white,
                         ),
@@ -45,7 +45,7 @@ class _LandingPageState extends State<LandingPage> { // Perhatikan perubahan _Lo
                         text: 'Ku',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 32,
+                          fontSize: 52,
                           fontWeight: FontWeight.w600,
                           color: yellow, // Mengatur warna teks menjadi kuning
                         ),
@@ -58,17 +58,17 @@ class _LandingPageState extends State<LandingPage> { // Perhatikan perubahan _Lo
                   'Nikmati kuliahmu, nikmati hidupmu!',
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 14,
+                    fontSize: 20,
                     fontWeight: FontWeight.w600,
                     color: white,// Mengatur warna teks menjadi kuning
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 30.0),
-            CustomButton(label: 'login', backgroundColor: white, textColor: black,),
-            const SizedBox(height: 30.0),
-            CustomButton(label: 'create account', backgroundColor: yellow, textColor: black)
+            const SizedBox(height: 80.0),
+            CustomButton(label: 'Login', backgroundColor: white, textColor: black,),
+            const SizedBox(height: 10.0),
+            CustomButton(label: 'Create a new account', backgroundColor: yellow, textColor: black)
           ],
         ),
       ),
