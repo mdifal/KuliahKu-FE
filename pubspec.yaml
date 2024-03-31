@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   passwordfield: ^0.2.0
   dropdown_button2: ^2.3.8
+  simple_timer: ^2.0.0
 
 dev_dependencies:
   flutter_test:

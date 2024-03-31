@@ -131,6 +131,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  simple_timer:
+    dependency: "direct main"
+    description:
+      name: simple_timer
+      sha256: "780754451f1969ffba2675ed1acb9536794a6e867cd4e80f3d8724e53370c200"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
