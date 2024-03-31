@@ -76,11 +76,11 @@ class CustomTextField extends StatelessWidget {
             ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: secondaryColor.withOpacity(0.8),
+              fillColor: secondaryColor,
               hintText: placeholder,
               hintStyle: TextStyle(
                 fontSize: 12,
-                color: grey.withOpacity(0.8),
+                color: grey,
                 fontWeight: FontWeight.w600,
               ),
               contentPadding:
