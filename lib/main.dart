@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'login.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -112,6 +114,13 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToLogin(context); // Panggil fungsi navigasi
+              },
+              child: Text('Login'),
+            ),
+
           ],
         ),
       ),
@@ -123,3 +132,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+void _navigateToLogin(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => LoginPage()),
+  );
+}
+

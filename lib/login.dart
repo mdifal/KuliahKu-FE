@@ -1,0 +1,108 @@
+// Copyright 2018-present the Flutter authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import 'package:flutter/material.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF436CD3), // Mengatur warna latar belakang
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 300, // Sesuaikan dengan tinggi yang diinginkan
+              child: Image.asset(
+                'assets/gambar_landingpage.png',
+                fit: BoxFit.cover, // Opsional: mengatur gambar agar memenuhi ukuran kotak
+              ),
+            ),
+            Column(
+              children: <Widget>[
+                const SizedBox(height: 80.0),
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Kuliah',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Ku',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFFFCB46), // Mengatur warna teks menjadi kuning
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Nikmati kuliahmu, nikmati hidupmu!',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,// Mengatur warna teks menjadi kuning
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              onPressed: () {
+                // Tambahkan logika untuk tombol Login di sini
+              },
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(150, 50), // Mengatur ukuran tombol menjadi lebih lebar
+              ),
+              child: Text('Login'),
+            ),
+            const SizedBox(height: 30.0),
+            ElevatedButton(
+              onPressed: () {
+                // Tambahkan logika untuk tombol Create Account di sini
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.yellow, // Mengatur warna tombol menjadi kuning
+                minimumSize: Size(150, 50), // Mengatur ukuran tombol menjadi lebih lebar
+              ),
+              child: Text('Create Account'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
