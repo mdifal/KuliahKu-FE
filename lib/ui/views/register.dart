@@ -44,7 +44,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Center(child: Column(children: [
                         Text('Create Your Account', style: TextStyle(
