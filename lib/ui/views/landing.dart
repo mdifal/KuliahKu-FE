@@ -1,20 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LandingPage extends StatefulWidget {
+  const LandingPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LandingPageState createState() => _LandingPageState(); // Perhatikan bahwa ini harus mengembalikan _LandingPageState
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-
+class _LandingPageState extends State<LandingPage> { // Perhatikan perubahan _LoginPageState menjadi _LandingPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,9 +66,9 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             const SizedBox(height: 30.0),
-            CustomButton(label: 'login', color: white),
+            CustomButton(label: 'login', backgroundColor: white, textColor: black,),
             const SizedBox(height: 30.0),
-            CustomButton(label: 'create account', color: yellow)
+            CustomButton(label: 'create account', backgroundColor: yellow, textColor: black)
           ],
         ),
       ),
