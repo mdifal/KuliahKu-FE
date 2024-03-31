@@ -59,10 +59,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       key: UniqueKey(),
                       label: "Apa yang akan kamu kerjakan",
                       placeholder: "Pilih jenis belajar",
-                      items: [
-                        'Mengerjakan Tugas',
-                        'Belajar Mandiri'
-                      ],
+                      items: ['Mengerjakan Tugas', 'Belajar Mandiri'],
                     ),
                   ),
                   Padding(
@@ -71,14 +68,11 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       key: UniqueKey(),
                       label: "Mata Kuliah",
                       placeholder: "Pilih mata kuliah",
-                      items: [
-                        'Basis data',
-                        'Matematika'
-                      ],
+                      items: ['Basis data', 'Matematika'],
                     ),
                   ),
                   CustomDateInput(
-                    label: 'Batas Waktu',
+                    label: 'Deadline',
                     onChanged: (DateTime selectedDate) {
                       setState(() {
                         _selectedDeadline = selectedDate;
