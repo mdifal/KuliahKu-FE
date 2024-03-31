@@ -67,13 +67,13 @@ class _TimerPageState extends State<TimerPage> {
         title: Text(
           'Timer',
           style: TextStyle(
-            color: Colors.white,
+            color: white,
             fontFamily: 'Poppins',
             fontSize: 24,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: mainColor,
       ),
       body: Center(
         child: Column(
