@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'login.dart';
+import 'package:kuliahku/ui/views/login.dart';
+import 'package:kuliahku/ui/views/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -120,7 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text('Login'),
             ),
-
+            ElevatedButton(
+              onPressed: () {
+                _navigateToRegister(context); // Panggil fungsi navigasi
+              },
+              child: Text('register'),
+            ),
           ],
         ),
       ),
@@ -137,6 +143,13 @@ void _navigateToLogin(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => LoginPage()),
+  );
+}
+
+void _navigateToRegister(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => RegisterPage()),
   );
 }
 
