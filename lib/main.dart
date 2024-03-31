@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:kuliahku/ui/views/landing.dart';
 import 'package:kuliahku/ui/views/login.dart';
 import 'package:kuliahku/ui/views/register.dart';
+import 'package:kuliahku/ui/views/make_new_semester.dart';
+import 'package:kuliahku/ui/views/timer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -117,6 +120,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
               onPressed: () {
+                _navigateToLanding(context); // Panggil fungsi navigasi
+              },
+              child: Text('Landing'),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 _navigateToLogin(context); // Panggil fungsi navigasi
               },
               child: Text('Login'),
@@ -126,6 +135,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 _navigateToRegister(context); // Panggil fungsi navigasi
               },
               child: Text('register'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToAddNewSemester(context); // Panggil fungsi navigasi
+              },
+              child: Text('AddNewSemester'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToTimer(context); // Panggil fungsi navigasi
+              },
+              child: Text('Timer'),
             ),
           ],
         ),
@@ -139,6 +160,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+void _navigateToLanding(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => LandingPage()),
+  );
+}
+
+void _navigateToTimer(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => TimerPage()),
+  );
+}
 void _navigateToLogin(BuildContext context) {
   Navigator.push(
     context,
@@ -150,6 +184,13 @@ void _navigateToRegister(BuildContext context) {
   Navigator.push(
     context,
     MaterialPageRoute(builder: (context) => RegisterPage()),
+  );
+}
+
+void _navigateToAddNewSemester(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
   );
 }
 
