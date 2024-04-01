@@ -94,10 +94,3 @@ class LandingPage extends StatelessWidget {
     );
   }
 }
-
-void _navigateToLogin(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => LoginPage()),
-  );
-}
