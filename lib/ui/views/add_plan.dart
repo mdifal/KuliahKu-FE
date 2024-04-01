@@ -31,7 +31,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Timer',
+            'Tambah Tugas',
             style: TextStyle(
               color: white,
               fontFamily: 'Poppins',

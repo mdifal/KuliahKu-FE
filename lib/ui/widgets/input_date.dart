@@ -77,7 +77,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
                   return DropdownMenuItem<String>(
                     value: ( _months.indexOf(month) + 1 ).toString().padLeft(2, '0'),
                     child: SizedBox(
-                      width: 100, // Lebar item dropdown
+                      width: 80, // Lebar item dropdown
                       child: Text(
                         month,
                         textAlign: TextAlign.center,
