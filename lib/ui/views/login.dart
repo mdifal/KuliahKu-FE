@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kuliahku/ui/shared/images.dart';
+import 'package:flutter/gestures.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/make_new_semester.dart';
+import 'package:kuliahku/ui/views/register.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 
@@ -19,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
+        home: Scaffold(
         body: Container(
           color: mainColor,
           child: Stack(
@@ -96,13 +98,30 @@ class _LoginPageState extends State<LoginPage> {
                                   fontWeight: FontWeight.w600,
                                   color: mainColor, // Mengatur warna teks menjadi kuning
                                 ),
+                                recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => RegisterPage()), // Navigasi ke halaman Register
+                                  );
+                                },
                               ),
                             ],
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-                      CustomButton(label:"Log In", backgroundColor: yellow , textColor : black)
+                      CustomButton(
+                        label: 'Login',
+                        backgroundColor: yellow,
+                        textColor: black,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AddNewSemesterPage()), // Navigasi ke halaman Register
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
@@ -110,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-      ),
-    );
+        ),
+      );
   }
 }
