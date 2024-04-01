@@ -19,8 +19,13 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
         appBar: AppBar(
           title: Row(
             children: [
-              Icon(Icons.arrow_back, color: Colors.white), // Ikon di depan teks
-              SizedBox(width: 8), // Spasi antara ikon dan teks
+               IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(width: 8),
               Text(
                 'Input Jadwal Baru',
                 style: TextStyle(color: Colors.white),
@@ -29,7 +34,8 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           ),
           backgroundColor: mainColor,
         ),
-        body: Container(
+        body: SingleChildScrollView(
+          child: Container(
             padding: EdgeInsets.all(30.0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -39,64 +45,66 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
               ),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CustomTextField(
-                      label: "Nama Mata Kuliah",
-                      password: false,
-                      placeholder: "contoh : basis data",
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(left: 4, right: 4),
-                        child: CustomDropdown(
-                            label: "Hari",
-                            placeholder: "Select the day",
-                            items: [
-                              'Senin',
-                              'Selasa',
-                              'Rabu',
-                              'Kamis',
-                              'Jumat',
-                              'Sabtu'
-                            ])),
-                    Padding(
-                      padding: EdgeInsets.only(left: 4, right: 4),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: CustomDropdown(
-                                label: "Jam Mulai",
-                                placeholder: "Select the time",
-                                items: ['07.00', '08.40']),
-                          ),
-                          Expanded(
-                            child: CustomDropdown(
-                                label: "Jam Selesai",
-                                placeholder: "Select the time",
-                                items: ['07.00', '08.40']),
-                          ),
-                        ],
-                      ),
-                    ),
-                    CustomTextField(
-                      label: "Dosen Pengampu",
-                      password: false,
-                      placeholder: "contoh : Bapak fulan",
-                    ),
-                    CustomTextField(
-                      label: "Ruangan",
-                      password: false,
-                      placeholder: "contoh : R-109",
-                    ),
-                  ],
+                CustomTextField(
+                  label: "Nama Mata Kuliah",
+                  password: false,
+                  placeholder: "contoh : basis data",
                 ),
-                CustomButton(
-                    label: "Simpan", backgroundColor: yellow, textColor: black)
+                CustomDropdown(
+                    label: "Hari",
+                    placeholder: "Select the day",
+                    items: [
+                      'Senin',
+                      'Selasa',
+                      'Rabu',
+                      'Kamis',
+                      'Jumat',
+                      'Sabtu'
+                    ],
+                  ),
+                Row(
+                    children: [
+                      Expanded(
+                        child: CustomDropdown(
+                          label: "Jam Mulai",
+                          placeholder: "-",
+                          items: ['07.00', '08.40'],
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomDropdown(
+                          label: "Jam Selesai",
+                          placeholder: "-",
+                          items: ['07.00', '08.40'],
+                        ),
+                      ),
+                    ],
+                  ),
+                CustomTextField(
+                  label: "Dosen Pengampu",
+                  password: false,
+                  placeholder: "contoh : Bapak fulan",
+                ),
+                CustomTextField(
+                  label: "Ruangan",
+                  password: false,
+                  placeholder: "contoh : R-109",
+                ),
               ],
-            )),
+            ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(20),
+          color: Colors.white,
+          child: CustomButton(
+            label: "Simpan",
+            backgroundColor: yellow,
+            textColor: black,
+          ),
+        ),
       ),
     );
   }
