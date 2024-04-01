@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/login.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
+import 'package:kuliahku/ui/views/make_new_semester.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -104,13 +107,30 @@ class _RegisterPageState extends State<RegisterPage> {
                                   fontWeight: FontWeight.w600,
                                   color: mainColor, // Mengatur warna teks menjadi kuning
                                 ),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LoginPage()), // Navigasi ke halaman Register
+                                    );
+                                  },
                               ),
                             ],
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-                      CustomButton(label:"Sign Up", backgroundColor: yellow , textColor : black)
+                      CustomButton(
+                        label: 'Sign Up',
+                        backgroundColor: yellow,
+                        textColor: black,
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AddNewSemesterPage()), // Navigasi ke halaman Register
+                          );
+                        },
+                      )
                     ],
                   ),
                 ),
