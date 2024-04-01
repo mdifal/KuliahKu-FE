@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
@@ -14,6 +17,7 @@ class AddPlanPage extends StatefulWidget {
 
 class _AddPlanPageState extends State<AddPlanPage> {
   late DateTime _selectedDeadline;
+  File? _selectedFile;
 
   @override
   void initState() {
@@ -26,15 +30,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Row(
-            children: [
-              Icon(Icons.arrow_back, color: Colors.white),
-              SizedBox(width: 8),
-              Text(
-                'Input Plan Baru',
-                style: TextStyle(color: Colors.white),
-              ),
-            ],
+          title: Text(
+            'Timer',
+            style: TextStyle(
+              color: white,
+              fontFamily: 'Poppins',
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           backgroundColor: mainColor,
         ),
@@ -83,6 +86,27 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     label: "Catatan",
                     password: false,
                   ),
+                  SizedBox(height: 10),
+                  CustomUploadFileButton(
+                    label: "Tambah Lampiran",
+                    onPressed: () async {
+                      final result = await FilePicker.platform.pickFiles();
+                      if (result != null) {
+                        setState(() {
+                          _selectedFile = File(result.files.single.path!);
+                        });
+                      }
+                    },
+                  ),
+                  if (_selectedFile != null)
+                    Text(
+                      'File: ${basename(_selectedFile!.path)}',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: delivery
+                      ),
+                    ),
+                  SizedBox(height: 10),
                 ],
               ),
               CustomButton(
