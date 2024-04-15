@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/views/history_time_record.dart';
 import 'package:kuliahku/ui/views/kalender.dart';
 
 import 'package:kuliahku/ui/views/landing.dart';
@@ -143,11 +144,23 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text('Kalender'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                _navigateToHistoryRecord(context); // Panggil fungsi navigasi
+              },
+              child: Text('History time record'),
+            ),
           ],
         ),
       ),// This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+void _navigateToHistoryRecord(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => HistoryRecordPage()),
+  );
 }
 
 void _navigateToLanding(BuildContext context) {
