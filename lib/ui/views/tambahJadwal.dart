@@ -20,7 +20,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           title: Row(
             children: [
                IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back,color: white,),
                 onPressed: () {
                   Navigator.pop(context);
                 },
