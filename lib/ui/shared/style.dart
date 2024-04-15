@@ -19,6 +19,10 @@ const Color hint = Color(0xFFBABABA);
 const Color facebookColor = Color(0xFF1976D2);
 const Color lightBlue = Color(0xFF4B7EFF);
 const Color darkBlue = Color(0xFF284899);
+const Color cardOrange = Color.fromARGB(255, 231, 164, 127);
+const Color cardGreen = Color(0xFF89D592);
+const Color cardYellow = Color.fromARGB(255, 236, 221, 136);
+const Color cardBlue = Color(0xFF9BC4FF);
 
 // // TextStyle
 // TextStyle mainTextStyle = GoogleFonts.poppins(color: mainColor);
