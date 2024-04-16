@@ -53,37 +53,43 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 120, // Misalkan waktu dalam menit
+                    time: 120,
+                    color : 0xFFFFCC00,
                   ),
                   SizedBox(height: 16),
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 7200, // Misalkan waktu dalam menit
+                    time: 7200,
+                    color : 0xFFFFCC00,
                   ),
                   SizedBox(height: 16),
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 3600, // Misalkan waktu dalam menit
+                    time: 3600,
+                    color : 0xFFFFCC00,
                   ),
                   SizedBox(height: 16),
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 1900, // Misalkan waktu dalam menit
+                    time: 1900,
+                    color : 0xFFFFCC00,
                   ),
                   SizedBox(height: 16),
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 120, // Misalkan waktu dalam menit
+                    time: 120, 
+                    color : 0xFFFFCC00,
                   ),
                   SizedBox(height: 16),
                   CardHistory(
                     title: 'History 1',
                     mataKuliah: 'Database',
-                    time: 120, // Misalkan waktu dalam menit
+                    time: 120,
+                    color : 0xFFFFCC00,
                   )
                 ],
               ),
