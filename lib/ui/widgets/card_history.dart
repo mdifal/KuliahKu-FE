@@ -14,31 +14,32 @@ String formatDuration(int seconds) {
   return '$hoursString$minutesString$secondsString';
 }
 
-Color getTimeColor(int? seconds) {
-      if (seconds != null) {
-        if (seconds >= 7200){
-          return cardGreen; 
-        }
-        else if (seconds >= 3600) {
-          // Lebih dari atau sama dengan 1 jam
-          return cardBlue; 
-        } else if (seconds > 1800) {
-          // Lebih dari 30 menit
-          return cardYellow;
-        } else if (seconds > 0) {
-          // Lebih dari 0 detik
-          return cardOrange; 
-        }
-      }
-      return Color(0xFF717171); // Grey jika null atau 0
-    }
+// Color getTimeColor(int? seconds) {
+//       if (seconds != null) {
+//         if (seconds >= 7200){
+//           return cardGreen; 
+//         }
+//         else if (seconds >= 3600) {
+//           // Lebih dari atau sama dengan 1 jam
+//           return cardBlue; 
+//         } else if (seconds > 1800) {
+//           // Lebih dari 30 menit
+//           return cardYellow;
+//         } else if (seconds > 0) {
+//           // Lebih dari 0 detik
+//           return cardOrange; 
+//         }
+//       }
+//       return Color(0xFF717171); // Grey jika null atau 0
+//     }
 
 class CardHistory extends StatelessWidget {
   final String? title;
   final String? mataKuliah;
   final int? time;
+  final int? color;
 
-  const CardHistory({Key? key, this.title, this.mataKuliah, this.time})
+  const CardHistory({Key? key, this.title, this.mataKuliah, this.time, this.color})
       : super(key: key);
 
   @override
@@ -48,7 +49,7 @@ class CardHistory extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
       decoration: BoxDecoration(
-        color: getTimeColor(time),
+        color: Color(color!),
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Column(
