@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:kuliahku/ui/shared/images.dart';
@@ -6,6 +7,7 @@ import 'package:kuliahku/ui/views/make_new_semester.dart';
 import 'package:kuliahku/ui/views/register.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,13 +17,60 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login() async {
+    try {
+      String password = _passwordController.text;
+      String username = _usernameController.text;
+
+      Map<String, dynamic> data = {
+        "username": username,
+        "password": password,
+      };
+      print(data);
+
+      var response = await http.post(
+        Uri.parse('http://192.168.100.28:8001/login'),
+        body: json.encode(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final token = responseData['token'];
+        // Token berhasil diterima dari server
+        print('Token: $token');
+        // Lanjutkan navigasi ke halaman AddNewSemesterPage
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AddNewSemesterPage()),
+        );
+      } else if (response.statusCode == 401) {
+        // Tangani kesalahan autentikasi
+        final responseData = json.decode(response.body);
+        final errorMessage = responseData['error'];
+        print('Gagal login: $errorMessage');
+        // Tampilkan pesan kesalahan kepada pengguna
+        // Misalnya, dengan menggunakan dialog atau snackbar
+      } else {
+        // Tangani kesalahan lainnya
+        print('Error: ${response.statusCode}');
+      }
+
+    } catch (error) {
+      // Tangani kesalahan jika ada
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
+      home: Scaffold(
         body: Container(
           color: mainColor,
           child: Stack(
@@ -69,12 +118,14 @@ class _LoginPageState extends State<LoginPage> {
                         label: "Username",
                         password: false,
                         placeholder: "Enter your Username",
+                        controller: _usernameController,
                       ),
                       SizedBox(height: 10),
                       CustomTextField(
                         label: "Password",
                         password: true,
                         placeholder: "Enter your password",
+                        controller: _passwordController,
                       ),
                       SizedBox(height: 80),
                       Center(
@@ -99,12 +150,12 @@ class _LoginPageState extends State<LoginPage> {
                                   color: mainColor, // Mengatur warna teks menjadi kuning
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => RegisterPage()), // Navigasi ke halaman Register
-                                  );
-                                },
+                                  ..onTap = () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => RegisterPage()), // Navigasi ke halaman Register
+                                    );
+                                  },
                               ),
                             ],
                           ),
@@ -115,12 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                         label: 'Login',
                         backgroundColor: yellow,
                         textColor: black,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AddNewSemesterPage()), // Navigasi ke halaman Register
-                          );
-                        },
+                        onPressed: _login,
                       )
                     ],
                   ),
@@ -129,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-        ),
-      );
+      ),
+    );
   }
 }
