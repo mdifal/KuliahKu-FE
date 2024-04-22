@@ -6,6 +6,8 @@ import 'package:kuliahku/ui/views/login.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/views/make_new_semester.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,6 +17,73 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _confirmPasswordController = TextEditingController();
+
+  Future<void> _registerUser() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    String passwordConfirmation = _confirmPasswordController.text;
+    String fullName = _fullNameController.text;
+    String username = _usernameController.text;
+
+    Map<String, dynamic> data = {
+      "email": email,
+      "password": password,
+      "password_confirmation": passwordConfirmation,
+      "fullname": fullName,
+      "username": username,
+    };
+    print(data);
+
+    String body = jsonEncode(data);
+    var url = 'http://192.168.0.105:8001/create';
+    var response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+    );
+    print('hai');
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      String statusCode = jsonResponse['statusCode'];
+      print('Success! Status code: $statusCode');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
+      );
+    } else {
+      // Error registering user
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Registration Failed'),
+              content: Text(
+                  'An error occurred while registering. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,15 +92,15 @@ class _RegisterPageState extends State<RegisterPage> {
           color: mainColor,
           child: Stack(
             children: [
-               Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Image.asset(
-                background_landing,
-                width: MediaQuery.of(context).size.width,
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Image.asset(
+                  background_landing,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-            ),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -48,42 +117,55 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Center(child: Column(children: [
-                        Text('Create Your Account', style: TextStyle(
-                          fontSize: 20,
-                          color: mainColor,
-                          fontWeight: FontWeight.w600
-                        ),),
-                        Text('Buat akun untuk memulai perjalananmu!', style: TextStyle(
-                          fontSize: 12,
-                          color: black,
-                          fontWeight: FontWeight.w400
-                        ),)
-                      ],),),
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Create Your Account',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: mainColor,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              'Buat akun untuk memulai perjalananmu!',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: black,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          ],
+                        ),
+                      ),
                       CustomTextField(
                         label: "Full Name",
                         password: false,
                         placeholder: "Enter your Full Name",
+                        controller: _fullNameController,
                       ),
                       CustomTextField(
                         label: "Username",
                         password: false,
                         placeholder: "Enter your Username",
+                        controller: _usernameController,
                       ),
                       CustomTextField(
                         label: "Email",
                         password: false,
                         placeholder: "Enter your Email",
+                        controller: _emailController,
                       ),
                       CustomTextField(
                         label: "Password",
                         password: true,
                         placeholder: "Enter your password",
+                        controller: _passwordController,
                       ),
                       CustomTextField(
                         label: "Confirm Password",
                         password: true,
                         placeholder: "Confirm your password",
+                        controller: _confirmPasswordController,
                       ),
                       SizedBox(height: 10),
                       Center(
@@ -105,13 +187,16 @@ class _RegisterPageState extends State<RegisterPage> {
                                   fontFamily: 'Poppins',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: mainColor, // Mengatur warna teks menjadi kuning
+                                  color:
+                                      mainColor, // Mengatur warna teks menjadi kuning
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => LoginPage()), // Navigasi ke halaman Register
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              LoginPage()), // Navigasi ke halaman Register
                                     );
                                   },
                               ),
@@ -124,12 +209,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         label: 'Sign Up',
                         backgroundColor: yellow,
                         textColor: black,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AddNewSemesterPage()), // Navigasi ke halaman Register
-                          );
-                        },
+                        onPressed: _registerUser,
                       )
                     ],
                   ),
