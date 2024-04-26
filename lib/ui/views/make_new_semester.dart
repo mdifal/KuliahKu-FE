@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
+import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/number_input_field.dart';
+import 'package:http/http.dart' as http;
 
 class AddNewSemesterPage extends StatefulWidget {
   const AddNewSemesterPage({Key? key}) : super(key: key);
@@ -12,10 +15,42 @@ class AddNewSemesterPage extends StatefulWidget {
   _AddNewSemesterPageState createState() => _AddNewSemesterPageState();
 }
 
-class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
+class _AddNewSemesterPageState extends State<AddNewSemesterPage>
+{
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   int _numberOfSubjects = 0;
+  int _selectedSemester = 1; // Menyimpan semester yang dipilih
+
+  // Fungsi untuk menambahkan semester baru
+  Future<void> _addNewSemester() async {
+    try {
+      final url = Uri.parse('http://192.168.172.247:8001/users/1/semesters');
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'semesterNumber': _selectedSemester, // Mengirim semester yang dipilih
+          'startDate': _selectedStartDate.toString(),
+          'endDate': _selectedEndDate.toString(),
+          'totalCredits': _numberOfSubjects,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 201) {
+        // Jika berhasil menambahkan semester
+        print('Semester added successfully');
+        // Tampilkan pesan sukses atau navigasi ke halaman lain
+      } else {
+        // Jika terjadi kesalahan saat menambahkan semester
+        print('Failed to add semester');
+        // Tampilkan pesan kesalahan
+      }
+    } catch (error) {
+      print('Error adding semester: $error');
+      // Tampilkan pesan kesalahan
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +82,18 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                   ),
                 ),
                 const SizedBox(height: 20.0),
+                // Dropdown untuk memilih semester
+                CustomDropdown(
+                  label: 'Semester',
+                  items: List.generate(8, (index) => 'Semester ${index + 1}'),
+                  placeholder: 'Pilih Semester',
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedSemester = int.parse(value!);
+                    });
+                  },
+                ),
+                const SizedBox(height: 20.0),
                 CustomDateInput(
                   label: 'Awal Semester',
                   onChanged: (DateTime selectedDate) {
@@ -76,7 +123,13 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
               ],
             ),
             const SizedBox(height: 30.0),
-            CustomButton(label: 'Mulai', backgroundColor: mainColor, textColor: white,),
+            // Tombol untuk memulai semester
+            CustomButton(
+              label: 'Mulai',
+              backgroundColor: mainColor,
+              textColor: white,
+              onPressed: _addNewSemester,
+            ),
             const SizedBox(height: 30.0),
           ],
         ),
