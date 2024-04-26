@@ -15,7 +15,8 @@ class CustomDateInput extends StatefulWidget {
   _CustomDateInputState createState() => _CustomDateInputState();
 }
 
-class _CustomDateInputState extends State<CustomDateInput> {
+class _CustomDateInputState extends State<CustomDateInput>
+{
   String _selectedDay = '01';
   String _selectedMonth = '01';
   String _selectedYear = '2022'; // Nilai default untuk tahun
@@ -28,6 +29,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // Align label ke kiri
         children: [
@@ -35,7 +37,9 @@ class _CustomDateInputState extends State<CustomDateInput> {
             widget.label ?? 'Input Tanggal',
             style: TextStyle(
               color: black,
-              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
           Row(
@@ -75,7 +79,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
                 },
                 items: _months.map((String month) {
                   return DropdownMenuItem<String>(
-                    value: ( _months.indexOf(month) + 1 ).toString().padLeft(2, '0'),
+                    value: (_months.indexOf(month) + 1).toString().padLeft(2, '0'),
                     child: SizedBox(
                       width: 80, // Lebar item dropdown
                       child: Text(
