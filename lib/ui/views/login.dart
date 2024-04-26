@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  String? _errorMessage;
 
   Future<void> _login() async {
     try {
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
       print(data);
 
       var response = await http.post(
-        Uri.parse('http://192.168.100.28:8001/login'),
+        Uri.parse('http://192.168.172.247:8001/login'),
         body: json.encode(data),
         headers: {
           'Content-Type': 'application/json',
@@ -54,8 +55,10 @@ class _LoginPageState extends State<LoginPage> {
         final responseData = json.decode(response.body);
         final errorMessage = responseData['error'];
         print('Gagal login: $errorMessage');
-        // Tampilkan pesan kesalahan kepada pengguna
-        // Misalnya, dengan menggunakan dialog atau snackbar
+
+        setState(() {
+          _errorMessage = errorMessage; // Atur pesan kesalahan untuk ditampilkan
+        });
       } else {
         // Tangani kesalahan lainnya
         print('Error: ${response.statusCode}');
@@ -113,7 +116,20 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.w400
                         ),)
                       ],),),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
+                      Container(
+                        alignment: Alignment.center,
+                        child: _errorMessage != null
+                            ? Text(
+                          _errorMessage!,
+                          style: TextStyle(
+                            color: failed,
+                            fontSize: 12,
+                          ),
+                        )
+                            : SizedBox(height: 10), // Jika tidak ada pesan kesalahan, biarkan widget kosong
+                      ),
+                      SizedBox(height: 10),
                       CustomTextField(
                         label: "Username",
                         password: false,
