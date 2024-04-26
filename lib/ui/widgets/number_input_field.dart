@@ -40,44 +40,49 @@ class _CustomNumberInputState extends State<CustomNumberInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          widget.label ?? 'Input Number',
-          style: TextStyle(
-            color: black,
-            fontWeight: FontWeight.bold,
+    return Container(
+      margin: EdgeInsets.all(8), // Atau sesuaikan dengan margin yang Anda inginkan
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label ?? 'Input Number',
+            style: TextStyle(
+              color: black,
+              fontFamily: 'Poppins',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        SizedBox(
-          height: 40,
-          child: TextFormField(
-            controller: _controller,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(top: 10),
-              isDense: true,
-              suffixIcon: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: _incrementValue,
-                    child: Icon(Icons.keyboard_arrow_up),
-                  ),
-                  GestureDetector(
-                    onTap: _decrementValue,
-                    child: Icon(Icons.keyboard_arrow_down),
-                  ),
-                ],
+          SizedBox(
+            child: TextFormField(
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(top: 10),
+                isDense: true,
+                suffixIcon: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: _incrementValue,
+                      child: Icon(Icons.keyboard_arrow_up),
+                    ),
+                    GestureDetector(
+                      onTap: _decrementValue,
+                      child: Icon(Icons.keyboard_arrow_down),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
+
 
   void _incrementValue() {
     final newValue = int.parse(_controller.text) + 1;
