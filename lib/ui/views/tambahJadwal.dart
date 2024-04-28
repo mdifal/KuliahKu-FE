@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
-import 'package:time_picker_spinner/time_picker_spinner.dart';
 import 'package:intl/intl.dart';
+import 'package:kuliahku/ui/widgets/time_field.dart';
 
 class tambahJadwalPage extends StatefulWidget {
   const tambahJadwalPage({Key? key}) : super(key: key);
@@ -116,30 +115,20 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
                   placeholder: "contoh : basis data",
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _showStartTimePicker(context);
-                        },
-                        child: Text('Jam Mulai: $startTimeString'),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _showEndTimePicker(context);
-                        },
-                        child: Text('Jam Selesai: $endTimeString'),
-                      ),
-                    ),
+                    CustomOutlineButton(
+                            label: 'Jam Mulai',
+                            value: startTimeString,
+                            onPressed: () {
+                              _showStartTimePicker(context);
+                            }),CustomOutlineButton(
+                            label: 'Jam Selesai',
+                            value: endTimeString,
+                            onPressed: () {
+                              _showEndTimePicker(context);
+                            })
                   ],
-                ),
-                CustomDropdown(
-                  label: "Hari",
-                  placeholder: "Select the day",
-                  items: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
                 ),
                 CustomTextField(
                   label: "Dosen Pengampu",
@@ -164,66 +153,6 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
             textColor: black,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class TimePicker extends StatefulWidget {
-  final Function(DateTime) onSave;
-
-  const TimePicker({Key? key, required this.onSave}) : super(key: key);
-
-  @override
-  State<TimePicker> createState() => _TimePickerState();
-}
-
-class _TimePickerState extends State<TimePicker> {
-  late DateTime dateTime;
-
-  @override
-  void initState() {
-    super.initState();
-    dateTime = DateTime.now();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-      ),
-      height: MediaQuery.of(context).size.height / 2,
-      child: Column(
-        children: [
-          TimePickerSpinner(
-            locale: const Locale('en', ''),
-            time: dateTime,
-            is24HourMode: false,
-            isShowSeconds: true,
-            itemHeight: 80,
-            normalTextStyle: const TextStyle(
-              fontSize: 24,
-            ),
-            highlightedTextStyle:
-                const TextStyle(fontSize: 24, color: Colors.blue),
-            isForce2Digits: true,
-            onTimeChange: (time) {
-              setState(() {
-                dateTime = time;
-              });
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              widget.onSave(dateTime);
-              Navigator.pop(context);
-            },
-            child: Text('Simpan'),
-          ),
-        ],
       ),
     );
   }
