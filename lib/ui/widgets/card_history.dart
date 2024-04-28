@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kuliahku/ui/shared/style.dart';
 
 // Fungsi untuk memformat durasi
 String formatDuration(int seconds) {
