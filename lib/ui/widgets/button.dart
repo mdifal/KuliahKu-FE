@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/shared/style.dart';
 
 class CustomButton extends StatelessWidget {
   final String? label;
@@ -124,6 +123,65 @@ class CustomUploadFileButton extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomOutlineButton extends StatelessWidget {
+  final String? label;
+  final String? value;
+  final VoidCallback? onPressed;
+
+  const CustomOutlineButton({
+    Key? key,
+    this.label,
+    this.value,
+    this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 8.0,
+            ), // Tambahkan margin bawah pada teks
+            child: Text(
+              label!,
+              style: TextStyle(
+                color: black,
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onPressed,
+            style: TextButton.styleFrom(
+              backgroundColor: white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: grey),
+              ),
+              minimumSize: Size(130, 50),
+            ),
+            child: Text(
+              value!,
+              style: TextStyle(
+                color: grey,
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
