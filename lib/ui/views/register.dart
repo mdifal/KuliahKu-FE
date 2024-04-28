@@ -40,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
     print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://192.168.0.105:8001/create';
+    var url = 'http://10.50.70.142:8001/create';
     var response = await http.post(
       Uri.parse(url),
       body: body,
@@ -50,27 +50,22 @@ class _RegisterPageState extends State<RegisterPage> {
         "Access-Control-Allow-Origin": "*"
       },
     );
-    print('hai');
-    print(response.body);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      String statusCode = jsonResponse['statusCode'];
-      print('Success! Status code: $statusCode');
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    String statusCode = jsonResponse['statusCode'];
+    String message = jsonResponse['message'];
+    if (statusCode == "200") {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
       );
     } else {
-      // Error registering user
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('Registration Failed'),
               content: Text(
-                  'An error occurred while registering. Please try again.'),
+                  message),
               actions: [
                 TextButton(
                   onPressed: () {
