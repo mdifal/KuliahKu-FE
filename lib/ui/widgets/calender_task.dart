@@ -18,8 +18,9 @@ class _CalenderTaskState extends State<CalenderTask> {
     final DateTime startTime =
         DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Conference', startTime, endTime, yellow, false));
-    meetings.add(Meeting('Conference3', startTime, endTime, yellow, false));
+    Color color = Color(0xFF89D592); 
+    meetings.add(Meeting('Conference', startTime, endTime, color, 'a', 'a', false));
+    meetings.add(Meeting('Conference3', startTime, endTime, color, 'a', 'a', false));
 
     return meetings;
   }
