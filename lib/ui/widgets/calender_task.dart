@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/detail_plan.dart';
 import 'package:kuliahku/ui/widgets/calender/meeting.dart';
 import 'package:kuliahku/ui/widgets/calender/meeting_data_source.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -25,6 +26,18 @@ class _CalenderTaskState extends State<CalenderTask> {
     return meetings;
   }
 
+  void _handleAgendaTap(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.appointment) {
+      final Meeting meeting = details.appointments![0] as Meeting;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailPlanPage(agenda : meeting.eventName),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +55,8 @@ class _CalenderTaskState extends State<CalenderTask> {
       monthViewSettings: MonthViewSettings(
           appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
           showAgenda: true),
-    ));
+          onTap: _handleAgendaTap
+    )
+    );
   }
 }

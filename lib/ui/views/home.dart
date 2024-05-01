@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> {
                   color: _selectedIndex == 1 ? Colors.yellow : Colors.white),
               tooltip: 'Stopwatch',
             ),
+            SizedBox(width: 20),
             IconButton(
               onPressed: () {
                 _onItemTapped(2);
