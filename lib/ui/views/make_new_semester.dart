@@ -7,6 +7,7 @@ import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/number_input_field.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuliahku/ui/shared/global.dart';
 
 class AddNewSemesterPage extends StatefulWidget {
   const AddNewSemesterPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
   // Fungsi untuk menambahkan semester baru
   Future<void> _addNewSemester() async {
     try {
-      final url = Uri.parse('http://192.168.172.247:8001/users/1/semesters');
+      final url = Uri.parse('http://$ipUrl:8001/users/$email/semesters');
       final response = await http.post(
         url,
         body: json.encode({
