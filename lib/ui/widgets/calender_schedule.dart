@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/widgets/calender/meeting.dart';
-import 'package:kuliahku/ui/widgets/calender/meeting_data_source.dart';
+import 'package:kuliahku/ui/widgets/calender/schedule.dart';
+import 'package:kuliahku/ui/widgets/calender/schedule_data_source.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalenderSchedule extends StatefulWidget {
@@ -22,13 +22,13 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
         DateTime(firstDayOfWeek.year, firstDayOfWeek.month, firstDayOfWeek.day);
     final DateTime endOfLastDay = DateTime(
         lastDayOfWeek.year, lastDayOfWeek.month, lastDayOfWeek.day, 23, 59, 59);
-    Color color = Color(0xFF89D592); 
+    Color color = Color(4292030255);
     List<Meeting> _getDataSource() {
       List<Meeting> meetings = <Meeting>[];
       meetings.add(Meeting('Basis Data', DateTime(2024, 4, 30, 9, 0, 0),
-          DateTime(2024, 4, 30, 11, 0, 0), color , 'a', 'a', false));
+          DateTime(2024, 4, 30, 11, 0, 0), Colors.cyan, 'a', 'a', false));
       meetings.add(Meeting('Proyek 3', DateTime(2024, 4, 30, 13, 0, 0),
-          DateTime(2024, 4, 30, 14, 0, 0), color  , 'a', 'a', false));
+          DateTime(2024, 4, 30, 14, 0, 0), color, 'a', 'a', false));
 
       return meetings;
     }
