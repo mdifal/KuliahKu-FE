@@ -42,8 +42,13 @@ dependencies:
   path: ^1.8.3
   syncfusion_flutter_calendar: ^25.1.37+1
   time_picker_spinner: ^0.0.1
+  http: ^0.13.6
+  chatify: ^0.1.2
+  intl: ^0.18.1
+  jwt_decode: 0.3.1
+
+dependency_overrides:
   http: ^1.2.1
-  table_calendar: ^3.1.1
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +74,7 @@ flutter:
   assets:
   - assets/images/gambar_landingpage.png
   - assets/images/gambar_addnewsemester.png
+  - assets/images/gambar_laporanbelajar.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
