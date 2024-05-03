@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/make_new_semester.dart';
+import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/register.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
+import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,10 +18,13 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
+String emailId = '';
+
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
+  String? user_id;
 
   Future<void> _login() async {
     try {
@@ -33,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
       print(data);
 
       var response = await http.post(
-        Uri.parse('http://192.168.172.247:8001/login'),
+        Uri.parse('http://$ipUrl:8001/login'),
         body: json.encode(data),
         headers: {
           'Content-Type': 'application/json',
@@ -43,12 +48,22 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final token = responseData['token'];
+
         // Token berhasil diterima dari server
         print('Token: $token');
+
+        Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+
+        String email = decodedToken['email'];
+
+        setState(() {
+          emailId = email;
+        });
+
         // Lanjutkan navigasi ke halaman AddNewSemesterPage
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const AddNewSemesterPage()),
+          MaterialPageRoute(builder: (context) => const CalenderTaskandSchedulePage()),
         );
       } else if (response.statusCode == 401) {
         // Tangani kesalahan autentikasi
@@ -132,7 +147,6 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 10),
                       CustomTextField(
                         label: "Username",
-                        password: false,
                         placeholder: "Enter your Username",
                         controller: _usernameController,
                       ),
