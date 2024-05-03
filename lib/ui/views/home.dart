@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/add_plan.dart';
+import 'package:kuliahku/ui/views/make_new_plan.dart';
 import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/history_time_record.dart';
 import 'package:kuliahku/ui/views/make_new_schedule.dart';
