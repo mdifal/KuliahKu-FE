@@ -15,8 +15,7 @@ class AddNewSemesterPage extends StatefulWidget {
   _AddNewSemesterPageState createState() => _AddNewSemesterPageState();
 }
 
-class _AddNewSemesterPageState extends State<AddNewSemesterPage>
-{
+class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
   int _numberOfSubjects = 0;
@@ -85,11 +84,17 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage>
                 // Dropdown untuk memilih semester
                 CustomDropdown(
                   label: 'Semester',
-                  items: List.generate(8, (index) => 'Semester ${index + 1}'),
+                  items: List.generate(8, (index) {
+                    final semester = index + 1;
+                    return {
+                      'label': 'Semester $semester',
+                      'value': semester
+                    };
+                  }),
                   placeholder: 'Pilih Semester',
                   onChanged: (value) {
                     setState(() {
-                      _selectedSemester = int.parse(value!);
+                      _selectedSemester = value;
                     });
                   },
                 ),

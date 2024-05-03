@@ -17,8 +17,8 @@ class _TimerPageState extends State<TimerPage> {
   bool _isRunning = false;
   late Timer _timer;
 
-  String? _selectedCourse;
-  String? _selectedLearningType;
+  late int _selectedCourse;
+  late int _selectedLearningType;
 
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -105,42 +105,57 @@ class _TimerPageState extends State<TimerPage> {
             SizedBox(height: 30),
             _isRunning
                 ? Column(
-              children: [
-                Text(
-                  'Mata Kuliah: $_selectedCourse',
-                  style: TextStyle(fontSize: 20),
-                ),
-                Text(
-                  'Jenis Belajar: $_selectedLearningType',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            )
+                    children: [
+                      Text(
+                        'Mata Kuliah: $_selectedCourse',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      Text(
+                        'Jenis Belajar: $_selectedLearningType',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  )
                 : Column(
-              children: [
-                CustomDropdown(
-                  label: "Mata Kuliah",
-                  placeholder: "Pilih mata kuliah",
-                  items: ['Basis Data', 'Matematika'],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCourse = value;
-                    });
-                  },
-                ),
-                SizedBox(height: 5),
-                CustomDropdown(
-                  label: "Jenis Belajar",
-                  placeholder: "Pilih jenis belajar",
-                  items: ['Mengerjakan tugas', 'Belajar Mandiri'],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedLearningType = value;
-                    });
-                  },
-                ),
-              ],
-            ),
+                    children: [
+                      CustomDropdown(
+                        label: "Mata Kuliah",
+                        placeholder: "Pilih mata kuliah",
+                        items: [
+                          {'label': 'Basis Data', 'value': 1},
+                          {
+                            'label': 'Matematika',
+                            'value': 2
+                          } //nanti valuenya id nya
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCourse = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 5),
+                      CustomDropdown(
+                        label: "Jenis Belajar",
+                        placeholder: "Pilih jenis belajar",
+                        items: [
+                          {
+                            'label': 'Mengerjakan Tugas',
+                            'value': 1
+                          },
+                          {
+                            'label': 'Belajar Mandiri',
+                            'value': 2
+                          },
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedLearningType = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
             SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -62,7 +62,16 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       key: UniqueKey(),
                       label: "Apa yang akan kamu kerjakan",
                       placeholder: "Pilih jenis belajar",
-                      items: ['Mengerjakan Tugas', 'Belajar Mandiri'],
+                      items: [
+                        {
+                          'label': 'Mengerjakan Tugas',
+                          'value': 'Mengerjakan Tugas'
+                        },
+                        {
+                          'label': 'Belajar Mandiri',
+                          'value': 'Belajar Mandiri'
+                        },
+                      ],
                     ),
                   ),
                   Padding(
@@ -71,7 +80,16 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       key: UniqueKey(),
                       label: "Mata Kuliah",
                       placeholder: "Pilih mata kuliah",
-                      items: ['Basis data', 'Matematika'],
+                      items: [
+                        {
+                          'label': 'Mengerjakan Tugas',
+                          'value': 'Mengerjakan Tugas'
+                        },
+                        {
+                          'label': 'Belajar Mandiri',
+                          'value': 'Belajar Mandiri'
+                        },
+                      ],
                     ),
                   ),
                   CustomDateInput(
@@ -101,10 +119,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   if (_selectedFile != null)
                     Text(
                       'File: ${basename(_selectedFile!.path)}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: delivery
-                      ),
+                      style: TextStyle(fontSize: 16, color: delivery),
                     ),
                   SizedBox(height: 10),
                 ],

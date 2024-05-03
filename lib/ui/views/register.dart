@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/login.dart';
@@ -40,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
     print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://10.50.70.142:8001/create';
+    var url = 'http://$ipUrl:8001/create';
     var response = await http.post(
       Uri.parse(url),
       body: body,

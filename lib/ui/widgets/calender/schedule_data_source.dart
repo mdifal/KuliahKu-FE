@@ -1,7 +1,7 @@
 
 import 'dart:ui';
 
-import 'package:kuliahku/ui/widgets/calender/meeting.dart';
+import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class MeetingDataSource extends CalendarDataSource{

@@ -3,10 +3,10 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 
 class CustomDropdown extends StatefulWidget {
-  final List<String> items;
+  final List<Map<String, dynamic>> items; // Change the type of items from Map<String, int> to Map<String, dynamic>
   final String? label;
   final String? placeholder;
-  final ValueChanged<String?>? onChanged;
+  final ValueChanged<int>? onChanged;
 
   const CustomDropdown({
     Key? key,
@@ -21,7 +21,7 @@ class CustomDropdown extends StatefulWidget {
 }
 
 class _CustomDropdownState extends State<CustomDropdown> {
-  String? selectedValue;
+  int? selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
           ),
-          DropdownButtonFormField2<String>(
+          DropdownButtonFormField2<int>(
+            value: selectedValue,
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.symmetric(vertical: 6),
               border: OutlineInputBorder(
@@ -55,15 +56,15 @@ class _CustomDropdownState extends State<CustomDropdown> {
               style: const TextStyle(fontSize: 14),
             ),
             items: widget.items
-                .map((item) => DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: const TextStyle(
-                  fontSize: 14,
-                ),
-              ),
-            ))
+                .map((item) => DropdownMenuItem<int>(
+                      value: item['value'], // Mengambil nilai 'value' dari item
+                      child: Text(
+                        item['label'], // Mengambil label dari item
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ))
                 .toList(),
             validator: (value) {
               if (value == null) {
@@ -76,7 +77,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 selectedValue = value;
               });
               if (widget.onChanged != null) {
-                widget.onChanged!(value);
+                widget.onChanged!(value!);
               }
             },
             onSaved: (value) {
