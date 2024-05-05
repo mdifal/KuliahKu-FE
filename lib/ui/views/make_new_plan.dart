@@ -155,16 +155,21 @@ class _AddPlanPageState extends State<AddPlanPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Tambah Tugas',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-            ),
+          title: Row(
+            children: [
+              SizedBox(width: 8),
+              Text(
+                'Tambah Tugas',
+                style: TextStyle(
+                  color: white,
+                  fontFamily: 'Poppins',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
           ),
-          backgroundColor: Colors.blue,
+          backgroundColor: darkBlue,
         ),
         body: Container(
           padding: EdgeInsets.all(30.0),
