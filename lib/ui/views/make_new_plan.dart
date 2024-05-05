@@ -21,18 +21,26 @@ class AddPlanPage extends StatefulWidget {
 }
 
 class _AddPlanPageState extends State<AddPlanPage> {
+
+  int type = 0;
+
+  int subjectId = 0;
+
+  TextEditingController _judulController = TextEditingController();
+
   late DateTime _selectedDeadline;
   late DateTime _selectedReminder;
   late DateTime _selectedDeadlineTime;
   late DateTime _selectedReminderTime;
-  File? _selectedFile;
   late String deadlineString = '';
   late String reminderString = '';
-  int type = 0; // Menyimpan jenis belajar
-  int subjectId = 0; // Menyimpan ID mata kuliah
-  String description = ''; // Menyimpan catatan
+
+  String description = '';
+
   TextEditingController _catatanController = TextEditingController();
-  TextEditingController _judulController = TextEditingController();
+
+  FilePickerResult? _selectedFile;
+
   List<Map<String, dynamic>> jadwal = [];
 
   @override
@@ -51,7 +59,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
     try {
 
       String url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/now';
-      // Ganti URL dengan endpoint Anda
 
       var response = await http.get(
         Uri.parse(url),
@@ -77,7 +84,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
       }
     } catch (error) {
       print('Error fetching data: $error');
-      // Handle error
     }
   }
 
@@ -93,11 +99,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
     });
   }
 
-  // Metode untuk menambahkan rencana ke backend
   Future<void> addPlanToBackend() async {
     try {
       // Backend endpoint
-      String url = 'http://$ipUrl:8001/users/$email/rencanaMandiri';
+      String url = 'http:/$ipUrl:8001/user/$email/rencanaMandiri';
 
       // Data to be sent to the backend
       Map<String, dynamic> requestBody = {
@@ -111,6 +116,20 @@ class _AddPlanPageState extends State<AddPlanPage> {
         'notes': _catatanController.text,
       };
 
+      if (_selectedFile != null) {
+        var file = _selectedFile!.files.single;
+        var stream = file.readStream!;
+        List<int> bytes = [];
+        await for (var chunk in stream) {
+          bytes.addAll(chunk);
+        }
+        String base64File = base64Encode(bytes);
+        requestBody['lampiran'] = base64File;
+      } else {
+        requestBody['lampiran'] = null; // or ''
+      }
+
+
       print(requestBody);
 
       var response = await http.post(
@@ -121,16 +140,12 @@ class _AddPlanPageState extends State<AddPlanPage> {
         },
       );
 
-      // Check if the request was successful
       if (response.statusCode == 200) {
-        // Plan successfully added
         print('Rencana mandiri berhasil ditambahkan');
       } else {
-        // Request failed
         print('Gagal menambahkan rencana mandiri: ${response.statusCode}');
       }
     } catch (error) {
-      // Handle error
       print('Terjadi kesalahan: $error');
     }
   }
@@ -189,7 +204,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
                         ]
                     ),
                   ),
-                  // Dropdown untuk mata kuliah
                   Padding(
                       padding: EdgeInsets.symmetric(vertical: 0),
                       child: CustomDropdown(
@@ -221,7 +235,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       });
                     },
                   ),
-                  // Tombol untuk memilih waktu deadline
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -242,7 +255,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       });
                     },
                   ),
-                  // Tombol untuk memilih waktu deadline
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -255,31 +267,30 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       ),
                     ],
                   ),
-                  // Input catatan
                   CustomTextField(
                     label: "Catatan",
                     password: false,
                     controller: _catatanController,
                   ),
-                  SizedBox(height: 8),
-                  // Tombol untuk memilih dan menampilkan file lampiran
+                  SizedBox(height: 10),
                   CustomUploadFileButton(
                     label: "Tambah Lampiran",
                     onPressed: () async {
                       final result = await FilePicker.platform.pickFiles();
                       if (result != null) {
                         setState(() {
-                          _selectedFile = File(result.files.single.path!);
+                          _selectedFile = result;
                         });
                       }
                     },
                   ),
                   if (_selectedFile != null)
                     Text(
-                      'File: ${basename(_selectedFile!.path)}',
+                      'File: ${_selectedFile!.files.single.name}',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 10,
                         color: delivery,
+                        fontFamily: "Poppins",
                       ),
                     ),
                   SizedBox(height: 10),
@@ -300,7 +311,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  // Metode untuk menampilkan time picker
   void _deadlinePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
