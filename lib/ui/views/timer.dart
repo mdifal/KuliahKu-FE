@@ -173,45 +173,67 @@ class _TimerPageState extends State<TimerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Timer',
-          style: TextStyle(
-            color: white,
-            fontFamily: 'Poppins',
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-          ),
+        title: Row(
+          children: [
+            SizedBox(width: 8),
+            Text(
+              'Record',
+              style: TextStyle(
+                color: white,
+                fontFamily: 'Poppins',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
-        backgroundColor: mainColor,
+        backgroundColor: darkBlue,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.history,
+              color: white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HistoryRecordPage()),
+              );
+            },
+          ),
+          SizedBox(width: 8),
+        ],
       ),
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SizedBox(height: 20),
             Stack(
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 300,
-                  height: 300,
+                  width: 250,
+                  height: 250,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.transparent,
                     border: Border.all(
-                      color: Colors.lightBlue,
+                      color: mainColor,
                       width: 8,
                     ),
                   ),
                   child: Center(
                     child: Text(
                       _formattedTime(_seconds),
-                      style: TextStyle(fontSize: 50),
+                      style: TextStyle(fontSize: 40),
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             _isRunning || _seconds>0
                 ? Column(
               children: [
@@ -279,24 +301,24 @@ class _TimerPageState extends State<TimerPage> {
                     label: _isRunning ? 'Pause' : 'Start',
                     iconData: _isRunning ? Icons.pause: Icons.play_arrow,
                     onPressed: _isRunning ? _pauseTimer : _startTimer,
-                    textColor: Colors.lightBlue,
-                    backgroundColor: Colors.white,
+                    textColor: mainColor,
+                    backgroundColor: white,
                   ),
                   if (_isRunning && !_isFinish)
                     CustomIconsButton(
                       label: 'Stop',
                       iconData: Icons.stop ,
                       onPressed: _stopTimer ,
-                      textColor: Colors.lightBlue,
-                      backgroundColor: Colors.white,
+                      textColor: mainColor,
+                      backgroundColor: white,
                     ),
                   if (!_isRunning && !_isFinish && _seconds > 0)
                     CustomIconsButton(
                       onPressed: _resetTimer,
                       iconData: Icons.refresh,
                       label: 'Reset',
-                      textColor: Colors.lightBlue,
-                      backgroundColor: Colors.white,
+                      textColor: mainColor,
+                      backgroundColor: white,
                     ),
               ],
             ),
