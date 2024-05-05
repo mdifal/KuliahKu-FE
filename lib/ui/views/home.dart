@@ -5,6 +5,7 @@ import 'package:kuliahku/ui/views/make_new_plan.dart';
 import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/history_time_record.dart';
 import 'package:kuliahku/ui/views/make_new_schedule.dart';
+import 'package:kuliahku/ui/views/profile.dart';
 import 'package:kuliahku/ui/views/timer.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     CalenderTaskandSchedulePage(),
     TimerPage(),
     tambahJadwalPage(),
-    HistoryRecordPage(),
+    ProfilePage(),
     AddPlanPage(),
   ];
 
