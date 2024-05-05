@@ -26,8 +26,10 @@ class _TimerPageState extends State<TimerPage> {
   late DateTime _startTime;
   late DateTime _endTime;
 
-  late int _selectedCourse = 1;
-  late int _selectedLearningType = 1;
+  late String _selectedCourseId = '';
+  late String _selectedCourseLabel = '';
+  late int _selectedLearningTypeId = 1;
+  late String _selectedLearningType = '';
 
   List<Map<String, dynamic>> jadwal = [];
   int type = 0;
@@ -54,7 +56,7 @@ class _TimerPageState extends State<TimerPage> {
   @override
   void initState() {
     super.initState();
-    // fetchDataJadwal();
+    fetchDataJadwal();
   }
 
   Future<void> fetchDataJadwal() async {
@@ -91,12 +93,11 @@ class _TimerPageState extends State<TimerPage> {
 
   void addDataToBackend() async {
     try {
-      // Data yang akan dikirim ke backend
       Map<String, dynamic> data = {
         'startTime': DateFormat('HH:mm:ss').format(_startTime),
         'endTime': DateFormat('HH:mm:ss').format(_endTime),
-        'subject': _selectedCourse,
-        'jenis': _selectedLearningType,
+        'subject': _selectedCourseId,
+        'jenis': _selectedLearningTypeId,
         'time_records': _formattedTime(_seconds),
       };
 
@@ -215,7 +216,7 @@ class _TimerPageState extends State<TimerPage> {
                 ? Column(
               children: [
                 Text(
-                  'Mata Kuliah: $_selectedCourse',
+                  'Mata Kuliah: $_selectedCourseLabel',
                   style: TextStyle(fontSize: 20),
                 ),
                 Text(
@@ -231,7 +232,10 @@ class _TimerPageState extends State<TimerPage> {
                   placeholder: "Pilih jenis belajar",
                   onChanged: (value) {
                     setState(() {
-                      _selectedLearningType = value;
+                      _selectedLearningTypeId = value;
+                      if(value == 1)
+                        _selectedLearningType = 'Mengerjakan Tugas';
+                          _selectedLearningType = 'Belajar Mandiri';
                     });
                   },
                   items: [
@@ -244,20 +248,16 @@ class _TimerPageState extends State<TimerPage> {
                   placeholder: "Pilih mata kuliah",
                   onChanged: (value) {
                     setState(() {
-                      // _selectedCourse = jadwal[value]['id'];
-                      _selectedCourse = value;
+                      _selectedCourseId = jadwal[value]['id'];
+                      _selectedCourseLabel = jadwal[value]['nama matkul'];
                     });
                   },
-                  // items: List.generate(jadwal.length, (index) {
-                  //   return {
-                  //     'label': jadwal[index]['nama matkul'],
-                  //     'value': jadwal[index]['id']
-                  //   };
-                  // }),
-                  items: [
-                    {'label': 'Mengerjakan Tugas', 'value': 1},
-                    {'label': 'Belajar Mandiri', 'value': 2}
-                  ],
+                  items: List.generate(jadwal.length, (index) {
+                    return {
+                      'label': jadwal[index]['nama matkul'],
+                      'value': index
+                    };
+                  }),
                 ),
               ],
             ),
