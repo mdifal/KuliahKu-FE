@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/edit_profile.dart';
 
-import '../widgets/button.dart';
-import 'history_time_record.dart';
+import 'package:kuliahku/ui/views/laporan_hasil_belajar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const HistoryRecordPage()),
+                                  MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
                                 );
                               },
                               child: Row(
@@ -103,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const HistoryRecordPage()),
+                                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
                                 );
                               },
                               child: Row(
@@ -112,28 +112,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
                                   Text(
                                     'Edit profile',
-                                    style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const HistoryRecordPage()),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Icon(Icons.logout), // Tambahkan ikon ke dalam baris
-                                  SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
-                                  Text(
-                                    'Log out',
                                     style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
                                   ),
                                 ],
