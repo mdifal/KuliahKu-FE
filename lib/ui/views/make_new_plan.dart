@@ -1,16 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
-import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
 
 class AddPlanPage extends StatefulWidget {
@@ -23,24 +23,17 @@ class AddPlanPage extends StatefulWidget {
 class _AddPlanPageState extends State<AddPlanPage> {
 
   int type = 0;
-
   int subjectId = 0;
-
   TextEditingController _judulController = TextEditingController();
-
   late DateTime _selectedDeadline;
   late DateTime _selectedReminder;
   late DateTime _selectedDeadlineTime;
   late DateTime _selectedReminderTime;
   late String deadlineString = '';
   late String reminderString = '';
-
   String description = '';
-
   TextEditingController _catatanController = TextEditingController();
-
   FilePickerResult? _selectedFile;
-
   List<Map<String, dynamic>> jadwal = [];
 
   @override
@@ -57,14 +50,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> fetchDataJadwal() async {
     try {
-
       String url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/now';
-
       var response = await http.get(
         Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
@@ -101,10 +90,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> addPlanToBackend() async {
     try {
-      // Backend endpoint
       String url = 'http:/$ipUrl:8001/user/$email/rencanaMandiri';
 
-      // Data to be sent to the backend
       Map<String, dynamic> requestBody = {
         'type': type,
         'subjectId': jadwal[subjectId]['id'],
@@ -129,15 +116,12 @@ class _AddPlanPageState extends State<AddPlanPage> {
         requestBody['lampiran'] = null; // or ''
       }
 
-
       print(requestBody);
 
       var response = await http.post(
         Uri.parse(url),
         body: json.encode(requestBody),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
@@ -171,145 +155,148 @@ class _AddPlanPageState extends State<AddPlanPage> {
           ),
           backgroundColor: darkBlue,
         ),
-        body: Container(
-          padding: EdgeInsets.all(30.0),
-          decoration: BoxDecoration(
-            color: white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(30.0),
+            decoration: BoxDecoration(
+              color: white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Dropdown untuk jenis belajar
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 0),
-                    child: CustomDropdown(
-                        label: "Apa yang akan kamu kerjakan",
-                        placeholder: "Pilih jenis belajar",
-                        onChanged: (value) {
-                          setState(() {
-                            type = value;
-                          });
-                        },
-                        items: [
-                          {
-                            'label':'Mengerjakan Tugas',
-                            'value': 1
-                          },
-                          {
-                            'label':'Belajar Mandiri',
-                            'value': 2
-                          }
-                        ]
-                    ),
-                  ),
-                  Padding(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 0),
                       child: CustomDropdown(
-                        label: "Mata Kuliah",
-                        placeholder: "Pilih mata kuliah",
-                        onChanged: (value) {
-                          setState(() {
-                            subjectId = value;
-                          });
-                        },
-                        items: List.generate(jadwal.length, (index) {
-                          return {
-                            'label': jadwal[index]['nama matkul'],
-                            'value': index
-                          };
-                        }),
-                      )
-                  ),
-                  CustomTextField(
-                    label: "Judul",
-                    password: false,
-                    controller: _judulController,
-                  ),
-                  CustomDateInput(
-                    label: 'Deadline',
-                    onChanged: (DateTime selectedDate) {
-                      setState(() {
-                        _selectedDeadline = selectedDate;
-                      });
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomOutlineButton(
-                        label: 'Waktu Deadline',
-                        value: deadlineString,
-                        onPressed: () {
-                          _deadlinePicker(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  CustomDateInput(
-                    label: 'Reminder',
-                    onChanged: (DateTime selectedDate) {
-                      setState(() {
-                        _selectedReminder  = selectedDate;
-                      });
-                    },
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomOutlineButton(
-                        label: 'Waktu Reminder',
-                        value: reminderString,
-                        onPressed: () {
-                          _reminderPicker(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  CustomTextField(
-                    label: "Catatan",
-                    password: false,
-                    controller: _catatanController,
-                  ),
-                  SizedBox(height: 10),
-                  CustomUploadFileButton(
-                    label: "Tambah Lampiran",
-                    onPressed: () async {
-                      final result = await FilePicker.platform.pickFiles();
-                      if (result != null) {
-                        setState(() {
-                          _selectedFile = result;
-                        });
-                      }
-                    },
-                  ),
-                  if (_selectedFile != null)
-                    Text(
-                      'File: ${_selectedFile!.files.single.name}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: delivery,
-                        fontFamily: "Poppins",
+                          label: "Apa yang akan kamu kerjakan",
+                          placeholder: "Pilih jenis belajar",
+                          onChanged: (value) {
+                            setState(() {
+                              type = value;
+                            });
+                          },
+                          items: [
+                            {
+                              'label':'Mengerjakan Tugas',
+                              'value': 1
+                            },
+                            {
+                              'label':'Belajar Mandiri',
+                              'value': 2
+                            }
+                          ]
                       ),
                     ),
-                  SizedBox(height: 10),
-                ],
-              ),
-              CustomButton(
-                backgroundColor: yellow,
-                label: 'Simpan',
-                textColor: white,
-                onPressed: () {
-                  addPlanToBackend();
-                },
-              ),
-            ],
+                    Padding(
+                        padding: EdgeInsets.symmetric(vertical: 0),
+                        child: CustomDropdown(
+                          label: "Mata Kuliah",
+                          placeholder: "Pilih mata kuliah",
+                          onChanged: (value) {
+                            setState(() {
+                              subjectId = value;
+                            });
+                          },
+                          items: List.generate(jadwal.length, (index) {
+                            return {
+                              'label': jadwal[index]['nama matkul'],
+                              'value': index
+                            };
+                          }),
+                        )
+                    ),
+                    CustomTextField(
+                      label: "Judul",
+                      password: false,
+                      controller: _judulController,
+                    ),
+                    CustomDateInput(
+                      label: 'Deadline',
+                      onChanged: (DateTime selectedDate) {
+                        setState(() {
+                          _selectedDeadline = selectedDate;
+                        });
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomOutlineButton(
+                          label: 'Waktu Deadline',
+                          value: deadlineString,
+                          onPressed: () {
+                            _deadlinePicker(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    CustomDateInput(
+                      label: 'Reminder',
+                      onChanged: (DateTime selectedDate) {
+                        setState(() {
+                          _selectedReminder  = selectedDate;
+                        });
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomOutlineButton(
+                          label: 'Waktu Reminder',
+                          value: reminderString,
+                          onPressed: () {
+                            _reminderPicker(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    CustomTextField(
+                      label: "Catatan",
+                      password: false,
+                      controller: _catatanController,
+                    ),
+                    SizedBox(height: 10),
+                    CustomUploadFileButton(
+                      label: "Tambah Lampiran",
+                      onPressed: () async {
+                        final result = await FilePicker.platform.pickFiles();
+                        if (result != null) {
+                          setState(() {
+                            _selectedFile = result;
+                          });
+                        }
+                      },
+                    ),
+                    if (_selectedFile != null)
+                      Text(
+                        'File: ${_selectedFile!.files.single.name}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: delivery,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(20),
+          color: Colors.white,
+          child: CustomButton(
+            label: "Simpan",
+            backgroundColor: yellow,
+            textColor: black,
+            onPressed: addPlanToBackend,
           ),
         ),
       ),
