@@ -13,6 +13,8 @@ import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 
+import '../widgets/calender/schedule.dart';
+
 class AddPlanPage extends StatefulWidget {
   const AddPlanPage({Key? key}) : super(key: key);
 
@@ -34,12 +36,18 @@ class _AddPlanPageState extends State<AddPlanPage> {
   String description = '';
   TextEditingController _catatanController = TextEditingController();
   FilePickerResult? _selectedFile;
-  List<Map<String, dynamic>> jadwal = [];
+
+  List<Meeting> meetings = <Meeting>[];
+  DateTime today = DateTime.now();
+  late DateTime firstDayOfWeek;
+  late DateTime lastDayOfWeek;
+  late DateTime startOfFirstDay;
+  late DateTime endOfLastDay;
 
   @override
   void initState() {
     super.initState();
-    fetchDataJadwal();
+    _getDataSource();
     _selectedDeadline = DateTime.now();
     _selectedReminder = DateTime.now();
     _selectedDeadlineTime = DateTime.now();
@@ -48,31 +56,60 @@ class _AddPlanPageState extends State<AddPlanPage> {
     updateReminder(_selectedReminderTime);
   }
 
-  Future<void> fetchDataJadwal() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    firstDayOfWeek = today.subtract(Duration(days: today.weekday - 1));
+    lastDayOfWeek = firstDayOfWeek.add(Duration(days: 5));
+    print('first : $firstDayOfWeek, last : $lastDayOfWeek');
+    startOfFirstDay =
+        DateTime(firstDayOfWeek.year, firstDayOfWeek.month, firstDayOfWeek.day);
+    endOfLastDay = DateTime(
+        lastDayOfWeek.year, lastDayOfWeek.month, lastDayOfWeek.day, 23, 59, 59);
+    _fetchData();
+  }
+
+  List<Meeting> _getDataSource() {
+    return meetings;
+  }
+
+  Future<void> _fetchData() async {
+    var url =
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+
     try {
-      String url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/now';
       var response = await http.get(
         Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
       );
-
       if (response.statusCode == 200) {
-        final List<dynamic> fetchedData = json.decode(response.body);
-        List<Map<String, dynamic>> transformedData = fetchedData.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'nama matkul': item['subject'],
-          };
-        }).toList();
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        List<dynamic> dataTugas = jsonResponse['data'];
+        List<Meeting> fetchedMeetings = <Meeting>[];
+        for (var data in dataTugas) {
+          String id = data['id'] ?? '';
+          String subject = data['subject'] ?? '';
+          String dosen = data['dosen'] ?? '';
+          String ruangan = data['ruang'] ?? '';
+          DateTime startTime = DateTime.parse(data['startTime']);
+          DateTime endTime = DateTime.parse(data['endTime']);
+          Color color = Color(data['color']);
+          String day = data['day'];
 
+          fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
+              dosen, ruangan, false, day));
+        }
         setState(() {
-          jadwal = transformedData;
+          meetings = fetchedMeetings;
         });
       } else {
-        throw Exception('Failed to load data');
+        print('Request failed with status: ${response.statusCode}');
       }
-    } catch (error) {
-      print('Error fetching data: $error');
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -94,7 +131,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
       Map<String, dynamic> requestBody = {
         'type': type,
-        'subjectId': jadwal[subjectId]['id'],
+        'subjectId': meetings[subjectId].id,
         'title': _judulController.text,
         'dateReminder': DateFormat('yyyy-MM-dd').format(_selectedReminder),
         'timeReminder': DateFormat('HH:mm:ss').format(_selectedReminderTime),
@@ -203,13 +240,13 @@ class _AddPlanPageState extends State<AddPlanPage> {
                               subjectId = value;
                             });
                           },
-                          items: List.generate(jadwal.length, (index) {
+                          items: List.generate(meetings.length, (index) {
                             return {
-                              'label': jadwal[index]['nama matkul'],
+                              'label': meetings[index].eventName,
                               'value': index
                             };
                           }),
-                        )
+                        ),
                     ),
                     CustomTextField(
                       label: "Judul",
