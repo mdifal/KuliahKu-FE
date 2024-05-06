@@ -96,7 +96,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
 
       if (response.statusCode == 200) {
-        _showStatusMessage('Perubahan data tersimpan');
+        _showStatusMessage('Changes saved successfully');
         print('Perubahan profil disimpan');
       } else {
         throw Exception('Failed to save profile changes');
