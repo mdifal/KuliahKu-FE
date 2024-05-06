@@ -4,6 +4,7 @@ import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -31,9 +32,15 @@ class _TimerPageState extends State<TimerPage> {
   late int _selectedLearningTypeId = 1;
   late String _selectedLearningType = '';
 
-  List<Map<String, dynamic>> jadwal = [];
   int type = 0;
   int subjectId = 0;
+
+  List<Meeting> meetings = <Meeting>[];
+  DateTime today = DateTime.now();
+  late DateTime firstDayOfWeek;
+  late DateTime lastDayOfWeek;
+  late DateTime startOfFirstDay;
+  late DateTime endOfLastDay;
 
   String _formattedTime(int seconds) {
     int hours = seconds ~/ 3600;
@@ -56,38 +63,63 @@ class _TimerPageState extends State<TimerPage> {
   @override
   void initState() {
     super.initState();
-    fetchDataJadwal();
+    _getDataSource();
   }
 
-  Future<void> fetchDataJadwal() async {
-    try {
-      String url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/now';
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    firstDayOfWeek = today.subtract(Duration(days: today.weekday - 1));
+    lastDayOfWeek = firstDayOfWeek.add(Duration(days: 5));
+    print('first : $firstDayOfWeek, last : $lastDayOfWeek');
+    startOfFirstDay =
+        DateTime(firstDayOfWeek.year, firstDayOfWeek.month, firstDayOfWeek.day);
+    endOfLastDay = DateTime(
+        lastDayOfWeek.year, lastDayOfWeek.month, lastDayOfWeek.day, 23, 59, 59);
+    _fetchData();
+  }
 
+  List<Meeting> _getDataSource() {
+    return meetings;
+  }
+
+  Future<void> _fetchData() async {
+    var url =
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+
+    try {
       var response = await http.get(
         Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json',
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
         },
       );
-
       if (response.statusCode == 200) {
-        final List<dynamic> fetchedData = json.decode(response.body);
-        List<Map<String, dynamic>> transformedData = fetchedData.map((item) {
-          return {
-            'id': item['id'].toString(),
-            'nama matkul': item['subject'],
-          };
-        }).toList();
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        List<dynamic> dataTugas = jsonResponse['data'];
+        List<Meeting> fetchedMeetings = <Meeting>[];
+        for (var data in dataTugas) {
+          String id = data['id'] ?? '';
+          String subject = data['subject'] ?? '';
+          String dosen = data['dosen'] ?? '';
+          String ruangan = data['ruang'] ?? '';
+          DateTime startTime = DateTime.parse(data['startTime']);
+          DateTime endTime = DateTime.parse(data['endTime']);
+          Color color = Color(data['color']);
+          String day = data['day'];
 
+          fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
+              dosen, ruangan, false, day));
+        }
         setState(() {
-          jadwal = transformedData;
+          meetings = fetchedMeetings;
         });
       } else {
-        throw Exception('Failed to load data');
+        print('Request failed with status: ${response.statusCode}');
       }
-
-    } catch (error) {
-      print('Error fetching data: $error');
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -175,7 +207,7 @@ class _TimerPageState extends State<TimerPage> {
       appBar: AppBar(
         title: Row(
           children: [
-            SizedBox(width: 8),
+            SizedBox(width: 10),
             Text(
               'Record',
               style: TextStyle(
@@ -270,13 +302,13 @@ class _TimerPageState extends State<TimerPage> {
                   placeholder: "Pilih mata kuliah",
                   onChanged: (value) {
                     setState(() {
-                      _selectedCourseId = jadwal[value]['id'];
-                      _selectedCourseLabel = jadwal[value]['nama matkul'];
+                      _selectedCourseId = meetings[value].id;
+                      _selectedCourseLabel = meetings[value].eventName;
                     });
                   },
-                  items: List.generate(jadwal.length, (index) {
+                  items: List.generate(meetings.length, (index) {
                     return {
-                      'label': jadwal[index]['nama matkul'],
+                      'label': meetings[index].eventName,
                       'value': index
                     };
                   }),
