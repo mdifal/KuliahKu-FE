@@ -22,13 +22,12 @@ class _CalenderTaskState extends State<CalenderTask> {
   List<Meeting> meetings = <Meeting>[];
 
   @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  _fetchData();
+}
 
   List<Meeting> _getDataSource() {
-    
     return meetings;
   }
 
@@ -49,6 +48,7 @@ class _CalenderTaskState extends State<CalenderTask> {
       List<dynamic> dataTugas = jsonResponse['data'];
       List<Meeting> fetchedMeetings = <Meeting>[];
 
+      print(jsonResponse);
       for (var data in dataTugas) {
        String id = data['id'] ?? '';
         String eventName = data['title'] ?? '';
@@ -106,23 +106,26 @@ class _CalenderTaskState extends State<CalenderTask> {
   }
 
   Widget _appointmentBuilder(
-    BuildContext context,
-    CalendarAppointmentDetails details,
-  ) {
-    final Meeting meeting = details.appointments.first as Meeting;
-    return Container(
+  BuildContext context,
+  CalendarAppointmentDetails details,
+) {
+  final Meeting meeting = details.appointments.first as Meeting;
+  return IntrinsicHeight(
+    child: Container(
       decoration: BoxDecoration(
         color: meeting.appointmentColor,
         borderRadius: BorderRadius.circular(4), // Menambahkan border radius 4
       ),
-      padding: EdgeInsets.all(5), // Menambahkan padding untuk penyesuaian
+      padding: EdgeInsets.all(5), 
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri
+      crossAxisAlignment: CrossAxisAlignment.start, 
+      mainAxisSize: MainAxisSize.min, 
         children: [
           Text(
             meeting.eventName,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
+          SizedBox(height: 2), // Beri sedikit jarak antara teks
           Row(
             children: [
               Text(
@@ -138,6 +141,6 @@ class _CalenderTaskState extends State<CalenderTask> {
           ),
         ],
       ),
-    );
-  }
-}
+    ),
+  );
+}}
