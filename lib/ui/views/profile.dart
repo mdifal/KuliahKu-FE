@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:kuliahku/ui/views/edit_password.dart';
 import 'package:kuliahku/ui/views/edit_profile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -142,6 +143,28 @@ class _ProfilePageState extends State<ProfilePage> {
                                   SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
                                   Text(
                                     'Edit profile',
+                                    style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        TableRow(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const EditPasswordPage()),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(Icons.lock_outline), // Tambahkan ikon ke dalam baris
+                                  SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
+                                  Text(
+                                    'Edit Password',
                                     style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
                                   ),
                                 ],
