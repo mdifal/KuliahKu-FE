@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/edit_task.dart';
+import 'package:kuliahku/ui/widgets/button.dart';
 
 class DetailPlanPage extends StatefulWidget {
   const DetailPlanPage({
@@ -67,6 +70,77 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
     }
   }
 
+  Future<void> delete() async {
+    var url =
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/delete/${widget.idTask}';
+
+    try {
+      var response = await http.delete(
+        Uri.parse(url),
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        String message = jsonResponse['message'];
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Hapus Tugas Berhasil'),
+                content: Text(message),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Hapus Tugas Gagal'),
+                content:
+                    Text('Request failed with status: ${response.statusCode}'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            });
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void updateTask() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateTaskPage(
+          id: widget.idTask,
+        ),
+      ),
+    );
+  }
+
+  void deleteTask() {
+    delete();
+    didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +159,20 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
           _buildDetailItem('Deadline', dateTimeDeadline.toString()),
           _buildDetailItem('Notes', notes),
           _buildDetailItem('Color', color.toString()),
+          Row(
+            children: [
+              CustomButton(
+                  label: 'delete',
+                  backgroundColor: Colors.red,
+                  textColor: white,
+                  onPressed: deleteTask),
+              CustomButton(
+                  label: 'update',
+                  backgroundColor: Color.fromARGB(255, 60, 136, 41),
+                  textColor: white,
+                  onPressed: updateTask)
+            ],
+          )
         ],
       ),
     );

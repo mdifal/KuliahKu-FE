@@ -123,11 +123,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        String statusCode = jsonResponse['statusCode'];
         Map<String, dynamic> data = jsonResponse['data'];
-
-        print('json $jsonResponse');
-        print('data $data');
         setState(() {
         _mataKuliahController.text = data['subject'] ?? '';
         _dosenController.text = data['dosen'] ?? '';
@@ -216,7 +212,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
               ),
               SizedBox(width: 8),
               Text(
-                'Input Jadwal Baru',
+                'Update Jadwal',
                 style: TextStyle(color: Colors.white),
               ),
             ],
