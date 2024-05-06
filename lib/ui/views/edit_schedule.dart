@@ -1,24 +1,33 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/calender.dart';
+import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
-import 'package:kuliahku/ui/widgets/button.dart';
-import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
-import 'package:kuliahku/ui/shared/global.dart';
+import 'package:http/http.dart' as http;
 
-class tambahJadwalPage extends StatefulWidget {
-  const tambahJadwalPage({Key? key}) : super(key: key);
+class UpdateSchedulePage extends StatefulWidget {
+final String id;
+
+  const UpdateSchedulePage({
+    Key? key,
+    required this.id
+  }) : super(key: key);
 
   @override
-  State<tambahJadwalPage> createState() => _tambahJadwalPageState();
+  State<UpdateSchedulePage> createState() => _UpdateSchedulePageState();
 }
 
-class _tambahJadwalPageState extends State<tambahJadwalPage> {
+class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchData();
+  }
+  
   late DateTime startTime;
   late DateTime endTime;
   late String startTimeString;
@@ -30,7 +39,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
   TextEditingController _dosenController = TextEditingController();
   TextEditingController _ruanganController = TextEditingController();
 
-  Future<void> _addSchedule() async {
+  Future<void> _updateSchedule() async {
     String mataKuliah = _mataKuliahController.text;
     String jamMulai = startTimeString;
     String jamSelesai = endTimeString;
@@ -48,11 +57,10 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
       "startTime": jamMulai,
       "subject": mataKuliah
     };
-    print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah';
-    var response = await http.post(
+    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/update/${widget.id}';
+    var response = await http.put(
       Uri.parse(url),
       body: body,
       headers: {
@@ -69,7 +77,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Tambah Jadwal Berhasil'),
+              title: Text('Update Jadwal Berhasil'),
               content: Text(message),
               actions: [
                 TextButton(
@@ -86,7 +94,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Tambah Jadwal Gagal'),
+              title: Text('Update Jadwal Gagal'),
               content: Text(message),
               actions: [
                 TextButton(
@@ -98,6 +106,42 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
               ],
             );
           });
+    }
+  }
+  
+  Future<void> _fetchData() async {
+    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/detail/${widget.id}';
+
+    try {
+      var response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        String statusCode = jsonResponse['statusCode'];
+        Map<String, dynamic> data = jsonResponse['data'];
+
+        print('json $jsonResponse');
+        print('data $data');
+        setState(() {
+        _mataKuliahController.text = data['subject'] ?? '';
+        _dosenController.text = data['dosen'] ?? '';
+        _ruanganController.text = data['ruang'] ?? '';
+        selectedDay = data['day'];
+        selectedColor = data['color'];
+        startTimeString = data['startTime'];
+        endTimeString = data['endTime'];
+      });
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -275,7 +319,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
             label: "Simpan",
             backgroundColor: yellow,
             textColor: black,
-            onPressed: _addSchedule,
+            onPressed: _updateSchedule,
           ),
         ),
       ),
