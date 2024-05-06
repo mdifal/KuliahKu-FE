@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/views/edit_profile.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:kuliahku/ui/views/laporan_hasil_belajar.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,6 +16,34 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late String _username = '';
+  late String _fullname = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfileData();
+  }
+  Future<void> fetchProfileData() async {
+    try {
+      var url = 'http://$ipUrl:8001/profile/$email';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final fetchedData =  json.decode(response.body);
+
+        setState(() {
+          _fullname = fetchedData['username'];
+          _username = fetchedData['fullname'];
+        });
+      } else {
+        throw Exception('Failed to fetch profile data');
+      }
+    } catch (error) {
+      print('Error fetching profile data: $error');
+      throw Exception('Failed to fetch profile data');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'username',
+                  _username,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -61,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Nama lengkap',
+                  _fullname,
                   style: TextStyle(
                     fontSize: 18,
                     color: grey,
