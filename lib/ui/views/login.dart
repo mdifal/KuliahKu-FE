@@ -18,8 +18,6 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-String emailId = '';
-
 class _LoginPageState extends State<LoginPage> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -54,10 +52,10 @@ class _LoginPageState extends State<LoginPage> {
 
         Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
 
-        String email = decodedToken['email'];
+        String emailId = decodedToken['email'];
 
         setState(() {
-          emailId = email;
+          email = emailId;
         });
 
         // Lanjutkan navigasi ke halaman AddNewSemesterPage
