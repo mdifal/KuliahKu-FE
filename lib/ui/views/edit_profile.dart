@@ -2,9 +2,13 @@ import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
 import '../widgets/button.dart';
-import 'history_time_record.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -14,25 +18,117 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // Data statis untuk ditampilkan di form edit
-  String username = 'john_doe';
-  String password = '@123john';
-  String perguruanTinggi = 'Universitas ABC';
-  String dob = '01-01-1990';
+  late String _username = '';
+  late String _fullname = '';
+  late String _college = '';
+  late DateTime _dob;
   late ImagePicker _imagePicker;
   XFile? _imageFile;
+
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _fullnameController = TextEditingController();
+  TextEditingController _collegeController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
+
+  String _statusMessage = '';
+
+  void _showStatusMessage(String message) {
+    setState(() {
+      _statusMessage = message;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _imagePicker = ImagePicker();
+    fetchProfileData();
   }
+
+  Future<void> fetchProfileData() async {
+    try {
+      var url = 'http://$ipUrl:8001/profile/edit/$email';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final fetchedData = json.decode(response.body);
+        print(fetchedData);
+        setState(() {
+          _username = fetchedData['username'];
+          _fullname = fetchedData['fullname'];
+          _college = fetchedData['college'];
+          _dob = fetchedData['dob'];
+
+          _usernameController.text = _username;
+          _fullnameController.text = _fullname;
+          _collegeController.text = _college;
+          _dobController.text = DateFormat('yyyy-MM-dd').format(_dob);
+        });
+      } else {
+        throw Exception('Failed to fetch profile data');
+      }
+    } catch (error) {
+      print('Error fetching profile data: $error');
+      throw Exception('Failed to fetch profile data');
+    }
+  }
+
 
   Future<void> _ambilFoto() async {
     final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _imageFile = pickedFile;
     });
+  }
+
+  Future<void> _simpanPerubahan() async {
+    try {
+      var url = 'http://$ipUrl:8001/profile/edit/$email';
+      var response = await http.put(
+        Uri.parse(url),
+        body: jsonEncode({
+          'username': _username,
+          'fullname': _fullname,
+          'college': _college,
+          'dob': _dob,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        _showStatusMessage('Perubahan data tersimpan');
+        print('Perubahan profil disimpan');
+      } else {
+        throw Exception('Failed to save profile changes');
+      }
+    } catch (error) {
+      print('Error saving profile changes: $error');
+      throw Exception('Failed to save profile changes');
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _dob,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (pickedDate != null && pickedDate != _dob) {
+      setState(() {
+        _dob = pickedDate;
+        _dobController.text = DateFormat('yyyy-MM-dd').format(_dob);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _fullnameController.dispose();
+    _collegeController.dispose();
+    _dobController.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,29 +180,86 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             buildEditableFormField(
-              initialValue: username,
+              controller: _usernameController,
               labelText: 'Username',
+              prefixIcon: Icons.alternate_email_rounded,
+              onChanged: (value) {
+                setState(() {
+                  _username = value;
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            buildEditableFormField(
+              controller: _fullnameController,
+              labelText: 'Fullname',
               prefixIcon: Icons.person,
+              onChanged: (value) {
+                setState(() {
+                  _fullname = value;
+                });
+              },
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             buildEditableFormField(
-              initialValue: password,
-              labelText: 'Password',
-              prefixIcon: Icons.lock,
-            ),
-            SizedBox(height: 20),
-            buildEditableFormField(
-              initialValue: perguruanTinggi,
-              labelText: 'Perguruan Tinggi',
+              controller: _collegeController,
+              labelText: 'Collage',
               prefixIcon: Icons.school,
+              onChanged: (value) {
+                setState(() {
+                  _college = value;
+                });
+              },
             ),
-            SizedBox(height: 20),
-            buildEditableFormField(
-              initialValue: dob,
-              labelText: 'Date of Birth',
-              prefixIcon: Icons.calendar_today,
+            SizedBox(height: 10),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Stack(
+                children: [
+                  TextFormField(
+                    controller: _dobController,
+                    readOnly: true,
+                    onTap: () {
+                      _selectDate(context);
+                    },
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'Date of Birth',
+                      prefixIcon: Icon(Icons.calendar_today),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.all(20),
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_statusMessage.isNotEmpty)
+              Center(
+                child: Text(
+                  _statusMessage,
+                  style: TextStyle(
+                    color: success,
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            SizedBox(height: 10),
+            CustomButton(
+              label: "Simpan",
+              backgroundColor: yellow,
+              textColor: black,
+              onPressed: _simpanPerubahan,
             ),
           ],
         ),
@@ -115,16 +268,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget buildEditableFormField({
-    required String initialValue,
+    required TextEditingController controller,
     required String labelText,
     required IconData prefixIcon,
+    required Function(String) onChanged,
   }) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Stack(
         children: [
           TextFormField(
-            initialValue: initialValue,
+            controller: controller,
+            onChanged: onChanged,
             decoration: InputDecoration(
               border: UnderlineInputBorder(),
               labelText: labelText,
