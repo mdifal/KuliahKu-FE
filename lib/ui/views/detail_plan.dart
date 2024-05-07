@@ -51,17 +51,19 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         String statusCode = jsonResponse['statusCode'];
-        Map<String, dynamic> data = jsonResponse['data'];
-        id = data['id'];
-        title = data['title'];
-        type = data['type'];
-        subjectId = data['subjectId'];
-        semesterId = data['semesterId'];
-        dateTimeReminder = DateTime.parse(data['dateTimeReminder']);
-        dateTimeDeadline = DateTime.parse(data['dateTimeDeadline']);
-        notes = data['notes'];
-        color = data['color'];
-        setState(() {});
+
+        setState(() {
+          Map<String, dynamic> data = jsonResponse['data'];
+          id = data['id'];
+          title = data['title'];
+          type = data['type'];
+          subjectId = data['subjectId'];
+          semesterId = data['semesterId'];
+          dateTimeReminder = DateTime.parse(data['dateTimeReminder']);
+          dateTimeDeadline = DateTime.parse(data['dateTimeDeadline']);
+          notes = data['notes'];
+          color = data['color'];
+        });
       } else {
         print('Request failed with status: ${response.statusCode}');
       }
@@ -72,7 +74,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
 
   Future<void> delete() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/delete/${widget.idTask}';
+        'http://$ipUrl:8001/users/$email/rencanaMandiri/delete/${widget.idTask}';
 
     try {
       var response = await http.delete(
@@ -130,16 +132,17 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
       context,
       MaterialPageRoute(
         builder: (context) => UpdateTaskPage(
-          id: widget.idTask,
+          id: widget.idTask
         ),
       ),
     );
   }
 
-  void deleteTask() {
-    delete();
-    didChangeDependencies();
-  }
+  void deleteTask() async {
+  await delete(); // Menghapus data
+  Navigator.pop(context); // Kembali ke halaman sebelumnya
+  _fetchData(); // Memperbarui data setelah kembali
+}
 
   @override
   Widget build(BuildContext context) {

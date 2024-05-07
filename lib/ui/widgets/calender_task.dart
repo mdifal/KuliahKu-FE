@@ -56,7 +56,7 @@ void didChangeDependencies() {
         DateTime dateTimeDeadline = DateTime.parse(data['dateTimeDeadline']);
         Color color = Color(data['color']);
 
-        fetchedMeetings.add(Meeting(id, eventName, dateTimeReminder, dateTimeDeadline, color));
+        fetchedMeetings.add(Meeting(id, eventName, dateTimeReminder, dateTimeReminder, dateTimeDeadline, color));
       }
 
       setState(() {
@@ -72,16 +72,18 @@ void didChangeDependencies() {
 
 
   void _handleAgendaTap(CalendarTapDetails details) {
-    if (details.targetElement == CalendarElement.appointment) {
-      final Meeting meeting = details.appointments![0] as Meeting;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DetailPlanPage(idTask: meeting.idEvent),
-        ),
-      );
-    }
+  if (details.targetElement == CalendarElement.appointment) {
+    final Meeting meeting = details.appointments![0] as Meeting;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailPlanPage(idTask: meeting.idEvent),
+      ),
+    ).then((_) {
+      didChangeDependencies(); // Memperbarui data setelah kembali dari DetailPlanPage
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -110,22 +112,23 @@ void didChangeDependencies() {
   CalendarAppointmentDetails details,
 ) {
   final Meeting meeting = details.appointments.first as Meeting;
+
   return IntrinsicHeight(
     child: Container(
       decoration: BoxDecoration(
         color: meeting.appointmentColor,
-        borderRadius: BorderRadius.circular(4), // Menambahkan border radius 4
+        borderRadius: BorderRadius.circular(4),
       ),
-      padding: EdgeInsets.all(5), 
+      padding: EdgeInsets.all(5),
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start, 
-      mainAxisSize: MainAxisSize.min, 
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             meeting.eventName,
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 2), // Beri sedikit jarak antara teks
+          SizedBox(height: 2),
           Row(
             children: [
               Text(
@@ -143,4 +146,5 @@ void didChangeDependencies() {
       ),
     ),
   );
-}}
+}
+}

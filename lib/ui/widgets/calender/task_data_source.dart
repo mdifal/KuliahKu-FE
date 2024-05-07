@@ -17,5 +17,10 @@ class MeetingDataSource extends CalendarDataSource{
   DateTime getStartTime(int index) {
     return appointments![index].from;
   }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments![index].to;
+  }
   
 }
