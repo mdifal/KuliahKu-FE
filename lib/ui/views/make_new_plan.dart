@@ -12,6 +12,7 @@ import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../widgets/calender/schedule.dart';
 
@@ -127,7 +128,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> addPlanToBackend() async {
     try {
-      String url = 'http:/$ipUrl:8001/user/$email/rencanaMandiri';
+      String url = 'http://$ipUrl:8001/users/$email/rencanaMandiri';
 
       Map<String, dynamic> requestBody = {
         'type': type,
@@ -140,17 +141,24 @@ class _AddPlanPageState extends State<AddPlanPage> {
         'notes': _catatanController.text,
       };
 
-      if (_selectedFile != null) {
+      if (_selectedFile != null && _selectedFile!.files.single.bytes != null) {
         var file = _selectedFile!.files.single;
-        var stream = file.readStream!;
-        List<int> bytes = [];
-        await for (var chunk in stream) {
-          bytes.addAll(chunk);
-        }
-        String base64File = base64Encode(bytes);
-        requestBody['lampiran'] = base64File;
+        var bytes = file.bytes!;
+        var stream = Stream.fromIterable([bytes]);
+
+        var length = bytes.length;
+
+        var multipartFile = http.MultipartFile(
+          'lampiran',
+          stream,
+          length,
+          filename: basename(file.name),
+          contentType: MediaType('application', 'octet-stream'),
+        );
+
+        requestBody['lampiran'] = multipartFile;
       } else {
-        requestBody['lampiran'] = null; // or ''
+        requestBody['lampiran'] = '';
       }
 
       print(requestBody);

@@ -63,6 +63,7 @@ class _TimerPageState extends State<TimerPage> {
   @override
   void initState() {
     super.initState();
+    _timer = Timer(Duration.zero, () {});
     _getDataSource();
   }
 
@@ -82,6 +83,7 @@ class _TimerPageState extends State<TimerPage> {
   List<Meeting> _getDataSource() {
     return meetings;
   }
+
 
   Future<void> _fetchData() async {
     var url =
