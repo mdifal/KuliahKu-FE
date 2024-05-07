@@ -19,7 +19,7 @@ class _CustomDateInputState extends State<CustomDateInput>
 {
   String _selectedDay = '01';
   String _selectedMonth = '01';
-  String _selectedYear = '2022'; // Nilai default untuk tahun
+  String _selectedYear = DateTime.now().year.toString(); // Nilai default untuk tahun
 
   List<String> _months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
@@ -104,11 +104,11 @@ class _CustomDateInputState extends State<CustomDateInput>
                 items: List.generate(10, (index) {
                   // Menggunakan range tahun dari 2022 hingga 2031
                   return DropdownMenuItem<String>(
-                    value: (2022 + index).toString(),
+                    value: (DateTime.now().year + index).toString(),
                     child: SizedBox(
                       width: 60, // Lebar item dropdown
                       child: Text(
-                        (2022 + index).toString(),
+                        (DateTime.now().year + index).toString(),
                         textAlign: TextAlign.center,
                       ),
                     ),
