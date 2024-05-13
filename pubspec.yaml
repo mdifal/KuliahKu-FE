@@ -38,7 +38,7 @@ dependencies:
   passwordfield: ^0.2.0
   dropdown_button2: ^2.3.8
   simple_timer: ^2.0.0
-  file_picker: ^8.0.0+1
+  file_picker: ^4.0.0
   path: ^1.8.3
   syncfusion_flutter_calendar: ^25.1.37+1
   time_picker_spinner: ^0.0.1

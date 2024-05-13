@@ -13,6 +13,7 @@ import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../widgets/calender/schedule.dart';
 
@@ -36,7 +37,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
   late String reminderString = '';
   String description = '';
   TextEditingController _catatanController = TextEditingController();
-  FilePickerResult? _selectedFile;
 
   List<Meeting> meetings = <Meeting>[];
   DateTime today = DateTime.now();
@@ -44,6 +44,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
   late DateTime lastDayOfWeek;
   late DateTime startOfFirstDay;
   late DateTime endOfLastDay;
+  FilePickerResult? _selectedFile;
 
   @override
   void initState() {
@@ -130,44 +131,32 @@ class _AddPlanPageState extends State<AddPlanPage> {
     try {
       String url = 'http://$ipUrl:8001/users/$email/rencanaMandiri';
 
-      Map<String, dynamic> requestBody = {
-        'type': type,
-        'subjectId': meetings[subjectId].id,
-        'title': _judulController.text,
-        'dateReminder': DateFormat('yyyy-MM-dd').format(_selectedReminder),
-        'timeReminder': DateFormat('HH:mm:ss').format(_selectedReminderTime),
-        'dateDeadline': DateFormat('yyyy-MM-dd').format(_selectedDeadline),
-        'timeDeadline': DateFormat('HH:mm:ss').format(_selectedDeadlineTime),
-        'notes': _catatanController.text,
-      };
+      var request = http.MultipartRequest('POST', Uri.parse(url));
 
-      if (_selectedFile != null && _selectedFile!.files.single.bytes != null) {
-        var file = _selectedFile!.files.single;
-        var bytes = file.bytes!;
-        var stream = Stream.fromIterable([bytes]);
-
-        var length = bytes.length;
-
-        var multipartFile = http.MultipartFile(
-          'lampiran',
-          stream,
-          length,
-          filename: basename(file.name),
-          contentType: MediaType('application', 'octet-stream'),
-        );
-
-        requestBody['lampiran'] = multipartFile;
-      } else {
-        requestBody['lampiran'] = '';
+      // Tambahkan file yang dipilih ke dalam permintaan multipart
+      if (_selectedFile != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          _selectedFile!.files.first.bytes!,
+          filename: _selectedFile!.files.first.name,
+        ));
       }
 
-      print(requestBody);
+      // Tambahkan data lain ke dalam permintaan
+      request.fields['type'] = type.toString();
+      request.fields['subjectId'] = meetings[subjectId].id;
+      request.fields['title'] = _judulController.text;
+      request.fields['dateReminder'] = DateFormat('yyyy-MM-dd').format(_selectedReminder);
+      request.fields['timeReminder'] = DateFormat('HH:mm:ss').format(_selectedReminderTime);
+      request.fields['dateDeadline'] = DateFormat('yyyy-MM-dd').format(_selectedDeadline);
+      request.fields['timeDeadline'] = DateFormat('HH:mm:ss').format(_selectedDeadlineTime);
+      request.fields['notes'] = _catatanController.text;
 
-      var response = await http.post(
-        Uri.parse(url),
-        body: json.encode(requestBody),
-        headers: {'Content-Type': 'application/json'},
-      );
+      // Kirim permintaan ke backend
+      var streamedResponse = await request.send();
+
+      // Tunggu respon dari backend
+      var response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         print('Rencana mandiri berhasil ditambahkan');
@@ -178,6 +167,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       print('Terjadi kesalahan: $error');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -310,20 +300,20 @@ class _AddPlanPageState extends State<AddPlanPage> {
                     CustomUploadFileButton(
                       label: "Tambah Lampiran",
                       onPressed: () async {
-                        final result = await FilePicker.platform.pickFiles();
-                        if (result != null) {
-                          setState(() {
-                            _selectedFile = result;
-                          });
+                        _selectedFile = await FilePicker.platform.pickFiles();
+                        if (_selectedFile != null) {
+                          // File dipilih, lakukan sesuatu dengan file tersebut
+                          // Contoh: Simpan path file dalam variabel _selectedFile
+                          setState(() {});
                         }
                       },
                     ),
                     if (_selectedFile != null)
                       Text(
-                        'File: ${_selectedFile!.files.single.name}',
+                        'File: ${_selectedFile!.files.first.name}',
                         style: TextStyle(
                           fontSize: 10,
-                          color: delivery,
+                          color: black,
                           fontFamily: "Poppins",
                         ),
                       ),
