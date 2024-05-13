@@ -131,7 +131,7 @@ class _TimerPageState extends State<TimerPage> {
         'startTime': DateFormat('HH:mm:ss').format(_startTime),
         'endTime': DateFormat('HH:mm:ss').format(_endTime),
         'subject': _selectedCourseId,
-        'jenis': _selectedLearningTypeId,
+        'type': _selectedLearningTypeId,
         'time_records': _formattedTime(_seconds),
       };
 
