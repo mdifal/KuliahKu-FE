@@ -25,7 +25,6 @@ class AddPlanPage extends StatefulWidget {
 }
 
 class _AddPlanPageState extends State<AddPlanPage> {
-
   int type = 0;
   int subjectId = 0;
   TextEditingController _judulController = TextEditingController();
@@ -146,10 +145,14 @@ class _AddPlanPageState extends State<AddPlanPage> {
       request.fields['type'] = type.toString();
       request.fields['subjectId'] = meetings[subjectId].id;
       request.fields['title'] = _judulController.text;
-      request.fields['dateReminder'] = DateFormat('yyyy-MM-dd').format(_selectedReminder);
-      request.fields['timeReminder'] = DateFormat('HH:mm:ss').format(_selectedReminderTime);
-      request.fields['dateDeadline'] = DateFormat('yyyy-MM-dd').format(_selectedDeadline);
-      request.fields['timeDeadline'] = DateFormat('HH:mm:ss').format(_selectedDeadlineTime);
+      request.fields['dateReminder'] =
+          DateFormat('yyyy-MM-dd').format(_selectedReminder);
+      request.fields['timeReminder'] =
+          DateFormat('HH:mm:ss').format(_selectedReminderTime);
+      request.fields['dateDeadline'] =
+          DateFormat('yyyy-MM-dd').format(_selectedDeadline);
+      request.fields['timeDeadline'] =
+          DateFormat('HH:mm:ss').format(_selectedDeadlineTime);
       request.fields['notes'] = _catatanController.text;
 
       // Kirim permintaan ke backend
@@ -167,7 +170,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
       print('Terjadi kesalahan: $error');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -217,34 +219,27 @@ class _AddPlanPageState extends State<AddPlanPage> {
                             });
                           },
                           items: [
-                            {
-                              'label':'Mengerjakan Tugas',
-                              'value': 1
-                            },
-                            {
-                              'label':'Belajar Mandiri',
-                              'value': 2
-                            }
-                          ]
-                      ),
+                            {'label': 'Mengerjakan Tugas', 'value': 1},
+                            {'label': 'Belajar Mandiri', 'value': 2}
+                          ]),
                     ),
                     Padding(
-                        padding: EdgeInsets.symmetric(vertical: 0),
-                        child: CustomDropdown(
-                          label: "Mata Kuliah",
-                          placeholder: "Pilih mata kuliah",
-                          onChanged: (value) {
-                            setState(() {
-                              subjectId = value;
-                            });
-                          },
-                          items: List.generate(meetings.length, (index) {
-                            return {
-                              'label': meetings[index].eventName,
-                              'value': index
-                            };
-                          }),
-                        ),
+                      padding: EdgeInsets.symmetric(vertical: 0),
+                      child: CustomDropdown(
+                        label: "Mata Kuliah",
+                        placeholder: "Pilih mata kuliah",
+                        onChanged: (value) {
+                          setState(() {
+                            subjectId = value;
+                          });
+                        },
+                        items: List.generate(meetings.length, (index) {
+                          return {
+                            'label': meetings[index].eventName,
+                            'value': index
+                          };
+                        }),
+                      ),
                     ),
                     CustomTextField(
                       label: "Judul",
@@ -275,7 +270,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       label: 'Reminder',
                       onChanged: (DateTime selectedDate) {
                         setState(() {
-                          _selectedReminder  = selectedDate;
+                          _selectedReminder = selectedDate;
                         });
                       },
                     ),
@@ -317,21 +312,20 @@ class _AddPlanPageState extends State<AddPlanPage> {
                           fontFamily: "Poppins",
                         ),
                       ),
-                    SizedBox(height: 10),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      color: Colors.white,
+                      child: CustomButton(
+                        label: "Simpan",
+                        backgroundColor: yellow,
+                        textColor: black,
+                        onPressed: addPlanToBackend,
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
-          color: Colors.white,
-          child: CustomButton(
-            label: "Simpan",
-            backgroundColor: yellow,
-            textColor: black,
-            onPressed: addPlanToBackend,
           ),
         ),
       ),
@@ -353,6 +347,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
       },
     );
   }
+
   void _reminderPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
