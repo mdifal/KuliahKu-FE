@@ -8,6 +8,8 @@ import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/widgets/time_field.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class tambahJadwalPage extends StatefulWidget {
   const tambahJadwalPage({Key? key}) : super(key: key);
@@ -63,39 +65,21 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
     String statusCode = jsonResponse['statusCode'];
     String message = jsonResponse['message'];
     if (statusCode == "200") {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Tambah Jadwal Berhasil'),
-              content: Text(message),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          });
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.success(
+          message: "Jadwal Berhasil Ditambahkan!",
+          backgroundColor: success,
+        ),
+      );
     } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Tambah Jadwal Gagal'),
-              content: Text(message),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            );
-          });
+      showTopSnackBar(
+        Overlay.of(context),
+        CustomSnackBar.error(
+          message: "Jadwal Gagal Ditambahkan!",
+          backgroundColor: failed,
+        ),
+      );
     }
   }
 
@@ -261,19 +245,19 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
                       selectedColor = value;
                     });
                   },
-                )
+                ),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  color: Colors.white,
+                  child: CustomButton(
+                    label: "Simpan",
+                    backgroundColor: yellow,
+                    textColor: black,
+                    onPressed: _addSchedule,
+                  ),
+                ),
               ],
             ),
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.all(20),
-          color: Colors.white,
-          child: CustomButton(
-            label: "Simpan",
-            backgroundColor: yellow,
-            textColor: black,
-            onPressed: _addSchedule,
           ),
         ),
       ),
