@@ -29,7 +29,7 @@ class _CustomDateInputState extends State<CustomDateInput>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: EdgeInsets.all(2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // Align label ke kiri
         children: [
