@@ -57,7 +57,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _username = fetchedData['username'];
           _fullname = fetchedData['fullname'];
           _college = fetchedData['college'];
-          _dob = fetchedData['dob'];
+          _dob = DateTime.parse(fetchedData['dob']);
 
           _usernameController.text = _username;
           _fullnameController.text = _fullname;
@@ -90,7 +90,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           'username': _username,
           'fullname': _fullname,
           'college': _college,
-          'dob': _dob,
+          'dob': _dob.toString(),
         }),
         headers: {'Content-Type': 'application/json'},
       );
@@ -117,7 +117,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (pickedDate != null && pickedDate != _dob) {
       setState(() {
         _dob = pickedDate;
-        _dobController.text = DateFormat('yyyy-MM-dd').format(_dob);
+        _dobController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     }
   }
@@ -141,7 +141,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Text(
               'Edit Profile',
               style: TextStyle(
-                color: white,
                 fontFamily: 'Poppins',
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -149,7 +148,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ],
         ),
-        backgroundColor: darkBlue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -87,7 +87,6 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
             Text(
               'Edit Password',
               style: TextStyle(
-                color: white,
                 fontFamily: 'Poppins',
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -95,7 +94,6 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
             ),
           ],
         ),
-        backgroundColor: darkBlue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

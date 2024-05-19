@@ -32,11 +32,9 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
                 SizedBox(width: 8),
                 Text(
                   'History Time Record',
-                  style: TextStyle(color: Colors.white),
                 ),
               ],
             ),
-            backgroundColor: mainColor,
           ),
           body: SingleChildScrollView(
             child: Container(
