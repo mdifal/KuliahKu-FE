@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/shared/style.dart';
 
 class ReplyCard extends StatelessWidget {
-  const ReplyCard({Key key, this.message, this.time}) : super(key: key);
+  const ReplyCard({
+    Key? key,
+    required this.message,
+    required this.time
+  }) : super(key: key);
   final String message;
   final String time;
 
@@ -15,8 +20,8 @@ class ReplyCard extends StatelessWidget {
         ),
         child: Card(
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          // color: Color(0xffdcf8c6),
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          color: greySoft,
           margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Stack(
             children: [
@@ -40,8 +45,8 @@ class ReplyCard extends StatelessWidget {
                 child: Text(
                   time,
                   style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[600],
+                    fontSize: 8,
+                    color: greySoft,
                   ),
                 ),
               ),

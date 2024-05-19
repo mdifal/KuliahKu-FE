@@ -8,13 +8,13 @@ class ChatModel {
   bool select = false;
   int id;
   ChatModel({
-    this.name,
-    this.icon,
-    this.isGroup,
-    this.time,
-    this.currentMessage,
-    this.status,
+    required this.name,
+    required this.icon,
+    required this.isGroup,
+    required this.time,
+    required this.currentMessage,
+    required this.status,
     this.select = false,
-    this.id,
+    required this.id,
   });
 }

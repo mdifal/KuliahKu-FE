@@ -213,7 +213,6 @@ class _TimerPageState extends State<TimerPage> {
             Text(
               'Record',
               style: TextStyle(
-                color: white,
                 fontFamily: 'Poppins',
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -221,7 +220,6 @@ class _TimerPageState extends State<TimerPage> {
             ),
           ],
         ),
-        backgroundColor: darkBlue,
         actions: [
           IconButton(
             icon: Icon(

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../shared/style.dart';
+
 class OwnMessageCard extends StatelessWidget {
-  const OwnMessageCard({Key key, this.message, this.time}) : super(key: key);
+  const OwnMessageCard({
+    Key? key,
+    required this.message,
+    required this.time
+  }) : super(key: key);
   final String message;
   final String time;
 
@@ -15,9 +21,9 @@ class OwnMessageCard extends StatelessWidget {
         ),
         child: Card(
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          color: Color(0xffdcf8c6),
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          color: white,
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 3),
           child: Stack(
             children: [
               Padding(
@@ -42,16 +48,12 @@ class OwnMessageCard extends StatelessWidget {
                     Text(
                       time,
                       style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                        fontSize: 8,
+                        color: greySoft,
                       ),
                     ),
                     SizedBox(
                       width: 5,
-                    ),
-                    Icon(
-                      Icons.done_all,
-                      size: 20,
                     ),
                   ],
                 ),

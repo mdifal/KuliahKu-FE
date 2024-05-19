@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ButtonCard extends StatelessWidget {
-  const ButtonCard({Key key, this.name, this.icon}) : super(key: key);
+  const ButtonCard({
+    Key? key,
+    required this.name,
+    required this.icon
+  }) : super(key: key);
   final String name;
   final IconData icon;
 

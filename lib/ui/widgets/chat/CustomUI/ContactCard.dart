@@ -1,9 +1,12 @@
-import 'package:chatapp/Model/ChatModel.dart';
+import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ContactCard extends StatelessWidget {
-  const ContactCard({Key key, this.contact}) : super(key: key);
+  const ContactCard({
+    Key? key,
+    required this.contact
+  }) : super(key: key);
   final ChatModel contact;
 
   @override

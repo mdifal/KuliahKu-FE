@@ -1,12 +1,14 @@
-import 'package:chatapp/Model/ChatModel.dart';
-import 'package:chatapp/Screens/IndividualPage.dart';
+import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
+import 'package:kuliahku/ui/widgets/chat/Screens/IndividualPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({Key key, this.chatModel, this.sourchat}) : super(key: key);
+  const CustomCard({
+    Key? key,
+    required this.chatModel
+  }) : super(key: key);
   final ChatModel chatModel;
-  final ChatModel sourchat;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,7 @@ class CustomCard extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (contex) => IndividualPage(
-                      chatModel: chatModel,
-                      sourchat: sourchat,
+                      chatModel: chatModel
                     )));
       },
       child: Column(
@@ -26,7 +27,7 @@ class CustomCard extends StatelessWidget {
             leading: CircleAvatar(
               radius: 30,
               child: SvgPicture.asset(
-                chatModel.isGroup ? "assets/groups.svg" : "assets/person.svg",
+                "assets/person.svg",
                 color: Colors.white,
                 height: 36,
                 width: 36,
@@ -42,10 +43,6 @@ class CustomCard extends StatelessWidget {
             ),
             subtitle: Row(
               children: [
-                Icon(Icons.done_all),
-                SizedBox(
-                  width: 3,
-                ),
                 Text(
                   chatModel.currentMessage,
                   style: TextStyle(

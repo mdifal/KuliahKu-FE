@@ -1,4 +1,4 @@
-import 'package:camera/camera.dart';
+import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/OwnMessgaeCrad.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/ReplyCard.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
@@ -80,17 +80,18 @@ class _IndividualPageState extends State<IndividualPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.asset(
-          "assets/whatsapp_Back.png",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
+        // Image.asset(
+        //   "assets/whatsapp_Back.png",
+        //   height: MediaQuery.of(context).size.height,knca
+        //   width: MediaQuery.of(context).size.width,
+        //   fit: BoxFit.cover,
+        // ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: softBlue,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
             child: AppBar(
+              backgroundColor: facebookColor,
               leadingWidth: 70,
               titleSpacing: 0,
               leading: InkWell(
@@ -102,19 +103,18 @@ class _IndividualPageState extends State<IndividualPage> {
                   children: [
                     Icon(
                       Icons.arrow_back,
-                      size: 24,
+                      size: 30,
+                      color: white,
                     ),
                     CircleAvatar(
                       child: SvgPicture.asset(
-                        widget.chatModel.isGroup
-                            ? "assets/groups.svg"
-                            : "assets/person.svg",
-                        color: Colors.white,
+                        image_person,
+                        color: white,
                         height: 36,
                         width: 36,
                       ),
                       radius: 20,
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: softBlue,
                     ),
                   ],
                 ),
