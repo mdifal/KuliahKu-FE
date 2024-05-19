@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/register.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
+
+import 'home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -61,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         // Lanjutkan navigasi ke halaman AddNewSemesterPage
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const CalenderTaskandSchedulePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else if (response.statusCode == 401) {
         // Tangani kesalahan autentikasi
