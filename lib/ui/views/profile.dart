@@ -51,19 +51,9 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Row(
           children: [
-            SizedBox(width: 8),
-            Text(
-              'Profile',
-              style: TextStyle(
-                color: white,
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+
           ],
         ),
-        backgroundColor: darkBlue,
       ),
       body: Stack(
         children: [
@@ -102,84 +92,107 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 50),
                 Expanded(
                   child: Container(
-                    width: 300,
-                    child: Table(
-                      border: TableBorder.all(color: disable),
+                    padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
+                    constraints: BoxConstraints(
+                      maxWidth: 340,
+                    ),
+                    decoration: BoxDecoration(
+                      color: white, // Background color
+                      borderRadius: BorderRadius.circular(15), // Rounded corners
+                      boxShadow: [
+                        BoxShadow(
+                          color: grey.withOpacity(0.2), // Shadow color
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: Offset(0, 3), // Shadow position
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Make the Column fit the content
                       children: [
-                        TableRow(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Icon(Icons.file_copy), // Tambahkan ikon ke dalam baris
-                                  SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
-                                  Text(
-                                    'Laporan pembelajaran',
-                                    style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        MenuItem(
+                          icon: Icons.file_copy,
+                          text: 'Laporan pembelajaran',
+                          color: facebookColor,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
+                            );
+                          },
                         ),
-                        TableRow(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Icon(Icons.edit), // Tambahkan ikon ke dalam baris
-                                  SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
-                                  Text(
-                                    'Edit profile',
-                                    style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        Divider(),
+                        MenuItem(
+                          icon: Icons.edit,
+                          text: 'Edit profile',
+                          color: facebookColor,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                            );
+                          },
                         ),
-                        TableRow(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const EditPasswordPage()),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Icon(Icons.lock_outline), // Tambahkan ikon ke dalam baris
-                                  SizedBox(width: 8), // Sisipkan jarak antara ikon dan teks
-                                  Text(
-                                    'Edit Password',
-                                    style: TextStyle(color: Colors.black), // Atur warna teks sesuai kebutuhan
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        Divider(),
+                        MenuItem(
+                          icon: Icons.lock_outline,
+                          text: 'Edit Password',
+                          color: facebookColor,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const EditPasswordPage()),
+                            );
+                          },
                         ),
                       ],
                     ),
                   ),
                 ),
+                SizedBox(height: 165),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MenuItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Color color;
+  final VoidCallback onTap;
+
+  const MenuItem({
+    required this.icon,
+    required this.text,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Row(
+          children: [
+            Icon(icon, color: color),
+            SizedBox(width: 16),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: black,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
