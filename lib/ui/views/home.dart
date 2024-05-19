@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/make_new_plan.dart';
@@ -7,9 +6,11 @@ import 'package:kuliahku/ui/views/history_time_record.dart';
 import 'package:kuliahku/ui/views/make_new_schedule.dart';
 import 'package:kuliahku/ui/views/profile.dart';
 import 'package:kuliahku/ui/views/timer.dart';
+import 'package:kuliahku/ui/views/chat.dart';
+import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     CalenderTaskandSchedulePage(),
     TimerPage(),
-    tambahJadwalPage(),
+    ChatPage(),
     ProfilePage(),
     AddPlanPage(),
   ];
