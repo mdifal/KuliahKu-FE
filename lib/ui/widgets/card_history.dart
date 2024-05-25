@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/shared/style.dart';
 
 // Fungsi untuk memformat durasi
 String formatDuration(int seconds) {
@@ -56,16 +57,16 @@ class CardHistory extends StatelessWidget {
         children: [
           Text(
             title!,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: white),
           ),
           SizedBox(height: 5),
           Row(
             children: [
               Text(
                 "Mata Kuliah: ",
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 15, color: white),
               ),
-              Text(mataKuliah!, style: TextStyle(fontSize: 15)),
+              Text(mataKuliah!, style: TextStyle(fontSize: 15, color: white)),
             ],
           ),
           SizedBox(height: 5),
@@ -76,11 +77,12 @@ class CardHistory extends StatelessWidget {
                 child: Icon(
                   Icons.access_time_outlined,
                   size: 20,
+                  color: white
                 ),
               ),
               Text(
                 formattedTime,
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 15, color: white),
               ),
             ],
           ),
