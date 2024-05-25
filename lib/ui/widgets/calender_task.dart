@@ -20,19 +20,21 @@ class CalenderTask extends StatefulWidget {
 
 class _CalenderTaskState extends State<CalenderTask> {
   List<Meeting> meetings = <Meeting>[];
+  bool isLoading = true;
 
   @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  _fetchData();
-}
+void initState() {
+    super.initState();
+    _fetchData();
+  }
+
 
   List<Meeting> _getDataSource() {
     return meetings;
   }
 
   Future<void> _fetchData() async {
-  var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri';
+  var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri/semester/$idSemester';
 
   try {
     var response = await http.get(
@@ -61,90 +63,100 @@ void didChangeDependencies() {
 
       setState(() {
         meetings = fetchedMeetings;
+        isLoading = false;
+        });
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        isLoading = false;
       });
-    } else {
-      print('Request failed with status: ${response.statusCode}');
     }
-  } catch (e) {
-    print('Error: $e');
   }
-}
 
 
   void _handleAgendaTap(CalendarTapDetails details) {
-  if (details.targetElement == CalendarElement.appointment) {
-    final Meeting meeting = details.appointments![0] as Meeting;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetailPlanPage(idTask: meeting.idEvent),
-      ),
-    ).then((_) {
-      didChangeDependencies(); // Memperbarui data setelah kembali dari DetailPlanPage
-    });
+    if (details.targetElement == CalendarElement.appointment) {
+      final Meeting meeting = details.appointments![0] as Meeting;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailPlanPage(idTask: meeting.idEvent),
+        ),
+      ).then((_) {
+        _fetchData(); // Memperbarui data setelah kembali dari DetailPlanPage
+      });
+    }
   }
-}
-
-  @override
+  
+@override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SfCalendar(
-      view: CalendarView.month,
-      todayHighlightColor: darkBlue,
-      initialSelectedDate: DateTime.now(),
-      cellBorderColor: Colors.transparent,
-      dataSource: MeetingDataSource(_getDataSource()),
-      selectionDecoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(color: yellow, width: 2),
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          shape: BoxShape.rectangle),
-      monthViewSettings: MonthViewSettings(
-          appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
-          showAgenda: true),
-      onTap: _handleAgendaTap,
-      appointmentBuilder: _appointmentBuilder,
-    ));
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SfCalendar(
+              view: CalendarView.month,
+              todayHighlightColor: darkBlue,
+              initialSelectedDate: DateTime.now(),
+              cellBorderColor: Colors.transparent,
+              dataSource: MeetingDataSource(meetings),
+              selectionDecoration: BoxDecoration(
+                  color: Colors.transparent,
+                  border: Border.all(color: yellow, width: 2),
+                  borderRadius: const BorderRadius.all(Radius.circular(4)),
+                  shape: BoxShape.rectangle),
+              monthViewSettings: MonthViewSettings(
+                  appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+                  showAgenda: true),
+              onTap: _handleAgendaTap,
+              appointmentBuilder: _appointmentBuilder,
+            ),
+    );
   }
 
   Widget _appointmentBuilder(
-  BuildContext context,
-  CalendarAppointmentDetails details,
-) {
-  final Meeting meeting = details.appointments.first as Meeting;
+    BuildContext context,
+    CalendarAppointmentDetails details,
+  ) {
+    final Meeting meeting = details.appointments.first as Meeting;
 
-  return IntrinsicHeight(
-    child: Container(
-      decoration: BoxDecoration(
-        color: meeting.appointmentColor,
-        borderRadius: BorderRadius.circular(4),
+    return IntrinsicHeight(
+      child: Container(
+        decoration: BoxDecoration(
+          color: meeting.appointmentColor,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: EdgeInsets.all(5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              meeting.eventName,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 2),
+            Row(
+              children: [
+                Text(
+                  'Deadline : ',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  DateFormat('dd MMMM yyyy').format(meeting.deadline),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      padding: EdgeInsets.all(5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            meeting.eventName,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 2),
-          Row(
-            children: [
-              Text(
-                'Deadline : ',
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
-              SizedBox(width: 8),
-              Text(
-                DateFormat('dd MMMM yyyy').format(meeting.deadline),
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  );
-}
+    );
+  }
 }

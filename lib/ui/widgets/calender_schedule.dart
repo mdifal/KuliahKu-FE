@@ -5,6 +5,7 @@ import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/views/edit_schedule.dart';
 import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:kuliahku/ui/widgets/calender/schedule_data_source.dart';
+import 'package:kuliahku/ui/widgets/detail_schedule.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,7 +44,7 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/semester/$idSemester?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(
@@ -81,71 +82,6 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
     }
   }
 
-  void updateSchedule(String id) {
-   Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => UpdateSchedulePage(
-        id: id,
-      ),
-    ),
-  );
-  }
-
-  Future<void> deleteSchedule(String id) async {
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/delete/$id';
-
-    try {
-      var response = await http.delete(
-        Uri.parse(url),
-        headers: {
-          "Accept": "application/json",
-          "Access-Control-Allow-Origin": "*"
-        },
-      );
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        String message = jsonResponse['message'];
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Hapus Jadwal Berhasil'),
-                content: Text(message),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
-              );
-            });
-      } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Hapus Jadwal Gagal'),
-                content:
-                    Text('Request failed with status: ${response.statusCode}'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'),
-                  ),
-                ],
-              );
-            });
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,61 +93,11 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Jadwal '),
-                      PopupMenuButton<String>(
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                              value: 'update', child: Text('Update')),
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                        ],
-                        onSelected: (String value) {
-                          switch (value) {
-                            case 'update':
-                              Navigator.of(context).pop();
-                              updateSchedule(meeting.id);
-                              break;
-                            case 'delete':
-                              Navigator.of(context).pop();
-                              deleteSchedule(meeting.id);
-                              didChangeDependencies();
-                              break;
-                          }
-                        },
-                        icon: Icon(Icons.more_vert), // Ikon titik tiga
-                      ),
-                    ],
-                  ),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Mata Kuliah: ${meeting.eventName}'),
-                      Text('Waktu Mulai: ${meeting.from}'),
-                      Text('Waktu Selesai: ${meeting.to}'),
-                      Text('Hari: ${meeting.day}'),
-                      Text('Dosen: ${meeting.dosen}'),
-                      Text('Ruangan: ${meeting.ruangan}'),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Tutup'),
-                    ),
-                  ],
-                );
+                return DetailSchedule(meeting: meeting);
               },
-            );
+            ).then((_) {
+              didChangeDependencies();
+            });
           }
         },
         timeSlotViewSettings: TimeSlotViewSettings(

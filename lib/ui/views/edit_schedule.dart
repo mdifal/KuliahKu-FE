@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
@@ -11,12 +12,9 @@ import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:http/http.dart' as http;
 
 class UpdateSchedulePage extends StatefulWidget {
-final String id;
+  final String id;
 
-  const UpdateSchedulePage({
-    Key? key,
-    required this.id
-  }) : super(key: key);
+  const UpdateSchedulePage({Key? key, required this.id}) : super(key: key);
 
   @override
   State<UpdateSchedulePage> createState() => _UpdateSchedulePageState();
@@ -27,7 +25,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
     super.didChangeDependencies();
     _fetchData();
   }
-  
+
   late DateTime startTime;
   late DateTime endTime;
   late String startTimeString;
@@ -59,7 +57,8 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
     };
 
     String body = jsonEncode(data);
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/update/${widget.id}';
+    var url =
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/update/${widget.id}';
     var response = await http.put(
       Uri.parse(url),
       body: body,
@@ -83,6 +82,10 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage(calender: 'schedule',)),
+                    );
                   },
                   child: Text('OK'),
                 ),
@@ -108,9 +111,10 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
           });
     }
   }
-  
+
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/detail/${widget.id}';
+    var url =
+        'http://$ipUrl:8001/users/$email/jadwalKuliah/detail/${widget.id}';
 
     try {
       var response = await http.get(
@@ -125,14 +129,14 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         Map<String, dynamic> data = jsonResponse['data'];
         setState(() {
-        _mataKuliahController.text = data['subject'] ?? '';
-        _dosenController.text = data['dosen'] ?? '';
-        _ruanganController.text = data['ruang'] ?? '';
-        selectedDay = data['day'];
-        selectedColor = data['color'];
-        startTimeString = data['startTime'];
-        endTimeString = data['endTime'];
-      });
+          _mataKuliahController.text = data['subject'] ?? '';
+          _dosenController.text = data['dosen'] ?? '';
+          _ruanganController.text = data['ruang'] ?? '';
+          selectedDay = data['day'];
+          selectedColor = data['color'];
+          startTimeString = data['startTime'];
+          endTimeString = data['endTime'];
+        });
       } else {
         print('Request failed with status: ${response.statusCode}');
       }

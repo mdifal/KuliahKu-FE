@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/make_new_plan.dart';
 import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/history_time_record.dart';
-import 'package:kuliahku/ui/views/make_new_schedule.dart';
 import 'package:kuliahku/ui/views/profile.dart';
 import 'package:kuliahku/ui/views/timer.dart';
 import 'package:kuliahku/ui/views/chat.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final int? initialIndex;
+  final String? calender;
+
+  const HomePage({Key? key, this.initialIndex, this.calender}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+  late String? _calender;
 
-  final List<Widget> _pages = [
-    CalenderTaskandSchedulePage(),
-    TimerPage(),
-    ChatPage(),
-    ProfilePage(),
-    AddPlanPage(),
-  ];
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex ?? 0;
+    _calender = widget.calender ?? 'task';
+
+    _pages = [
+      CalenderTaskandSchedulePage(calender: _calender),
+      HistoryRecordPage(),
+      ChatPage(),
+      ProfilePage(),
+      TimerPage(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
