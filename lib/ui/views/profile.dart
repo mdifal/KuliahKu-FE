@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/global.dart';
@@ -25,17 +23,18 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     fetchProfileData();
   }
+
   Future<void> fetchProfileData() async {
     try {
       var url = 'http://$ipUrl:8001/profile/$email';
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final fetchedData =  json.decode(response.body);
+        final fetchedData = json.decode(response.body);
 
         setState(() {
-          _fullname = fetchedData['username'];
-          _username = fetchedData['fullname'];
+          _fullname = fetchedData['fullname'];
+          _username = fetchedData['username'];
         });
       } else {
         throw Exception('Failed to fetch profile data');
@@ -45,116 +44,113 @@ class _ProfilePageState extends State<ProfilePage> {
       throw Exception('Failed to fetch profile data');
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          children: [
-
-          ],
+          children: [],
         ),
       ),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 40),
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: softBlue,
-                      // backgroundImage: AssetImage(''),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 40),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: softBlue,
+                    // backgroundImage: AssetImage(''),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Text(
+                _username,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                _fullname,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: grey,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+              SizedBox(height: 50),
+              Container(
+                padding: const EdgeInsets.all(20),
+                constraints: BoxConstraints(
+                  maxWidth: screenSize.width * 0.9,
+                ),
+                decoration: BoxDecoration(
+                  color: white, // Background color
+                  borderRadius: BorderRadius.circular(15), // Rounded corners
+                  boxShadow: [
+                    BoxShadow(
+                      color: grey.withOpacity(0.2), // Shadow color
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // Shadow position
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-                Text(
-                  _username,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  _fullname,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: grey,
-                    fontFamily: 'Poppins',
-                  ),
-                ),
-                SizedBox(height: 50),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
-                    constraints: BoxConstraints(
-                      maxWidth: 340,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Make the Column fit the content
+                  children: [
+                    MenuItem(
+                      icon: Icons.file_copy,
+                      text: 'Laporan pembelajaran',
+                      color: facebookColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
+                        );
+                      },
                     ),
-                    decoration: BoxDecoration(
-                      color: white, // Background color
-                      borderRadius: BorderRadius.circular(15), // Rounded corners
-                      boxShadow: [
-                        BoxShadow(
-                          color: grey.withOpacity(0.2), // Shadow color
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // Shadow position
-                        ),
-                      ],
+                    Divider(),
+                    MenuItem(
+                      icon: Icons.edit,
+                      text: 'Edit profile',
+                      color: facebookColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                        );
+                      },
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min, // Make the Column fit the content
-                      children: [
-                        MenuItem(
-                          icon: Icons.file_copy,
-                          text: 'Laporan pembelajaran',
-                          color: facebookColor,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
-                            );
-                          },
-                        ),
-                        Divider(),
-                        MenuItem(
-                          icon: Icons.edit,
-                          text: 'Edit profile',
-                          color: facebookColor,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                            );
-                          },
-                        ),
-                        Divider(),
-                        MenuItem(
-                          icon: Icons.lock_outline,
-                          text: 'Edit Password',
-                          color: facebookColor,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const EditPasswordPage()),
-                            );
-                          },
-                        ),
-                      ],
+                    Divider(),
+                    MenuItem(
+                      icon: Icons.lock_outline,
+                      text: 'Edit Password',
+                      color: facebookColor,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditPasswordPage()),
+                        );
+                      },
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(height: 165),
-              ],
-            ),
+              ),
+              SizedBox(height: 20),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -183,12 +179,15 @@ class MenuItem extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             SizedBox(width: 16),
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: black,
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: black,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
