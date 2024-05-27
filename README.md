@@ -1,16 +1,31 @@
-# kuliahku
+# KuliahKu-FE
+### Anggota
+* Fauza Naylassana : 221511010
+* Muhammad Difa Alghifary : 221511020
+* Nisrina Wafa Zakiya Hamdani : 221511025
+## Deskripsi
+ini merupakan repository frontend aplikasi Kuliahku
 
-Project Proyek4
+## Teknologi
+* Flutter
 
-## Getting Started
+## How to start
+### 1. Clone Repository
+```
+clone https://github.com/mdifal/KuliahKu-FE.git
+```
+### 2. Install package
+Pada directory projek
+```
+flutter pub get
+```
+### 3. Sesuaikan IP dan port dengan IP dan port pada backend
+- Buka project
+- Buka file lib/ui/shared/global.dart
+- Ubah konstanta ipUrl sesuai dengan ip dan port pada project backend
+- ![image](https://github.com/mdifal/KuliahKu-FE/assets/86935367/2c9bda1c-9787-4a5f-9502-483e6327efcd)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 4. Jalankan aplikasi
+```
+flutter run
+```
