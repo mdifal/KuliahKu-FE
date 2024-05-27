@@ -12,7 +12,7 @@ ini merupakan repository frontend aplikasi Kuliahku
 ## How to start
 ### 1. Clone Repository
 ```
-clone https://github.com/mdifal/KuliahKu-FE.git
+git clone https://github.com/mdifal/KuliahKu-FE.git
 ```
 ### 2. Install package
 Pada directory projek
