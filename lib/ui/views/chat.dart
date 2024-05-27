@@ -11,13 +11,15 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
   late List<ChatModel> chatmodels;
   late ChatModel sourchat;
+  late TabController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = TabController(length: 4, vsync: this, initialIndex: 1);
     // Inisialisasi nilai chatmodels dan sourchat di sini
     chatmodels = List.generate(
       10,
@@ -63,20 +65,38 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             icon: Icon(
               Icons.group,
-              color: white,
+              color: white, // Menggunakan Colors.white secara langsung
             ),
             onPressed: () {
-
+              // Aksi ketika tombol ditekan
             },
           ),
           SizedBox(width: 8),
         ],
-      ),
-      body: ListView.builder(
-        itemCount: chatmodels.length,
-        itemBuilder: (context, index) => CustomCard(
-          chatModel: chatmodels[index]
+        bottom: TabBar(
+          controller: _controller,
+          indicatorColor: white,
+          tabs: [
+            Tab(
+              text: "CHATS",
+            ),
+            Tab(
+              text: "GROUP",
+            ),
+          ],
         ),
+      ),
+      body: TabBarView(
+        controller: _controller,
+        children: [
+          ListView.builder(
+            itemCount: chatmodels.length,
+            itemBuilder: (context, index) => CustomCard(
+              chatModel: chatmodels[index],
+            ),
+          ),
+          Center(child: Text("GROUP")), // Placeholder untuk status
+        ],
       ),
     );
   }
