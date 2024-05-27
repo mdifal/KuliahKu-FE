@@ -15,11 +15,10 @@ class CustomDateInput extends StatefulWidget {
   _CustomDateInputState createState() => _CustomDateInputState();
 }
 
-class _CustomDateInputState extends State<CustomDateInput>
-{
+class _CustomDateInputState extends State<CustomDateInput> {
   String _selectedDay = '01';
   String _selectedMonth = '01';
-  String _selectedYear = DateTime.now().year.toString(); // Nilai default untuk tahun
+  String _selectedYear = DateTime.now().year.toString();
 
   List<String> _months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
@@ -28,13 +27,16 @@ class _CustomDateInputState extends State<CustomDateInput>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       margin: EdgeInsets.all(2),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Align label ke kiri
+        crossAxisAlignment: CrossAxisAlignment.center, // Align label to the center
         children: [
           Text(
             widget.label ?? 'Input Tanggal',
+            textAlign: TextAlign.center, // Center the label text
             style: TextStyle(
               color: black,
               fontFamily: 'Poppins',
@@ -42,78 +44,84 @@ class _CustomDateInputState extends State<CustomDateInput>
               fontWeight: FontWeight.w600,
             ),
           ),
+          SizedBox(height: 8), // Add spacing between the label and dropdowns
           Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Align row ke tengah
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Dropdown untuk tanggal
-              DropdownButton<String>(
-                value: _selectedDay,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedDay = newValue!;
-                    _notifyParent();
-                  });
-                },
-                items: List.generate(31, (index) {
-                  return DropdownMenuItem<String>(
-                    value: (index + 1).toString().padLeft(2, '0'),
-                    child: SizedBox(
-                      width: 60, // Lebar item dropdown
-                      child: Text(
-                        (index + 1).toString().padLeft(2, '0'),
-                        textAlign: TextAlign.center,
+              // Dropdown for day
+              Expanded(
+                child: DropdownButton<String>(
+                  value: _selectedDay,
+                  isExpanded: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedDay = newValue!;
+                      _notifyParent();
+                    });
+                  },
+                  items: List.generate(31, (index) {
+                    return DropdownMenuItem<String>(
+                      value: (index + 1).toString().padLeft(2, '0'),
+                      child: Center(
+                        child: Text(
+                          (index + 1).toString().padLeft(2, '0'),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
               SizedBox(width: 8),
-              // Dropdown untuk bulan
-              DropdownButton<String>(
-                value: _selectedMonth,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedMonth = newValue!;
-                    _notifyParent();
-                  });
-                },
-                items: _months.map((String month) {
-                  return DropdownMenuItem<String>(
-                    value: (_months.indexOf(month) + 1).toString().padLeft(2, '0'),
-                    child: SizedBox(
-                      width: 80, // Lebar item dropdown
-                      child: Text(
-                        month,
-                        textAlign: TextAlign.center,
+              // Dropdown for month
+              Expanded(
+                child: DropdownButton<String>(
+                  value: _selectedMonth,
+                  isExpanded: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedMonth = newValue!;
+                      _notifyParent();
+                    });
+                  },
+                  items: _months.map((String month) {
+                    return DropdownMenuItem<String>(
+                      value: (_months.indexOf(month) + 1).toString().padLeft(2, '0'),
+                      child: Center(
+                        child: Text(
+                          month,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+                ),
               ),
               SizedBox(width: 8),
-              // Dropdown untuk tahun
-              DropdownButton<String>(
-                value: _selectedYear,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedYear = newValue!;
-                    _notifyParent();
-                  });
-                },
-                borderRadius: BorderRadius.circular(5), // Menambahkan border radius
-                items: List.generate(10, (index) {
-                  // Menggunakan range tahun dari 2022 hingga 2031
-                  return DropdownMenuItem<String>(
-                    value: (DateTime.now().year + index).toString(),
-                    child: SizedBox(
-                      width: 60, // Lebar item dropdown
-                      child: Text(
-                        (DateTime.now().year + index).toString(),
-                        textAlign: TextAlign.center,
+              // Dropdown for year
+              Expanded(
+                child: DropdownButton<String>(
+                  value: _selectedYear,
+                  isExpanded: true,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedYear = newValue!;
+                      _notifyParent();
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(5),
+                  items: List.generate(10, (index) {
+                    return DropdownMenuItem<String>(
+                      value: (DateTime.now().year + index).toString(),
+                      child: Center(
+                        child: Text(
+                          (DateTime.now().year + index).toString(),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ],
           ),
@@ -122,7 +130,6 @@ class _CustomDateInputState extends State<CustomDateInput>
     );
   }
 
-  // Method untuk memberitahu parent widget tentang perubahan tanggal
   void _notifyParent() {
     final selectedDate = DateTime(
       int.parse(_selectedYear),
