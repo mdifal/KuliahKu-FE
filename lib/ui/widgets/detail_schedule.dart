@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/edit_schedule.dart';
-import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:kuliahku/ui/widgets/calender_schedule.dart';
 
 class DetailSchedule extends StatefulWidget {
@@ -44,7 +46,6 @@ class _DetailScheduleState extends State<DetailSchedule> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Jadwal', style: TextStyle(fontWeight: FontWeight.bold)),
                 content: Text(message),
                 actions: [
                   TextButton(
@@ -61,7 +62,6 @@ class _DetailScheduleState extends State<DetailSchedule> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Hapus Jadwal Gagal'),
                 content:
                     Text('Request failed with status: ${response.statusCode}'),
                 actions: [
@@ -86,7 +86,7 @@ class _DetailScheduleState extends State<DetailSchedule> {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
       ),
       elevation: 0,
       backgroundColor: Colors.transparent,
@@ -94,97 +94,160 @@ class _DetailScheduleState extends State<DetailSchedule> {
     );
   }
 
-  contentBox(context, Meeting meeting) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                offset: Offset(0, 10),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('Jadwal', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          PopupMenuButton<String>(
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'update',
-                child: Text('Update'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'delete',
-                child: Text('Delete'),
-              ),
-            ],
-            onSelected: (String value) {
-              switch (value) {
-                case 'update':
-                  Navigator.of(context).pop();
-                  updateSchedule(meeting.id);
-                  
-                  break;
-                case 'delete':
-                  Navigator.of(context).pop();
-                  deleteSchedule(meeting.id);
-                  didChangeDependencies();
-                  break;
-              }
-            },
-            icon: Icon(Icons.more_vert), // Ikon titik tiga
+  Widget contentBox(context, Meeting meeting) {
+    final DateFormat timeFormat = DateFormat('HH:mm');
+    final String startTime = timeFormat.format(meeting.from);
+    final String endTime = timeFormat.format(meeting.to);
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(0, 10),
+            blurRadius: 10,
           ),
         ],
       ),
-              
-              SizedBox(height: 15),
-              _buildDetailRow('Mata Kuliah', meeting.eventName),
-              _buildDetailRow('Hari', meeting.day),
-              _buildDetailRow('Dosen', meeting.dosen),
-              _buildDetailRow('Ruangan', meeting.ruangan),
-              SizedBox(height: 22),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Stack(
+            children: [
               Align(
-                alignment: Alignment.bottomRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          Text('Mata Kuliah',
+                              style: TextStyle( fontSize: 12)),
+                          Text(meeting.eventName.toUpperCase(),
+                              style: TextStyle(fontSize: 20, color: mainColor, 
+                                  fontWeight: FontWeight.bold,)),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Card(
+                      color: Colors.blueAccent.withOpacity(0.1),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                meeting.day +
+                                    ", " +
+                                    '${startTime} - ${endTime}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Card(
+                      color: Colors.blueAccent.withOpacity(0.1),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                             _buildDetailRow(
+                                    Icons.person, 'Dosen', meeting.dosen),
+                                    SizedBox(height: 10),
+                                _buildDetailRow(
+                                    Icons.room, 'Ruangan', meeting.ruangan),
+                            
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: PopupMenuButton<String>(
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'update',
+                      child: Text('Update'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ],
+                  onSelected: (String value) {
+                    switch (value) {
+                      case 'update':
+                        Navigator.of(context).pop();
+                        updateSchedule(meeting.id);
+                        break;
+                      case 'delete':
+                        Navigator.of(context).pop();
+                        deleteSchedule(meeting.id);
+                        didChangeDependencies();
+                        break;
+                    }
                   },
-                  child: Text('Tutup', style: TextStyle(color: Colors.blue)),
+                  icon: Icon(Icons.more_vert, color: Colors.grey),
                 ),
               ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Expanded(
-            child: Text(value),
+          SizedBox(height: 15),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Tutup',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.blueAccent),
+        SizedBox(width: 10),
+       Text(
+              " :   " + value,
+              style: TextStyle(color: Colors.black87, ),
+            ),
+      ],
     );
   }
 }

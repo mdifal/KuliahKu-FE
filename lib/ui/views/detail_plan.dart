@@ -23,8 +23,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
   late String id = '';
   late String title = '';
   late String type = '';
-  late String subjectId = '';
-  late String semesterId = '';
+  late String subject = '';
   late DateTime dateTimeReminder = DateTime.now();
   late DateTime dateTimeDeadline = DateTime.now();
   late String notes = '';
@@ -38,7 +37,6 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
 
   Future<void> _fetchData() async {
     var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri/${widget.idTask}';
-    print(url);
     try {
       var response = await http.get(
         Uri.parse(url),
@@ -50,15 +48,13 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        String statusCode = jsonResponse['statusCode'];
-
+        print('detail $jsonResponse');
         setState(() {
           Map<String, dynamic> data = jsonResponse['data'];
           id = data['id'];
           title = data['title'];
           type = data['type'];
-          subjectId = data['subjectId'];
-          semesterId = data['semesterId'];
+          subject = data['subject'];
           dateTimeReminder = DateTime.parse(data['dateTimeReminder']);
           dateTimeDeadline = DateTime.parse(data['dateTimeDeadline']);
           notes = data['notes'];
@@ -153,11 +149,8 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
       body: ListView(
         padding: EdgeInsets.all(16),
         children: [
-          _buildDetailItem('ID', id),
-          _buildDetailItem('Title', title),
           _buildDetailItem('Type', type),
-          _buildDetailItem('Subject ID', subjectId),
-          _buildDetailItem('Semester ID', semesterId),
+          _buildDetailItem('Subject', subject),
           _buildDetailItem('Reminder', dateTimeReminder.toString()),
           _buildDetailItem('Deadline', dateTimeDeadline.toString()),
           _buildDetailItem('Notes', notes),
