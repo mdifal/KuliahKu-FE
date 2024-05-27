@@ -40,10 +40,11 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
         List<HistoryRecord> fetchedHistories = <HistoryRecord>[];
         for (var data in dataHistory) {
           String subject = data['subject'];
+          String title =  data['title'];
           int time = data['time'];
           int color = data['color'];
           String type = data['type'];
-          fetchedHistories.add(HistoryRecord(subject, time, color, type));
+          fetchedHistories.add(HistoryRecord(subject, title, time, color, type));
         }
         setState(() {
           histories = fetchedHistories;
@@ -94,7 +95,8 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
               return Column(
                 children: [
                   CardHistory(
-                    title: history.type,
+                    type: history.type,
+                    title: history.title,
                     mataKuliah: history.subject,
                     time: history.time,
                     color: history.color,
@@ -112,9 +114,10 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
 
 class HistoryRecord {
   final String subject;
+  final String title;
   final int time;
   final int color;
   final String type;
 
-  HistoryRecord(this.subject, this.time, this.color, this.type);
+  HistoryRecord(this.subject, this.title, this.time, this.color, this.type);
 }
