@@ -27,11 +27,13 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
   late int selectedDay;
 
   TextEditingController _mataKuliahController = TextEditingController();
+  TextEditingController _sksController = TextEditingController();
   TextEditingController _dosenController = TextEditingController();
   TextEditingController _ruanganController = TextEditingController();
 
   Future<void> _addSchedule() async {
     String mataKuliah = _mataKuliahController.text;
+    int sks = int.parse(_sksController.text);
     String jamMulai = startTimeString;
     String jamSelesai = endTimeString;
     String dosen = _dosenController.text;
@@ -46,7 +48,8 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
       "endTime": jamSelesai,
       "ruang": ruangan,
       "startTime": jamMulai,
-      "subject": mataKuliah
+      "subject": mataKuliah,
+      "sks" : sks,
     };
     print(data);
 
@@ -179,6 +182,12 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
                   password: false,
                   placeholder: "contoh : basis data",
                   controller: _mataKuliahController,
+                ),
+                CustomTextField(
+                  label: "Jumlah SKS",
+                  password: false,
+                  placeholder: "contoh : 21",
+                  controller: _sksController,
                 ),
                 CustomDropdown(
                   items: [
