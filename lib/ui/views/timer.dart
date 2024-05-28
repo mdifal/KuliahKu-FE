@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../widgets/text_field.dart';
 import 'history_time_record.dart';
 
 class TimerPage extends StatefulWidget {
@@ -27,10 +28,13 @@ class _TimerPageState extends State<TimerPage> {
   late DateTime _startTime;
   late DateTime _endTime;
 
+  TextEditingController _judulController = TextEditingController();
+  String _judulText = '';
+
   late String _selectedCourseId = '';
   late String _selectedCourseLabel = '';
-  late int _selectedLearningTypeId = 1;
-  late String _selectedLearningType = '';
+  late int _selectedLearningTypeId = 2;
+  late String _selectedLearningType = 'Belajar Mandiri';
 
   int type = 0;
   int subjectId = 0;
@@ -65,6 +69,12 @@ class _TimerPageState extends State<TimerPage> {
     super.initState();
     _timer = Timer(Duration.zero, () {});
     _getDataSource();
+
+    _judulController.addListener(() {
+      setState(() {
+        _judulText = _judulController.text;
+      });
+    });
   }
 
   @override
@@ -104,6 +114,7 @@ class _TimerPageState extends State<TimerPage> {
         for (var data in dataTugas) {
           String id = data['id'] ?? '';
           String subject = data['subject'] ?? '';
+          int sks = data['sks'];
           String dosen = data['dosen'] ?? '';
           String ruangan = data['ruang'] ?? '';
           DateTime startTime = DateTime.parse(data['startTime']);
@@ -112,7 +123,7 @@ class _TimerPageState extends State<TimerPage> {
           String day = data['day'];
 
           fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
-              dosen, ruangan, false, day));
+              dosen, sks, ruangan, false, day));
         }
         setState(() {
           meetings = fetchedMeetings;
@@ -131,6 +142,7 @@ class _TimerPageState extends State<TimerPage> {
         'startTime': DateFormat('HH:mm:ss').format(_startTime),
         'endTime': DateFormat('HH:mm:ss').format(_endTime),
         'subject': _selectedCourseId,
+        'title' : _judulController.text,
         'type': _selectedLearningTypeId,
         'time_records': _formattedTime(_seconds),
       };
@@ -266,7 +278,7 @@ class _TimerPageState extends State<TimerPage> {
               ],
             ),
             SizedBox(height: 40),
-            _isRunning || _seconds>0
+            _isRunning || _seconds > 0
                 ? Column(
               children: [
                 Text(
@@ -277,25 +289,18 @@ class _TimerPageState extends State<TimerPage> {
                   'Jenis Belajar: $_selectedLearningType',
                   style: TextStyle(fontSize: 20),
                 ),
+                Text(
+                  'Topik: $_judulText',
+                  style: TextStyle(fontSize: 20),
+                ),
               ],
             )
                 : Column(
               children: [
-                CustomDropdown(
-                  label: "Apa yang akan kamu kerjakan",
-                  placeholder: "Pilih jenis belajar",
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedLearningTypeId = value;
-                      if(value == 1)
-                        _selectedLearningType = 'Mengerjakan Tugas';
-                          _selectedLearningType = 'Belajar Mandiri';
-                    });
-                  },
-                  items: [
-                    {'label': 'Mengerjakan Tugas', 'value': 1},
-                    {'label': 'Belajar Mandiri', 'value': 2}
-                  ],
+                CustomTextField(
+                  label: "Topik Belajar",
+                  password: false,
+                  controller: _judulController,
                 ),
                 CustomDropdown(
                   label: "Mata Kuliah",
