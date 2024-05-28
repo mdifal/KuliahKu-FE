@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               SizedBox(height: 20),
               Text(
-                _username,
+                _fullname,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -81,9 +81,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               SizedBox(height: 10),
               Text(
-                _fullname,
+                _username,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   color: grey,
                   fontFamily: 'Poppins',
                 ),
