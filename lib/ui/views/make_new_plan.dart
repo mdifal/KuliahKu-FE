@@ -93,6 +93,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
         for (var data in dataTugas) {
           String id = data['id'] ?? '';
           String subject = data['subject'] ?? '';
+          int sks = data['sks'];
           String dosen = data['dosen'] ?? '';
           String ruangan = data['ruang'] ?? '';
           DateTime startTime = DateTime.parse(data['startTime']);
@@ -101,7 +102,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
           String day = data['day'];
 
           fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
-              dosen, ruangan, false, day));
+              dosen, sks, ruangan, false, day));
         }
         setState(() {
           meetings = fetchedMeetings;

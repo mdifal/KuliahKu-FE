@@ -122,13 +122,43 @@ class _DetailScheduleState extends State<DetailSchedule> {
                 child: Column(
                   children: [
                     Center(
-                      child: Column(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Mata Kuliah',
-                              style: TextStyle( fontSize: 12)),
-                          Text(meeting.eventName.toUpperCase(),
-                              style: TextStyle(fontSize: 20, color: mainColor, 
-                                  fontWeight: FontWeight.bold,)),
+                          SizedBox(width: 20),
+                          Column(
+                            children: [
+                              Text('Mata Kuliah',
+                                  style: TextStyle(fontSize: 12)),
+                              Text(meeting.eventName.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: mainColor,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                            ],
+                          ),
+                          SizedBox(width: 8),
+                          Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                                side: BorderSide(color: mainColor, width: 1),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 3, horizontal: 12),
+                                child: Column(
+                                  children: [
+                                    Text('SKS', style: TextStyle(fontSize: 8)),
+                                    Text(meeting.sks.toString(),
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: mainColor,
+                                          fontWeight: FontWeight.bold,
+                                        )),
+                                  ],
+                                ),
+                              )),
                         ],
                       ),
                     ),
@@ -152,7 +182,6 @@ class _DetailScheduleState extends State<DetailSchedule> {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
-                            
                           ],
                         ),
                       ),
@@ -169,12 +198,11 @@ class _DetailScheduleState extends State<DetailSchedule> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                             _buildDetailRow(
-                                    Icons.person, 'Dosen', meeting.dosen),
-                                    SizedBox(height: 10),
-                                _buildDetailRow(
-                                    Icons.room, 'Ruangan', meeting.ruangan),
-                            
+                            _buildDetailRow(
+                                Icons.person, 'Dosen', meeting.dosen),
+                            SizedBox(height: 10),
+                            _buildDetailRow(
+                                Icons.room, 'Ruangan', meeting.ruangan),
                           ],
                         ),
                       ),
@@ -243,10 +271,12 @@ class _DetailScheduleState extends State<DetailSchedule> {
       children: [
         Icon(icon, color: Colors.blueAccent),
         SizedBox(width: 10),
-       Text(
-              " :   " + value,
-              style: TextStyle(color: Colors.black87, ),
-            ),
+        Text(
+          " :   " + value,
+          style: TextStyle(
+            color: Colors.black87,
+          ),
+        ),
       ],
     );
   }
