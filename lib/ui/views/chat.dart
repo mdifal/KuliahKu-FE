@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/CustomCard.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../shared/global.dart';
 import '../shared/style.dart';
+import '../widgets/chat/Screens/SelectContact.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -12,35 +15,52 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
-  late List<ChatModel> chatmodels;
+  late List<dynamic> personalchatmodels = [];
   late ChatModel sourchat;
   late TabController _controller;
+  bool isLoading = false;
+
+  Future<void> fetchChatsData() async {
+    try {
+      var url = 'http://$ipUrl:8001/users/$email/roomchat';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final fetchedData = json.decode(response.body);
+
+        setState(() {
+          personalchatmodels = (fetchedData['chats'] as List).map((data) => ChatModel.fromJson(data)).toList();
+          isLoading = false;  // Data has been fetched, stop loading
+        });
+      } else {
+        throw Exception('Failed to fetch chats data');
+      }
+    } catch (error) {
+      print('Error fetching chats data: $error');
+      setState(() {
+        isLoading = false;  // Stop loading even if there is an error
+      });
+      throw Exception('Failed to fetch chats data');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 4, vsync: this, initialIndex: 1);
+    _controller = TabController(length: 2, vsync: this, initialIndex: 0);
+    // fetchChatsData();
     // Inisialisasi nilai chatmodels dan sourchat di sini
-    chatmodels = List.generate(
+    personalchatmodels = List.generate(
       10,
           (index) => ChatModel(
-        id: index,
-        name: 'User $index',
-        currentMessage: 'Hello, this is message $index',
-        time: '10:00 AM',
-        icon: 'https://via.placeholder.com/150',
-        isGroup: false,
-        status: "123",
-      ),
-    );
-    sourchat = ChatModel(
-      id: 23,
-      name: 'Sour User',
-      currentMessage: 'Hello, this is a sour message',
-      time: '11:00 AM',
-      icon: 'https://via.placeholder.com/150',
-      isGroup: true,
-      status: "123",
+            id: 'L8uaURaA5UzOFP8R4Y2Y',
+            targetId: 'nisrinawafa@gmail.com',
+            name: 'User $index',
+            currentMessage: 'Hello, this is message $index',
+            time: '10:00 AM',
+            profilePicture: 'https://via.placeholder.com/150',
+            status: "123",
+          ),
     );
   }
 
@@ -52,7 +72,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           children: [
             SizedBox(width: 10),
             Text(
-              'Personal Chat',
+              'Chat',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 20,
@@ -62,23 +82,53 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.group,
-              color: white, // Menggunakan Colors.white secara langsung
+          Container(
+            decoration: BoxDecoration(
+              color: mainColor,
+              borderRadius: BorderRadius.circular(5),
             ),
-            onPressed: () {
-              // Aksi ketika tombol ditekan
-            },
+            width: 25,
+            height: 25,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: Icon(
+                    Icons.add,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        if (_controller.index == 0) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SelectContact(),
+                            ),
+                          );
+                        } else if (_controller.index == 1) {
+                          print("Create new group");
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 30),
         ],
         bottom: TabBar(
           controller: _controller,
           indicatorColor: white,
           tabs: [
             Tab(
-              text: "CHATS",
+              text: "PERSONAL CHATS",
             ),
             Tab(
               text: "GROUP",
@@ -86,16 +136,18 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           ],
         ),
       ),
-      body: TabBarView(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : TabBarView(
         controller: _controller,
         children: [
           ListView.builder(
-            itemCount: chatmodels.length,
+            itemCount: personalchatmodels.length,
             itemBuilder: (context, index) => CustomCard(
-              chatModel: chatmodels[index],
+              chatModel: personalchatmodels[index],
             ),
           ),
-          Center(child: Text("GROUP")), // Placeholder untuk status
+          Center(child: Text("GROUP")),
         ],
       ),
     );

@@ -24,6 +24,7 @@ const Color cardGreen = Color(0xFF89D592);
 const Color cardYellow = Color.fromARGB(255, 236, 221, 136);
 const Color cardBlue = Color(0xFF9BC4FF);
 const Color softBlue = Color(0xFFCDD9F6);
+const Color lighterBlue = Color(0xFFE0E7FB);
 
 // // TextStyle
 // TextStyle mainTextStyle = GoogleFonts.poppins(color: mainColor);

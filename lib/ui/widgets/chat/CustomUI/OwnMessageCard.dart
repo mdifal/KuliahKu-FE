@@ -23,15 +23,15 @@ class OwnMessageCard extends StatelessWidget {
           elevation: 1,
           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: white,
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 3),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
           child: Stack(
             children: [
               Padding(
                 padding: const EdgeInsets.only(
                   left: 10,
-                  right: 30,
+                  right: 40,
                   top: 5,
-                  bottom: 20,
+                  bottom: 10,
                 ),
                 child: Text(
                   message,
