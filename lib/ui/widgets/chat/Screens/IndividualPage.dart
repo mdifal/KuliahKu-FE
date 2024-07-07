@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:kuliahku/ui/shared/images.dart';
-import 'package:kuliahku/ui/widgets/chat/CustomUI/OwnMessgaeCrad.dart';
+import 'package:kuliahku/ui/widgets/chat/CustomUI/OwnMessageCard.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/ReplyCard.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/MessageModel.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 
 class IndividualPage extends StatefulWidget {
   final ChatModel chatModel;
@@ -30,6 +33,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   void initState() {
     super.initState();
+    print("ini id chat: ${widget.chatModel.id}");
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -42,8 +46,11 @@ class _IndividualPageState extends State<IndividualPage> {
     connect();
   }
 
-  void connect() {
-    socket = IO.io('http://10.1.13.231:8001', <String, dynamic>{
+  void connect() async {
+    // Fetch initial chat messages
+    await fetchInitialMessages();
+
+    socket = IO.io('http://$ipUrl:8001', <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
@@ -65,11 +72,29 @@ class _IndividualPageState extends State<IndividualPage> {
     print(socket.connected);
   }
 
-  void sendMessage(String message, int targetId) {
+  Future<void> fetchInitialMessages() async {
+    final response = await http.get(Uri.parse('http://$ipUrl:8001/privateChats/${widget.chatModel.id}/chats'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> chatData = json.decode(response.body);
+      setState(() {
+        messages = chatData.map((data) => MessageModel(
+          type: data['senderId'] == email ? 'source' : 'destination',
+          message: data['content'],
+          time: DateTime.parse(data['timestamp']).toString().substring(10, 16),
+        )).toList();
+      });
+    } else {
+      throw Exception('Failed to load chat messages');
+    }
+  }
+
+  void sendMessage(String message, String targetId) {
     print("Sending message: $message to targetId: $targetId");
     setMessage("source", message);
-    socket.emit("message", {"message": message, "targetId": targetId});
+    socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message});
   }
+
 
   void setMessage(String type, String message) {
     MessageModel messageModel = MessageModel(
@@ -80,6 +105,40 @@ class _IndividualPageState extends State<IndividualPage> {
 
     setState(() {
       messages.add(messageModel);
+    });
+  }
+
+  void addDummyMessages() {
+    List<MessageModel> dummyMessages = [
+      MessageModel(
+        type: "source",
+        message: "Hello!",
+        time: "10:00",
+      ),
+      MessageModel(
+        type: "destination",
+        message: "Hi there!",
+        time: "10:01",
+      ),
+      MessageModel(
+        type: "source",
+        message: "How are you?",
+        time: "10:02",
+      ),
+      MessageModel(
+        type: "destination",
+        message: "I'm good, thanks. How about you?",
+        time: "10:03",
+      ),
+      MessageModel(
+        type: "source",
+        message: "I'm doing well.",
+        time: "10:04",
+      ),
+    ];
+
+    setState(() {
+      messages.addAll(dummyMessages);
     });
   }
 
@@ -220,6 +279,7 @@ class _IndividualPageState extends State<IndividualPage> {
                                       border: InputBorder.none,
                                       hintText: "Type a message",
                                       hintStyle: TextStyle(color: greySoft),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                                       suffixIcon: IconButton(
                                         icon: Icon(Icons.send),
                                         onPressed: () {
@@ -230,12 +290,11 @@ class _IndividualPageState extends State<IndividualPage> {
                                           );
                                           sendMessage(
                                             _controller.text,
-                                            widget.chatModel.id,
+                                            widget.chatModel.targetId,
                                           );
                                           _controller.clear();
                                         },
                                       ),
-                                      contentPadding: EdgeInsets.all(5),
                                     ),
                                   ),
                                 ),
