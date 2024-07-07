@@ -3,6 +3,8 @@ import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../../shared/images.dart';
+
 class AvatarCard extends StatelessWidget {
   const AvatarCard({
     Key? key,
@@ -22,10 +24,10 @@ class AvatarCard extends StatelessWidget {
               CircleAvatar(
                 radius: 23,
                 child: SvgPicture.asset(
-                  "assets/person.svg",
-                  color: white,
-                  height: 30,
-                  width: 30,
+                  image_person,
+                  fit: BoxFit.cover,
+                  width: 50,
+                  height: 50,
                 ),
                 backgroundColor: white,
               ),

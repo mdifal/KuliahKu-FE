@@ -3,6 +3,9 @@ import 'package:kuliahku/ui/widgets/chat/Screens/IndividualPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../shared/images.dart';
+import '../../../shared/style.dart';
+
 class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
@@ -27,12 +30,12 @@ class CustomCard extends StatelessWidget {
             leading: CircleAvatar(
               radius: 30,
               child: SvgPicture.asset(
-                "assets/person.svg",
-                color: Colors.white,
-                height: 36,
-                width: 36,
+                image_person,
+                fit: BoxFit.cover,
+                width: 45,
+                height: 45,
               ),
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: greySoft,
             ),
             title: Text(
               chatModel.name,
