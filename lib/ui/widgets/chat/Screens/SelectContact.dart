@@ -1,8 +1,7 @@
-import 'package:kuliahku/ui/widgets/chat/CustomUI/ButtonCard.dart';
-import 'package:kuliahku/ui/widgets/chat/CustomUI/ContactCard.dart';
-import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
-import 'package:kuliahku/ui/widgets/chat/Screens/CreateGroup.dart';
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/widgets/chat/CustomUI/ContactCard.dart';
+import 'package:kuliahku/ui/widgets/chat/Model/ContactModel.dart';
 
 class SelectContact extends StatefulWidget {
   SelectContact({Key? key}) : super(key: key);
@@ -12,107 +11,95 @@ class SelectContact extends StatefulWidget {
 }
 
 class _SelectContactState extends State<SelectContact> {
-  late List<ChatModel> contacts;
+  late List<ContactModel> contacts;
+  late List<ContactModel> filteredContacts;
+  TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     contacts = List.generate(
-      10,
-          (index) => ChatModel(
-        id: index,
+      20,
+          (index) => ContactModel(
+        id: "index",
         name: 'User $index',
-        currentMessage: 'Hello, this is message $index',
-        time: '10:00 AM',
+        email: 'user$index@gmail.com',
         icon: 'https://via.placeholder.com/150',
-        isGroup: false,
-        status: "123",
       ),
     );
+    filteredContacts = contacts;
   }
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
-        appBar: AppBar(
-          title: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Select Contact",
-                style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
+    return Scaffold(
+      appBar: AppBar(
+        title: isSearching
+            ? Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: searchController,
+                style: TextStyle(color: darkBlue),
+                decoration: InputDecoration(
+                  hintText: "Search contacts...",
+                  hintStyle: TextStyle(color: darkBlue),
+                  border: InputBorder.none,
                 ),
+                onChanged: (value) {
+                  filterContacts(value);
+                },
               ),
-              Text(
-                "256 contacts",
-                style: TextStyle(
-                  fontSize: 13,
-                ),
-              )
-            ],
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.search,
-                  size: 26,
-                ),
-                onPressed: () {}),
-            PopupMenuButton<String>(
-              padding: EdgeInsets.all(0),
-              onSelected: (value) {
-                print(value);
-              },
-              itemBuilder: (BuildContext contesxt) {
-                return [
-                  PopupMenuItem(
-                    child: Text("Invite a friend"),
-                    value: "Invite a friend",
-                  ),
-                  PopupMenuItem(
-                    child: Text("Contacts"),
-                    value: "Contacts",
-                  ),
-                  PopupMenuItem(
-                    child: Text("Refresh"),
-                    value: "Refresh",
-                  ),
-                  PopupMenuItem(
-                    child: Text("Help"),
-                    value: "Help",
-                  ),
-                ];
-              },
+            ),
+          ],
+        )
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Select Contact",
+              style: TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
-        body: ListView.builder(
-            itemCount: contacts.length + 2,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (builder) => CreateGroup()));
-                  },
-                  child: ButtonCard(
-                    icon: Icons.group,
-                    name: "New group",
-                  ),
-                );
-              } else if (index == 1) {
-                return ButtonCard(
-                  icon: Icons.person_add,
-                  name: "New contact",
-                );
-              }
-              return ContactCard(
-                contact: contacts[index - 2],
-              );
-            }));
+        actions: [
+          IconButton(
+            icon: isSearching ? Icon(Icons.cancel) : Icon(Icons.search),
+            onPressed: () {
+              setState(() {
+                isSearching = !isSearching;
+                if (!isSearching) {
+                  filteredContacts = contacts;
+                  searchController.clear();
+                }
+              });
+            },
+          ),
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: filteredContacts.length,
+        itemBuilder: (context, index) {
+          return ContactCard(
+            contact: filteredContacts[index],
+          );
+        },
+      ),
+    );
+  }
+
+  void filterContacts(String query) {
+    List<ContactModel> searchResult = contacts.where((contact) {
+      return contact.name.toLowerCase().contains(query.toLowerCase()) ||
+          contact.email.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+
+    setState(() {
+      filteredContacts = searchResult;
+    });
   }
 }
