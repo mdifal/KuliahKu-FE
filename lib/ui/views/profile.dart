@@ -135,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Divider(),
                     MenuItem(
                       icon: Icons.lock_outline,
-                      text: 'Edit Password',
+                      text: 'Ganti Password',
                       color: facebookColor,
                       onTap: () {
                         Navigator.push(

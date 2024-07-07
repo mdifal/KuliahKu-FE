@@ -85,7 +85,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
           children: [
             SizedBox(width: 10),
             Text(
-              'Edit Password',
+              'Ganti Password',
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 20,
