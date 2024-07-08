@@ -128,6 +128,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         Map<String, dynamic> data = jsonResponse['data'];
+        print('ini data $data');
         setState(() {
           _mataKuliahController.text = data['subject'] ?? '';
           _dosenController.text = data['dosen'] ?? '';
@@ -259,6 +260,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
                       selectedDay = value;
                     });
                   },
+                  initialValue: selectedDay,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,6 +309,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
                       selectedColor = value;
                     });
                   },
+                  initialValue: selectedColor,
                 )
               ],
             ),

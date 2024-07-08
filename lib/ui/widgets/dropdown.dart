@@ -3,10 +3,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 
 class CustomDropdown extends StatefulWidget {
-  final List<Map<String, dynamic>> items; // Change the type of items from Map<String, int> to Map<String, dynamic>
+  final List<Map<String, dynamic>> items;
   final String? label;
   final String? placeholder;
   final ValueChanged<int>? onChanged;
+  final int? initialValue;
 
   const CustomDropdown({
     Key? key,
@@ -14,6 +15,7 @@ class CustomDropdown extends StatefulWidget {
     this.label,
     required this.items,
     this.onChanged,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
   int? selectedValue;
 
   @override
+  void initState() {
+    super.initState();
+    selectedValue = widget.initialValue;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(8),
@@ -32,7 +40,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(
-                bottom: 8.0), // Tambahkan margin bawah pada teks
+                bottom: 8.0),
             child: Text(
               widget.label!,
               style: TextStyle(
@@ -57,9 +65,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
             ),
             items: widget.items
                 .map((item) => DropdownMenuItem<int>(
-                      value: item['value'], // Mengambil nilai 'value' dari item
+                      value: item['value'],
                       child: Text(
-                        item['label'], // Mengambil label dari item
+                        item['label'],
                         style: const TextStyle(
                           fontSize: 14,
                         ),

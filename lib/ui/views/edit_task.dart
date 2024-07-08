@@ -26,8 +26,8 @@ class UpdateTaskPage extends StatefulWidget {
 }
 
 class _UpdateTaskPageState extends State<UpdateTaskPage> {
-  int type = 0;
-  int subjectId = 0;
+  late int type;
+  late int subjectId;
   TextEditingController _judulController = TextEditingController();
   late DateTime _selectedDeadline;
   late DateTime _selectedReminder;
@@ -44,6 +44,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
   late DateTime lastDayOfWeek;
   late DateTime startOfFirstDay;
   late DateTime endOfLastDay;
+  
 
   @override
   void initState() {
@@ -54,7 +55,6 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
     updateDeadline(_selectedDeadlineTime);
     _selectedReminderTime = DateTime.now();
     updateReminder(_selectedReminderTime);
-
   }
 
   @override
@@ -66,7 +66,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
         DateTime(firstDayOfWeek.year, firstDayOfWeek.month, firstDayOfWeek.day);
     endOfLastDay = DateTime(
         lastDayOfWeek.year, lastDayOfWeek.month, lastDayOfWeek.day, 23, 59, 59);
-            _fetchData();
+    _fetchData();
     _fetchDataDetail();
   }
 
@@ -90,19 +90,25 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         Map<String, dynamic> data = jsonResponse['data'];
-        
-        print('dataaaa $jsonResponse');
         setState(() {
-            _judulController.text = data['title'] ?? '';
-            type = data['type'] ?? 0;
-            subjectId = meetings.indexWhere((meeting) => meeting.id == data['subjectId']);
-            _selectedDeadline = DateTime.parse(data['dateTimeDeadline'] ?? DateTime.now().toString()); 
-            _selectedReminder = DateTime.parse(data['dateReminder'] ?? DateTime.now().toString()); 
-            _selectedDeadlineTime = DateTime.parse(data['dateTimeDeadline'] ?? DateTime.now().toString()); 
-            _selectedReminderTime = DateTime.parse(data['dateTimeReminder'] ?? DateTime.now().toString()); 
-            deadlineString = DateFormat('HH:mm:ss').format(_selectedDeadlineTime); 
-            reminderString = DateFormat('HH:mm:ss').format(_selectedReminderTime); 
-            _catatanController.text = data['notes'] ?? ''; 
+          _judulController.text = data['title'] ?? '';
+          type = int.parse(data['type']);
+          for (int i = 0; i < meetings.length; i++) {
+    print(meetings[i].id);
+  }
+          subjectId = meetings.indexWhere((meeting) => meeting.id == data['subjectId']);
+           
+          _selectedDeadline = DateTime.parse(
+              data['dateTimeDeadline'] ?? DateTime.now().toString());
+          _selectedReminder =
+              DateTime.parse(data['dateReminder'] ?? DateTime.now().toString());
+          _selectedDeadlineTime = DateTime.parse(
+              data['dateTimeDeadline'] ?? DateTime.now().toString());
+          _selectedReminderTime = DateTime.parse(
+              data['dateTimeReminder'] ?? DateTime.now().toString());
+          deadlineString = DateFormat('HH:mm:ss').format(_selectedDeadlineTime);
+          reminderString = DateFormat('HH:mm:ss').format(_selectedReminderTime);
+          _catatanController.text = data['notes'] ?? '';
         });
       } else {
         print('Request failed with status: ${response.statusCode}');
@@ -167,17 +173,18 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
 
   Future<void> _updateTask() async {
     Map<String, dynamic> requestBody = {
-        'type': type,
-        'subjectId': meetings[subjectId].id,
-        'title': _judulController.text,
-        'dateReminder': DateFormat('yyyy-MM-dd').format(_selectedReminder),
-        'timeReminder': DateFormat('HH:mm:ss').format(_selectedReminderTime),
-        'dateDeadline': DateFormat('yyyy-MM-dd').format(_selectedDeadline),
-        'timeDeadline': DateFormat('HH:mm:ss').format(_selectedDeadlineTime),
-        'notes': _catatanController.text,
-      };
+      'type': type,
+      'subjectId': meetings[subjectId].id,
+      'title': _judulController.text,
+      'dateReminder': DateFormat('yyyy-MM-dd').format(_selectedReminder),
+      'timeReminder': DateFormat('HH:mm:ss').format(_selectedReminderTime),
+      'dateDeadline': DateFormat('yyyy-MM-dd').format(_selectedDeadline),
+      'timeDeadline': DateFormat('HH:mm:ss').format(_selectedDeadlineTime),
+      'notes': _catatanController.text,
+    };
 
-    var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri/update/${widget.id}';
+    var url =
+        'http://$ipUrl:8001/users/$email/rencanaMandiri/update/${widget.id}';
     var response = await http.put(
       Uri.parse(url),
       body: json.encode(requestBody),
@@ -261,36 +268,41 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 0),
                     child: CustomDropdown(
-                        label: "Apa yang akan kamu kerjakan",
-                        placeholder: "Pilih jenis belajar",
-                        onChanged: (value) {
-                          setState(() {
-                            type = value;
-                          });
-                        },
-                        items: [
-                          {'label':'Mengerjakan Tugas', 'value': 1},
-                          {'label':'Belajar Mandiri', 'value': 2}
-                        ]
+                      label: "Apa yang akan kamu kerjakan",
+                      placeholder: "Pilih jenis belajar",
+                      onChanged: (value) {
+                        setState(() {
+                          type = value;
+                        });
+                      },
+                      items: [
+                        {'label': 'Mengerjakan Tugas', 'value': 1},
+                        {'label': 'Belajar Mandiri', 'value': 2}
+                      ],
+                      initialValue: type,
                     ),
                   ),
                   Padding(
-                      padding: EdgeInsets.symmetric(vertical: 0),
-                      child: CustomDropdown(
-                        label: "Mata Kuliah",
-                        placeholder: "Pilih mata kuliah",
-                        onChanged: (value) {
-                          setState(() {
-                            subjectId = value;
-                          });
-                        },
-                        items: List.generate(meetings.length, (index) {
+                    padding: EdgeInsets.symmetric(vertical: 0),
+                    child: CustomDropdown(
+                      label: "Mata Kuliah",
+                      placeholder: "Pilih mata kuliah",
+                      onChanged: (value) {
+                        setState(() {
+                          subjectId = value;
+                        });
+                      },
+                      initialValue: subjectId,
+                      items: List.generate(
+                        meetings.length,
+                        (index) {
                           return {
                             'label': meetings[index].eventName,
                             'value': index
                           };
-                        }),
+                        },
                       ),
+                    ),
                   ),
                   CustomTextField(
                     label: "Judul",
@@ -321,7 +333,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                     label: 'Reminder',
                     onChanged: (DateTime selectedDate) {
                       setState(() {
-                        _selectedReminder  = selectedDate;
+                        _selectedReminder = selectedDate;
                       });
                     },
                   ),
@@ -398,7 +410,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
       },
     );
   }
-  
+
   void _reminderPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
