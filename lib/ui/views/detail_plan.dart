@@ -36,7 +36,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
   }
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri/${widget.idTask}';
+    var url = 'http://$ipUrl/users/$email/rencanaMandiri/${widget.idTask}';
     try {
       var response = await http.get(
         Uri.parse(url),
@@ -70,7 +70,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
 
   Future<void> delete() async {
     var url =
-        'http://$ipUrl:8001/users/$email/rencanaMandiri/delete/${widget.idTask}';
+        'http://$ipUrl/users/$email/rencanaMandiri/delete/${widget.idTask}';
 
     try {
       var response = await http.delete(

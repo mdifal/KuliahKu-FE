@@ -54,7 +54,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
     print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah';
+    var url = 'http://$ipUrl/users/$email/jadwalKuliah';
     var response = await http.post(
       Uri.parse(url),
       body: body,

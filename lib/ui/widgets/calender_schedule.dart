@@ -44,7 +44,7 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/semester/$idSemester?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl/users/$email/jadwalKuliah/semester/$idSemester?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(

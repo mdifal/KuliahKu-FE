@@ -50,7 +50,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
       print(data);
 
       var response = await http.post(
-        Uri.parse('http://$ipUrl:8001/profile/edit/password/$email'),
+        Uri.parse('http://$ipUrl/profile/edit/password/$email'),
         body: json.encode(data),
         headers: {
           'Content-Type': 'application/json',

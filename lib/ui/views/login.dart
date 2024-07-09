@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
       print(data);
 
       var response = await http.post(
-        Uri.parse('http://$ipUrl:8001/login'),
+        Uri.parse('http://$ipUrl/login'),
         body: json.encode(data),
         headers: {
           'Content-Type': 'application/json',

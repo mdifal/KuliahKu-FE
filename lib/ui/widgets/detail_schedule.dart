@@ -29,7 +29,7 @@ class _DetailScheduleState extends State<DetailSchedule> {
   }
 
   Future<void> deleteSchedule(String id) async {
-    var url = 'http://$ipUrl:8001/users/$email/jadwalKuliah/delete/$id';
+    var url = 'http://$ipUrl/users/$email/jadwalKuliah/delete/$id';
 
     try {
       var response = await http.delete(

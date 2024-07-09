@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> fetchProfileData() async {
     try {
-      var url = 'http://$ipUrl:8001/profile/$email';
+      var url = 'http://$ipUrl/profile/$email';
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {

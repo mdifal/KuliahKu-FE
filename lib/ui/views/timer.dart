@@ -98,7 +98,7 @@ class _TimerPageState extends State<TimerPage> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(
@@ -148,7 +148,7 @@ class _TimerPageState extends State<TimerPage> {
         'time_records': _formattedTime(_seconds),
       };
 
-      String url = 'http://$ipUrl:8001/users/$email/time-records';
+      String url = 'http://$ipUrl/users/$email/time-records';
       var response = await http.post(
         Uri.parse(url),
         headers: {

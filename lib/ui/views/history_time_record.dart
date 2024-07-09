@@ -23,7 +23,7 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
     _fetchData();
   }
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl:8001/users/$email/time-records/semester/$idSemester';
+    var url = 'http://$ipUrl/users/$email/time-records/semester/$idSemester';
 
     try {
       var response = await http.get(

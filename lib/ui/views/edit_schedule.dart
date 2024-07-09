@@ -58,7 +58,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
 
     String body = jsonEncode(data);
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/update/${widget.id}';
+        'http://$ipUrl/users/$email/jadwalKuliah/update/${widget.id}';
     var response = await http.put(
       Uri.parse(url),
       body: body,
@@ -114,7 +114,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/detail/${widget.id}';
+        'http://$ipUrl/users/$email/jadwalKuliah/detail/${widget.id}';
 
     try {
       var response = await http.get(

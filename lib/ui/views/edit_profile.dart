@@ -47,7 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> fetchProfileData() async {
     try {
-      var url = 'http://$ipUrl:8001/profile/edit/$email';
+      var url = 'http://$ipUrl/profile/edit/$email';
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -83,7 +83,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _simpanPerubahan() async {
     try {
-      var url = 'http://$ipUrl:8001/profile/edit/$email';
+      var url = 'http://$ipUrl/profile/edit/$email';
       var response = await http.put(
         Uri.parse(url),
         body: jsonEncode({

@@ -184,7 +184,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
     };
 
     var url =
-        'http://$ipUrl:8001/users/$email/rencanaMandiri/update/${widget.id}';
+        'http://$ipUrl/users/$email/rencanaMandiri/update/${widget.id}';
     var response = await http.put(
       Uri.parse(url),
       body: json.encode(requestBody),

@@ -76,7 +76,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl:8001/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(
@@ -129,7 +129,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> addPlanToBackend() async {
     try {
-      String url = 'http://$ipUrl:8001/users/$email/rencanaMandiri';
+      String url = 'http://$ipUrl/users/$email/rencanaMandiri';
 
       var request = http.MultipartRequest('POST', Uri.parse(url));
 

@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
     print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://$ipUrl:8001/create';
+    var url = 'http://$ipUrl/create';
     var response = await http.post(
       Uri.parse(url),
       body: body,

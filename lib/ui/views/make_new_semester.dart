@@ -25,7 +25,7 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
   // Fungsi untuk menambahkan semester baru
   Future<void> _addNewSemester() async {
     try {
-      final url = Uri.parse('http://$ipUrl:8001/users/$email/semesters');
+      final url = Uri.parse('http://$ipUrl/users/$email/semesters');
       final response = await http.post(
         url,
         body: json.encode({

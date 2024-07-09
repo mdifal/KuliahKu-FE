@@ -123,7 +123,7 @@ class _CalenderTaskandSchedulePageState
   }
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl:8001/users/$email/semesters';
+    var url = 'http://$ipUrl/users/$email/semesters';
 
     try {
       var response = await http.get(

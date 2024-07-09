@@ -34,7 +34,7 @@ void initState() {
   }
 
   Future<void> _fetchData() async {
-  var url = 'http://$ipUrl:8001/users/$email/rencanaMandiri/semester/$idSemester';
+  var url = 'http://$ipUrl/users/$email/rencanaMandiri/semester/$idSemester';
 
   try {
     var response = await http.get(

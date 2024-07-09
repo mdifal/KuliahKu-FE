@@ -6,6 +6,7 @@ import 'dart:convert';
 import '../shared/global.dart';
 import '../shared/style.dart';
 import '../widgets/chat/Screens/SelectContact.dart';
+import 'make_new_grup.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
 
   Future<void> fetchChatsData() async {
     try {
-      var url = 'http://$ipUrl:8001/users/$email/roomchat';
+      var url = 'http://$ipUrl/users/$email/roomchat';
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -55,7 +56,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           (index) => ChatModel(
             id: 'L8uaURaA5UzOFP8R4Y2Y',
             targetId: 'nisrinawafa@gmail.com',
-            name: 'User $index',
+            name: 'Nisrina Wafa',
             currentMessage: 'Hello, this is message $index',
             time: '10:00 AM',
             profilePicture: 'https://via.placeholder.com/150',
@@ -113,6 +114,10 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                           );
                         } else if (_controller.index == 1) {
                           print("Create new group");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const TambahGrupPage()),
+                            );
                         }
                       },
                     ),
