@@ -10,12 +10,10 @@ import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
-import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:kuliahku/ui/shared/global.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:file_picker/file_picker.dart';
-
-import '../widgets/calender/schedule.dart';
+import 'package:kuliahku/ui/widgets/calender/schedule.dart';
+import '../widgets/time_field.dart';
 
 class AddPlanPage extends StatefulWidget {
   const AddPlanPage({Key? key}) : super(key: key);
@@ -30,10 +28,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
   TextEditingController _judulController = TextEditingController();
   late DateTime _selectedDeadline;
   late DateTime _selectedReminder;
-  late DateTime _selectedDeadlineTime;
-  late DateTime _selectedReminderTime;
-  late String deadlineString = '';
-  late String reminderString = '';
   String description = '';
   TextEditingController _catatanController = TextEditingController();
 
@@ -51,10 +45,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
     _getDataSource();
     _selectedDeadline = DateTime.now();
     _selectedReminder = DateTime.now();
-    _selectedDeadlineTime = DateTime.now();
-    updateDeadline(_selectedDeadlineTime);
-    _selectedReminderTime = DateTime.now();
-    updateReminder(_selectedReminderTime);
   }
 
   @override
@@ -76,7 +66,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayOfWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(
@@ -115,18 +105,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
     }
   }
 
-  void updateDeadline(DateTime dateTime) {
-    setState(() {
-      deadlineString = DateFormat('HH:mm:ss').format(dateTime);
-    });
-  }
-
-  void updateReminder(DateTime dateTime) {
-    setState(() {
-      reminderString = DateFormat('HH:mm:ss').format(dateTime);
-    });
-  }
-
   Future<void> addPlanToBackend() async {
     try {
       String url = 'http://$ipUrl/users/$email/rencanaMandiri';
@@ -149,11 +127,11 @@ class _AddPlanPageState extends State<AddPlanPage> {
       request.fields['dateReminder'] =
           DateFormat('yyyy-MM-dd').format(_selectedReminder);
       request.fields['timeReminder'] =
-          DateFormat('HH:mm:ss').format(_selectedReminderTime);
+          DateFormat('HH:mm:ss').format(_selectedReminder);
       request.fields['dateDeadline'] =
           DateFormat('yyyy-MM-dd').format(_selectedDeadline);
       request.fields['timeDeadline'] =
-          DateFormat('HH:mm:ss').format(_selectedDeadlineTime);
+          DateFormat('HH:mm:ss').format(_selectedDeadline);
       request.fields['notes'] = _catatanController.text;
 
       // Kirim permintaan ke backend
@@ -247,45 +225,67 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       password: false,
                       controller: _judulController,
                     ),
-                    CustomDateInput(
+                    CustomDatetimeButton(
                       label: 'Deadline',
-                      onChanged: (DateTime selectedDate) {
-                        setState(() {
-                          _selectedDeadline = selectedDate;
+                      dateValue: DateFormat('dd/MM/yyyy').format(_selectedDeadline),
+                      timeValue: DateFormat('HH:mm').format(_selectedDeadline),
+                      onDatePressed: () {
+                        _pickDate(context, (date) {
+                          setState(() {
+                            _selectedDeadline = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              _selectedDeadline.hour,
+                              _selectedDeadline.minute,
+                            );
+                          });
+                        });
+                      },
+                      onTimePressed: () {
+                        _pickTime(context, (time) {
+                          setState(() {
+                            _selectedDeadline = DateTime(
+                              _selectedDeadline.year,
+                              _selectedDeadline.month,
+                              _selectedDeadline.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
                         });
                       },
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomOutlineButton(
-                          label: 'Waktu Deadline',
-                          value: deadlineString,
-                          onPressed: () {
-                            _deadlinePicker(context);
-                          },
-                        ),
-                      ],
-                    ),
-                    CustomDateInput(
+                    CustomDatetimeButton(
                       label: 'Reminder',
-                      onChanged: (DateTime selectedDate) {
-                        setState(() {
-                          _selectedReminder = selectedDate;
+                      dateValue: DateFormat('dd/MM/yyyy').format(_selectedReminder),
+                      timeValue: DateFormat('HH:mm').format(_selectedReminder),
+                      onDatePressed: () {
+                        _pickDate(context, (date) {
+                          setState(() {
+                            _selectedReminder = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              _selectedReminder.hour,
+                              _selectedReminder.minute,
+                            );
+                          });
                         });
                       },
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomOutlineButton(
-                          label: 'Waktu Reminder',
-                          value: reminderString,
-                          onPressed: () {
-                            _reminderPicker(context);
-                          },
-                        ),
-                      ],
+                      onTimePressed: () {
+                        _pickTime(context, (time) {
+                          setState(() {
+                            _selectedReminder = DateTime(
+                              _selectedReminder.year,
+                              _selectedReminder.month,
+                              _selectedReminder.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
+                        });
+                      },
                     ),
                     CustomTextField(
                       label: "Catatan",
@@ -298,8 +298,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       onPressed: () async {
                         _selectedFile = await FilePicker.platform.pickFiles();
                         if (_selectedFile != null) {
-                          // File dipilih, lakukan sesuatu dengan file tersebut
-                          // Contoh: Simpan path file dalam variabel _selectedFile
                           setState(() {});
                         }
                       },
@@ -333,35 +331,50 @@ class _AddPlanPageState extends State<AddPlanPage> {
     );
   }
 
-  void _deadlinePicker(BuildContext context) {
-    showModalBottomSheet(
+  void _pickTime(BuildContext context, ValueChanged<TimeOfDay> onSave) {
+    showTimePicker(
       context: context,
-      builder: (BuildContext builder) {
-        return TimePicker(
-          onSave: (time) {
-            setState(() {
-              _selectedDeadlineTime = time;
-              updateDeadline(_selectedDeadlineTime);
-            });
-          },
+      initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: secondaryColor.withOpacity(1),
+            colorScheme: ColorScheme.light(primary: facebookColor, secondary: yellow),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
         );
       },
-    );
+    ).then((time) {
+      if (time != null) {
+        onSave(time);
+      }
+    });
   }
 
-  void _reminderPicker(BuildContext context) {
-    showModalBottomSheet(
+  void _pickDate(BuildContext context, ValueChanged<DateTime> onSave) {
+    showDatePicker(
       context: context,
-      builder: (BuildContext builder) {
-        return TimePicker(
-          onSave: (time) {
-            setState(() {
-              _selectedReminderTime = time;
-              updateReminder(_selectedReminderTime);
-            });
-          },
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: secondaryColor.withOpacity(1),
+            colorScheme: ColorScheme.light(primary: facebookColor, secondary: yellow),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
         );
       },
-    );
+    ).then((date) {
+      if (date != null) {
+        onSave(date);
+      }
+    });
   }
+
+
+
 }

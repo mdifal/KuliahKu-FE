@@ -103,7 +103,7 @@ class CustomUploadFileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(5),
-      height: 30,
+      height: 35,
       width: 50,
       child: ElevatedButton.icon(
         onPressed: onPressed,
@@ -180,6 +180,104 @@ class CustomOutlineButton extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomDatetimeButton extends StatelessWidget {
+  final String? label;
+  final String? dateValue;
+  final String? timeValue;
+  final VoidCallback? onDatePressed;
+  final VoidCallback? onTimePressed;
+
+  const CustomDatetimeButton({
+    Key? key,
+    this.label,
+    this.dateValue,
+    this.timeValue,
+    this.onDatePressed,
+    this.onTimePressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              label!,
+              style: TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex: 2, // Lebih besar untuk tombol tanggal
+                child: TextButton(
+                  onPressed: onDatePressed,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    shadowColor: Colors.grey.withOpacity(0.2),
+                    elevation: 5,
+                    minimumSize: Size(double.infinity, 50), // Atur tinggi minimum
+                  ),
+                  child: Text(
+                    dateValue ?? "Pilih Tanggal",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10), // Tambahkan spasi antara tombol
+              Expanded(
+                flex: 1, // Lebih kecil untuk tombol waktu
+                child: TextButton(
+                  onPressed: onTimePressed,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    shadowColor: Colors.grey.withOpacity(0.2),
+                    elevation: 5,
+                    minimumSize: Size(double.infinity, 50),
+                  ),
+                  child: Text(
+                    timeValue ?? "Pilih Jam",
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
