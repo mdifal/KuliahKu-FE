@@ -11,16 +11,18 @@ import 'package:kuliahku/ui/shared/global.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class IndividualPage extends StatefulWidget {
-  final ChatModel chatModel;
+import '../Model/GroupModel.dart';
 
-  IndividualPage({Key? key, required this.chatModel}) : super(key: key);
+class GroupPage extends StatefulWidget {
+  final GroupModel grupModel;
+
+  GroupPage({Key? key, required this.grupModel}) : super(key: key);
 
   @override
-  _IndividualPageState createState() => _IndividualPageState();
+  _GroupPageState createState() => _GroupPageState();
 }
 
-class _IndividualPageState extends State<IndividualPage> {
+class _GroupPageState extends State<GroupPage> {
   bool show = false;
   FocusNode focusNode = FocusNode();
   bool sendButton = false;
@@ -32,7 +34,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   void initState() {
     super.initState();
-    print("ini id chat: ${widget.chatModel.id}");
+    print("ini id grup: ${widget.grupModel.idGroup}");
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -68,7 +70,7 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   Future<void> fetchInitialMessages() async {
-    final response = await http.get(Uri.parse('http://$ipUrl/privateChats/${widget.chatModel.id}/chats'));
+    final response = await http.get(Uri.parse('http://$ipUrl/privateChats/${widget.grupModel.idGroup}/chats'));
 
     if (response.statusCode == 200) {
       final List<dynamic> chatData = json.decode(response.body);
@@ -77,7 +79,7 @@ class _IndividualPageState extends State<IndividualPage> {
           sender: data['senderId'],
           type: data['senderId'] == email ? 'source' : 'destination',
           message: data['content'],
-          dateTime: data['timestamp'],
+          dateTime: data['timestamp'].toString(),
         )).toList();
       });
 
@@ -90,11 +92,9 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   void sendMessage(String message, String targetId) {
-    DateTime now = DateTime.now().toLocal();
-    print("Sending message: $message to targetId: $targetId timestamp: $now");
+    print("Sending message: $message to targetId: $targetId");
     setMessage("source", message);
-    // socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message, "timestamp": now});
-    socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message});
+    socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message, "timestamp": DateTime.now()});
   }
 
   void setMessage(String type, String message) {
@@ -104,7 +104,7 @@ class _IndividualPageState extends State<IndividualPage> {
       sender: email,
       type: type,
       message: message,
-      dateTime: now.toString(), // Correct substring for HH:mm format
+      dateTime: now.toString().substring(10, 16), // Correct substring for HH:mm format
     );
 
     setState(() {
@@ -117,22 +117,6 @@ class _IndividualPageState extends State<IndividualPage> {
       curve: Curves.easeOut,
     );
   }
-
-  String getFormattedDate(DateTime date) {
-    DateTime now = DateTime.now();
-    DateTime today = DateTime(now.year, now.month, now.day);
-    DateTime yesterday = DateTime(now.year, now.month, now.day - 1);
-    DateTime dateMessage = DateTime(date.year,date.month,date.day);
-
-    if (dateMessage == today) {
-      return "Today";
-    } else if (dateMessage == yesterday) {
-      return "Yesterday";
-    } else {
-      return "${date.day}/${date.month}/${date.year}";
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -178,10 +162,9 @@ class _IndividualPageState extends State<IndividualPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.chatModel.name,
+                    widget.grupModel.groupName,
                     style: TextStyle(
                       fontSize: 18.5,
-                      color: white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -202,56 +185,17 @@ class _IndividualPageState extends State<IndividualPage> {
                 controller: _scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
-                  DateTime currentDate = DateTime.parse(messages[index].dateTime);
-                  DateTime? previousDate;
-                  if (index > 0) {
-                    previousDate = DateTime.parse(messages[index - 1].dateTime);
+                  if (messages[index].type == "source") {
+                    return OwnMessageCard(
+                      message: messages[index].message,
+                      time: messages[index].dateTime.substring(11, 16),
+                    );
+                  } else {
+                    return ReplyCard(
+                      message: messages[index].message,
+                      time: messages[index].dateTime.substring(11, 16),
+                    );
                   }
-
-                  bool isNewDay = previousDate == null ||
-                      currentDate.day != previousDate.day ||
-                      currentDate.month != previousDate.month ||
-                      currentDate.year != previousDate.year;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (isNewDay)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Card(
-                              color: facebookColor.withOpacity(0.8),
-                              
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 13),
-                                child: Text(
-                                  getFormattedDate(currentDate),
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ),
-                          ),
-                        ),
-                      if (messages[index].type == "source")
-                        OwnMessageCard(
-                          message: messages[index].message,
-                          time: currentDate.toString().substring(11, 16),
-                        )
-                      else
-                        ReplyCard(
-                          message: messages[index].message,
-                          time: currentDate.toString().substring(11, 16),
-                        ),
-                    ],
-                  );
                 },
               ),
             ),
@@ -287,7 +231,7 @@ class _IndividualPageState extends State<IndividualPage> {
                             onPressed: () {
                               sendMessage(
                                 _controller.text,
-                                widget.chatModel.targetId,
+                                widget.grupModel.idGroup,
                               );
                               _controller.clear();
                             },

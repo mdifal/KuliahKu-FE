@@ -6,8 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../shared/images.dart';
 import '../../../shared/style.dart';
 
-class CustomCard extends StatelessWidget {
-  const CustomCard({
+class ListChatCard extends StatelessWidget {
+  const ListChatCard({
     Key? key,
     required this.chatModel
   }) : super(key: key);
@@ -21,7 +21,7 @@ class CustomCard extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (contex) => IndividualPage(
-                      chatModel: chatModel
+                      chatModel: chatModel,
                     )));
       },
       child: Column(

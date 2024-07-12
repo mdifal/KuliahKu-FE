@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kuliahku/ui/widgets/chat/CustomUI/CustomCard.dart';
+import 'package:kuliahku/ui/widgets/chat/CustomUI/ListChatCard.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../shared/global.dart';
 import '../shared/style.dart';
+import '../widgets/chat/CustomUI/ListGroupCard.dart';
+import '../widgets/chat/Model/GroupModel.dart';
 import '../widgets/chat/Screens/SelectContact.dart';
 import 'make_new_grup.dart';
 
@@ -17,6 +19,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
   late List<dynamic> personalchatmodels = [];
+  late List<dynamic> groupchatmodels = [];
   late ChatModel sourchat;
   late TabController _controller;
   bool isLoading = false;
@@ -62,6 +65,16 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
             profilePicture: 'https://via.placeholder.com/150',
             status: "123",
           ),
+    );
+    groupchatmodels = List.generate(
+      10,
+          (index) => GroupModel(
+        idGroup: 'L8uaURaA5UzOFP8R4Y2Y',
+        groupName: 'SDA TEAM',
+        currentMessage: 'Hello, this is message $index',
+        time: '10:00 AM',
+        profilePicture: 'https://via.placeholder.com/150',
+      ),
     );
   }
 
@@ -148,11 +161,16 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
         children: [
           ListView.builder(
             itemCount: personalchatmodels.length,
-            itemBuilder: (context, index) => CustomCard(
+            itemBuilder: (context, index) => ListChatCard(
               chatModel: personalchatmodels[index],
             ),
           ),
-          Center(child: Text("GROUP")),
+          ListView.builder(
+            itemCount: personalchatmodels.length,
+            itemBuilder: (context, index) => ListGroupCard(
+              groupModel: groupchatmodels[index],
+            ),
+          ),
         ],
       ),
     );
