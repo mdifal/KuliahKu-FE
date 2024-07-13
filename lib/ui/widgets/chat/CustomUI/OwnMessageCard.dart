@@ -23,7 +23,7 @@ class OwnMessageCard extends StatelessWidget {
           elevation: 1,
           // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: white,
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 2),
           child: Stack(
             children: [
               Padding(
@@ -36,7 +36,7 @@ class OwnMessageCard extends StatelessWidget {
                 child: Text(
                   message,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -48,12 +48,12 @@ class OwnMessageCard extends StatelessWidget {
                     Text(
                       time,
                       style: TextStyle(
-                        fontSize: 8,
-                        color: greySoft,
+                        fontSize: 9,
+                        color: black.withOpacity(0.8),
                       ),
                     ),
                     SizedBox(
-                      width: 5,
+                      width: 1,
                     ),
                   ],
                 ),

@@ -7,6 +7,6 @@ class MessageModel {
     required this.sender,
     required this.message,
     required this.type,
-    required this.dateTime
+    required this.dateTime,
   });
 }

@@ -1,20 +1,20 @@
 class ChatModel {
-  String id;
+  String roomId;
   String targetId;
-  String name;
-  String profilePicture;
-  String time;
+  String roomName;
+  String profilePicture = 'https://via.placeholder.com/150';
+  String CMTime;
   String currentMessage;
-  String status;
+  bool isGroup = false;
   bool select = false;
   ChatModel({
-    required this.id,
+    required this.roomId,
     required this.targetId,
-    required this.name,
-    required this.profilePicture,
-    required this.time,
+    required this.roomName,
+    this.profilePicture = 'https://via.placeholder.com/150',
+    required this.CMTime,
     required this.currentMessage,
-    required this.status,
+    this.isGroup = false,
     this.select = false,
   });
 

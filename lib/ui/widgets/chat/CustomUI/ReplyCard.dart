@@ -4,11 +4,15 @@ import 'package:kuliahku/ui/shared/style.dart';
 class ReplyCard extends StatelessWidget {
   const ReplyCard({
     Key? key,
+    required this.sender,
     required this.message,
-    required this.time
+    required this.time,
+    required this.isGroup,
   }) : super(key: key);
+  final String sender;
   final String message;
   final String time;
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +24,8 @@ class ReplyCard extends StatelessWidget {
         ),
         child: Card(
           elevation: 1,
-          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           color: lighterBlue,
-          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          margin: EdgeInsets.symmetric(horizontal: 15, vertical: 2),
           child: Stack(
             children: [
               Padding(
@@ -32,11 +35,26 @@ class ReplyCard extends StatelessWidget {
                   top: 5,
                   bottom: 10,
                 ),
-                child: Text(
-                  message,
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isGroup)
+                      Text(
+                        sender,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: darkBlue,
+                        ),
+                      ),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Positioned(
@@ -45,8 +63,8 @@ class ReplyCard extends StatelessWidget {
                 child: Text(
                   time,
                   style: TextStyle(
-                    fontSize: 8,
-                    color: greySoft,
+                    fontSize: 9,
+                    color: black.withOpacity(0.8),
                   ),
                 ),
               ),

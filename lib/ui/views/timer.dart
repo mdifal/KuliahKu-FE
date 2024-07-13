@@ -40,12 +40,8 @@ class _TimerPageState extends State<TimerPage> {
   int type = 0;
   int subjectId = 0;
 
-  List<Meeting> meetings = <Meeting>[];
-  DateTime today = DateTime.now();
-  late DateTime firstDayOfWeek;
-  late DateTime lastDayOfWeek;
-  late DateTime startOfFirstDay;
-  late DateTime endOfLastDay;
+  List<dynamic> matkul = <Meeting>[];
+  bool _isLoading = true;
 
   String _formattedTime(int seconds) {
     int hours = seconds ~/ 3600;
@@ -69,7 +65,7 @@ class _TimerPageState extends State<TimerPage> {
   void initState() {
     super.initState();
     _timer = Timer(Duration.zero, () {});
-    _getDataSource();
+    _fetchData();
 
     _judulController.addListener(() {
       setState(() {
@@ -78,27 +74,9 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    firstDayOfWeek = today.subtract(Duration(days: today.weekday - 1));
-    lastDayOfWeek = firstDayOfWeek.add(Duration(days: 5));
-    print('first : $firstDayOfWeek, last : $lastDayOfWeek');
-    startOfFirstDay =
-        DateTime(firstDayOfWeek.year, firstDayOfWeek.month, firstDayOfWeek.day);
-    endOfLastDay = DateTime(
-        lastDayOfWeek.year, lastDayOfWeek.month, lastDayOfWeek.day, 23, 59, 59);
-    _fetchData();
-  }
-
-  List<Meeting> _getDataSource() {
-    return meetings;
-  }
-
 
   Future<void> _fetchData() async {
-    var url =
-        'http://$ipUrl/users/$email/jadwalKuliah/now?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+    var url = 'http://$ipUrl/users/$email/jadwalKuliahNames/now';
 
     try {
       var response = await http.get(
@@ -110,30 +88,23 @@ class _TimerPageState extends State<TimerPage> {
       );
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        List<dynamic> dataTugas = jsonResponse['data'];
-        List<Meeting> fetchedMeetings = <Meeting>[];
-        for (var data in dataTugas) {
-          String id = data['id'] ?? '';
-          String subject = data['subject'] ?? '';
-          int sks = data['sks'];
-          String dosen = data['dosen'] ?? '';
-          String ruangan = data['ruang'] ?? '';
-          DateTime startTime = DateTime.parse(data['startTime']);
-          DateTime endTime = DateTime.parse(data['endTime']);
-          Color color = Color(data['color']);
-          String day = data['day'];
-
-          fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
-              dosen, sks, ruangan, false, day));
-        }
+        List<dynamic> dataMatkul = jsonResponse['data'];
+        print(dataMatkul);
         setState(() {
-          meetings = fetchedMeetings;
+          matkul = dataMatkul;
+          _isLoading = false;
         });
       } else {
         print('Request failed with status: ${response.statusCode}');
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
       print('Error: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -303,21 +274,24 @@ class _TimerPageState extends State<TimerPage> {
                   password: false,
                   controller: _judulController,
                 ),
-                CustomDropdown(
-                  label: "Mata Kuliah",
-                  placeholder: "Pilih mata kuliah",
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCourseId = meetings[value].id;
-                      _selectedCourseLabel = meetings[value].eventName;
-                    });
-                  },
-                  items: List.generate(meetings.length, (index) {
-                    return {
-                      'label': meetings[index].eventName,
-                      'value': index
-                    };
-                  }),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 0),
+                  child: CustomDropdown(
+                    label: "Mata Kuliah",
+                    placeholder: "Pilih mata kuliah",
+                    onChanged: (value) {
+                      setState(() {
+                        subjectId = value;
+                      });
+                    },
+                    isLoading: _isLoading,
+                    items: List.generate(matkul.length, (index) {
+                      return {
+                        'label': matkul[index],
+                        'value': index
+                      };
+                    }),
+                  ),
                 ),
               ],
             ),

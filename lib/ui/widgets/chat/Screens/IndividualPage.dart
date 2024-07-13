@@ -24,7 +24,7 @@ class _IndividualPageState extends State<IndividualPage> {
   bool show = false;
   FocusNode focusNode = FocusNode();
   bool sendButton = false;
-  List<MessageModel> messages = [];
+  List<MessageModel> messages = <MessageModel>[];
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
@@ -32,7 +32,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   void initState() {
     super.initState();
-    print("ini id chat: ${widget.chatModel.id}");
+    print("ini id chat: ${widget.chatModel.roomId}");
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -47,7 +47,11 @@ class _IndividualPageState extends State<IndividualPage> {
 
   void connect() async {
     // Fetch initial chat messages
-    await fetchInitialMessages();
+    if (widget.chatModel.isGroup){
+      await fetchInitialGroupMessages();
+    } else {
+      await fetchInitialPersonalMessages();
+    }
 
     socket = IO.io('http://$ipUrl', <String, dynamic>{
       "transports": ["websocket"],
@@ -67,18 +71,23 @@ class _IndividualPageState extends State<IndividualPage> {
     print(socket.connected);
   }
 
-  Future<void> fetchInitialMessages() async {
-    final response = await http.get(Uri.parse('http://$ipUrl/privateChats/${widget.chatModel.id}/chats'));
+  Future<void> fetchInitialPersonalMessages() async {
+    final response = await http.get(Uri.parse('http://$ipUrl/privateChats/${widget.chatModel.roomId}/chats'));
 
     if (response.statusCode == 200) {
       final List<dynamic> chatData = json.decode(response.body);
       setState(() {
-        messages = chatData.map((data) => MessageModel(
-          sender: data['senderId'],
-          type: data['senderId'] == email ? 'source' : 'destination',
-          message: data['content'],
-          dateTime: data['timestamp'],
-        )).toList();
+        for (var data in chatData) {
+          print(data);
+          MessageModel message = MessageModel(
+            sender: data['senderId'],
+            type: data['senderId'] == email ? 'source' : 'destination',
+            message: data['content'],
+            dateTime: data['id'].toString(),
+          );
+
+          messages.add(message);
+        }
       });
 
       WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -89,22 +98,69 @@ class _IndividualPageState extends State<IndividualPage> {
     }
   }
 
-  void sendMessage(String message, String targetId) {
-    DateTime now = DateTime.now().toLocal();
-    print("Sending message: $message to targetId: $targetId timestamp: $now");
+  Future<void> fetchInitialGroupMessages() async {
+    final response = await http.get(Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/chats'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> chatData = json.decode(response.body);
+      setState(() {
+        for (var data in chatData) {
+          print(data);
+          MessageModel message = MessageModel(
+            sender: data['senderId'],
+            type: data['senderId'] == email ? 'source' : 'destination',
+            message: data['content'],
+            dateTime: data['timestamp'].toString(),
+          );
+
+          messages.add(message);
+        }
+      });
+
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
+    } else {
+      throw Exception('Failed to load chat messages');
+    }
+  }
+
+  void sendMessage(String message) {
+    DateTime now = DateTime.now();
+    String target;
+    if(widget.chatModel.isGroup){
+      target = widget.chatModel.roomId;
+    } else {
+      target = widget.chatModel.targetId;
+    }
+    print("Sending message: $message to $target timestamp: $now");
     setMessage("source", message);
-    // socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message, "timestamp": now});
-    socket.emit("chat", {"senderId": email, "targetId": targetId, "content": message});
+    if(widget.chatModel.isGroup){
+      socket.emit("chat", {
+        "senderId": email,
+        "content": message,
+        "groupId": widget.chatModel.roomId,
+        "timestamp": now.toString(),
+      });
+    } else {
+      socket.emit("chat", {
+        "senderId": email,
+        "targetId": widget.chatModel.targetId,
+        "content": message,
+        "timestamp": now.toString(),
+      });
+    }
+
   }
 
   void setMessage(String type, String message) {
-    DateTime now = DateTime.now().toLocal();
+    DateTime now = DateTime.now();
 
     MessageModel messageModel = MessageModel(
       sender: email,
       type: type,
       message: message,
-      dateTime: now.toString(), // Correct substring for HH:mm format
+      dateTime: now.toString(),
     );
 
     setState(() {
@@ -122,7 +178,7 @@ class _IndividualPageState extends State<IndividualPage> {
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
     DateTime yesterday = DateTime(now.year, now.month, now.day - 1);
-    DateTime dateMessage = DateTime(date.year,date.month,date.day);
+    DateTime dateMessage = DateTime(date.year, date.month, date.day);
 
     if (dateMessage == today) {
       return "Today";
@@ -132,7 +188,6 @@ class _IndividualPageState extends State<IndividualPage> {
       return "${date.day}/${date.month}/${date.year}";
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +233,7 @@ class _IndividualPageState extends State<IndividualPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.chatModel.name,
+                    widget.chatModel.roomName,
                     style: TextStyle(
                       fontSize: 18.5,
                       color: white,
@@ -218,11 +273,10 @@ class _IndividualPageState extends State<IndividualPage> {
                     children: [
                       if (isNewDay)
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(5),
                           child: Center(
                             child: Card(
                               color: facebookColor.withOpacity(0.8),
-                              
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -237,7 +291,7 @@ class _IndividualPageState extends State<IndividualPage> {
                                   ),
                                 ),
                               ),
-                          ),
+                            ),
                           ),
                         ),
                       if (messages[index].type == "source")
@@ -247,8 +301,10 @@ class _IndividualPageState extends State<IndividualPage> {
                         )
                       else
                         ReplyCard(
+                          sender: widget.chatModel.roomName,
                           message: messages[index].message,
                           time: currentDate.toString().substring(11, 16),
+                          isGroup: widget.chatModel.isGroup,
                         ),
                     ],
                   );
@@ -274,7 +330,7 @@ class _IndividualPageState extends State<IndividualPage> {
                         minLines: 1,
                         onChanged: (value) {
                           setState(() {
-                            sendButton = value.isNotEmpty;
+                            sendButton = value.trim().isNotEmpty;
                           });
                         },
                         decoration: InputDecoration(
@@ -284,13 +340,17 @@ class _IndividualPageState extends State<IndividualPage> {
                           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                           suffixIcon: IconButton(
                             icon: Icon(Icons.send),
-                            onPressed: () {
+                            onPressed: sendButton
+                                ? () {
                               sendMessage(
-                                _controller.text,
-                                widget.chatModel.targetId,
+                                _controller.text.trim(),
                               );
                               _controller.clear();
-                            },
+                              setState(() {
+                                sendButton = false;
+                              });
+                            }
+                                : null,
                           ),
                         ),
                       ),

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:kuliahku/ui/widgets/chat/Screens/IndividualPage.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,24 @@ class ListChatCard extends StatelessWidget {
     required this.chatModel
   }) : super(key: key);
   final ChatModel chatModel;
+
+  String formatCMTime(String cmTime) {
+    DateTime now = DateTime.now();
+    DateTime date = DateTime.parse(cmTime);
+    Duration difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      // Tampilkan jam jika CMTime hari ini
+      return DateFormat('HH:mm').format(date);
+    } else if (difference.inDays == 1) {
+      // Tampilkan 'Kemarin' jika CMTime adalah 1 hari sebelum hari ini
+      return 'Kemarin';
+    } else {
+      // Tampilkan tanggal jika CMTime lebih dari 1 hari sebelum hari ini
+      return DateFormat('dd MMM yyyy').format(date);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +47,17 @@ class ListChatCard extends StatelessWidget {
         children: [
           ListTile(
             leading: CircleAvatar(
-              radius: 30,
+              radius: 23,
               child: SvgPicture.asset(
                 image_person,
                 fit: BoxFit.cover,
-                width: 45,
-                height: 45,
+                width: 35,
+                height: 35,
               ),
               backgroundColor: greySoft,
             ),
             title: Text(
-              chatModel.name,
+              chatModel.roomName,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -54,12 +73,15 @@ class ListChatCard extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: Text(chatModel.time),
+            trailing:
+            Text(formatCMTime(chatModel.CMTime)),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: 20, left: 80),
+            padding: const EdgeInsets.only(right: 20, left: 20),
             child: Divider(
               thickness: 1,
+              height: 1,
+              color: greySoft.withOpacity( 0.4),
             ),
           ),
         ],

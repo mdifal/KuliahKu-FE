@@ -8,6 +8,7 @@ class CustomDropdown extends StatefulWidget {
   final String? placeholder;
   final ValueChanged<int>? onChanged;
   final int? initialValue;
+  final bool isLoading;
 
   const CustomDropdown({
     Key? key,
@@ -16,6 +17,7 @@ class CustomDropdown extends StatefulWidget {
     required this.items,
     this.onChanged,
     this.initialValue,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -39,8 +41,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(
-                bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               widget.label!,
               style: TextStyle(
@@ -65,14 +66,14 @@ class _CustomDropdownState extends State<CustomDropdown> {
             ),
             items: widget.items
                 .map((item) => DropdownMenuItem<int>(
-                      value: item['value'],
-                      child: Text(
-                        item['label'],
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ))
+              value: item['value'],
+              child: Text(
+                item['label'],
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ))
                 .toList(),
             validator: (value) {
               if (value == null) {
@@ -80,7 +81,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
               }
               return null;
             },
-            onChanged: (value) {
+            onChanged: widget.isLoading
+                ? null
+                : (value) {
               setState(() {
                 selectedValue = value;
               });
@@ -94,17 +97,29 @@ class _CustomDropdownState extends State<CustomDropdown> {
             buttonStyleData: const ButtonStyleData(
               padding: EdgeInsets.only(right: 8),
             ),
-            iconStyleData: const IconStyleData(
-              icon: Icon(
+            iconStyleData: IconStyleData(
+              icon: widget.isLoading
+                  ? Padding(
+                padding: const EdgeInsets.only(right: 8.0), // Margin kanan
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                  ),
+                ),
+              )
+                  : Icon(
                 Icons.arrow_drop_down,
-                color: Colors.black45,
+                color: grey,
               ),
               iconSize: 24,
             ),
             dropdownStyleData: DropdownStyleData(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(5),
               ),
+              maxHeight: 150,
             ),
             menuItemStyleData: const MenuItemStyleData(
               padding: EdgeInsets.symmetric(horizontal: 16),

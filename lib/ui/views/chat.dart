@@ -18,11 +18,12 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
-  late List<dynamic> personalchatmodels = [];
-  late List<dynamic> groupchatmodels = [];
+  late List<ChatModel> personalChats = [];
+  late List<ChatModel> groupChats = [];
+  late List<ChatModel> chat = [];
   late ChatModel sourchat;
   late TabController _controller;
-  bool isLoading = false;
+  bool isLoading = true;
 
   Future<void> fetchChatsData() async {
     try {
@@ -30,11 +31,30 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final fetchedData = json.decode(response.body);
-
+        final List<dynamic> roomChat = json.decode(response.body);
         setState(() {
-          personalchatmodels = (fetchedData['chats'] as List).map((data) => ChatModel.fromJson(data)).toList();
-          isLoading = false;  // Data has been fetched, stop loading
+          for (var data in roomChat) {
+            print (data);
+            ChatModel chatModel = ChatModel(
+              roomId: data['roomId'],
+              targetId: data['targetId'] ?? 'nisrinawafa@gmail.com',
+              roomName: data['roomName'] ?? 'test chat',
+              profilePicture: data['profilePicture'] ?? 'https://via.placeholder.com/150',
+              CMTime: data['CMTime'],
+              currentMessage: data['currentMessage'],
+              isGroup: data['isGroup'],
+            );
+
+            if (chatModel.isGroup) {
+              groupChats.add(chatModel);
+            } else {
+              personalChats.add(chatModel);
+            }
+          }
+          personalChats.sort((a, b) => DateTime.parse(b.CMTime).compareTo(DateTime.parse(a.CMTime)));
+          groupChats.sort((a, b) => DateTime.parse(b.CMTime).compareTo(DateTime.parse(a.CMTime)));
+
+          isLoading = false;
         });
       } else {
         throw Exception('Failed to fetch chats data');
@@ -42,40 +62,23 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
     } catch (error) {
       print('Error fetching chats data: $error');
       setState(() {
-        isLoading = false;  // Stop loading even if there is an error
+        isLoading = false;
       });
       throw Exception('Failed to fetch chats data');
     }
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _controller = TabController(length: 2, vsync: this, initialIndex: 0);
-    // fetchChatsData();
-    // Inisialisasi nilai chatmodels dan sourchat di sini
-    personalchatmodels = List.generate(
-      10,
-          (index) => ChatModel(
-            id: 'L8uaURaA5UzOFP8R4Y2Y',
-            targetId: 'nisrinawafa@gmail.com',
-            name: 'Nisrina Wafa',
-            currentMessage: 'Hello, this is message $index',
-            time: '10:00 AM',
-            profilePicture: 'https://via.placeholder.com/150',
-            status: "123",
-          ),
-    );
-    groupchatmodels = List.generate(
-      10,
-          (index) => GroupModel(
-        idGroup: 'L8uaURaA5UzOFP8R4Y2Y',
-        groupName: 'SDA TEAM',
-        currentMessage: 'Hello, this is message $index',
-        time: '10:00 AM',
-        profilePicture: 'https://via.placeholder.com/150',
-      ),
-    );
+    fetchChatsData();
   }
 
   @override
@@ -160,15 +163,15 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
         controller: _controller,
         children: [
           ListView.builder(
-            itemCount: personalchatmodels.length,
+            itemCount: personalChats.length,
             itemBuilder: (context, index) => ListChatCard(
-              chatModel: personalchatmodels[index],
+              chatModel: personalChats[index],
             ),
           ),
           ListView.builder(
-            itemCount: personalchatmodels.length,
-            itemBuilder: (context, index) => ListGroupCard(
-              groupModel: groupchatmodels[index],
+            itemCount: groupChats.length,  // Corrected line
+            itemBuilder: (context, index) => ListChatCard(
+              chatModel: groupChats[index],
             ),
           ),
         ],

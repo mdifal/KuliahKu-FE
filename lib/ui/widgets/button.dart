@@ -211,7 +211,7 @@ class CustomDatetimeButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 5),
             child: Text(
               label!,
               style: TextStyle(
@@ -225,18 +225,18 @@ class CustomDatetimeButton extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                flex: 2, // Lebih besar untuk tombol tanggal
+                flex: 2,
                 child: TextButton(
                   onPressed: onDatePressed,
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey[300]!),
+                      side: BorderSide(color: greySoft.withOpacity(0.5)!),
                     ),
                     shadowColor: Colors.grey.withOpacity(0.2),
                     elevation: 5,
-                    minimumSize: Size(double.infinity, 50), // Atur tinggi minimum
+                    minimumSize: Size(double.infinity, 40), // Atur tinggi minimum
                   ),
                   child: Text(
                     dateValue ?? "Pilih Tanggal",
@@ -259,11 +259,11 @@ class CustomDatetimeButton extends StatelessWidget {
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey[300]!),
+                      side: BorderSide(color: greySoft.withOpacity(0.5)!),
                     ),
-                    shadowColor: Colors.grey.withOpacity(0.2),
+                    shadowColor: grey.withOpacity(0.2),
                     elevation: 5,
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: Size(double.infinity, 40),
                   ),
                   child: Text(
                     timeValue ?? "Pilih Jam",

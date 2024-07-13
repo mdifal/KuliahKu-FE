@@ -50,7 +50,7 @@ class AvatarCard extends StatelessWidget {
             height: 2,
           ),
           Text(
-            chatModel.name,
+            chatModel.roomName,
             style: TextStyle(
               fontSize: 12,
             ),
