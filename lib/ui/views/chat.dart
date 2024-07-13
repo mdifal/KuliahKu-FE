@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import '../shared/style.dart';
+import 'dart:convert';
+import '../shared/global.dart';
+import '../widgets/chat/Screens/SelectContact.dart';
+import 'make_new_grup.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/ListChatCard.dart';
 import 'package:kuliahku/ui/widgets/chat/Model/ChatModel.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../shared/global.dart';
-import '../shared/style.dart';
-import '../widgets/chat/CustomUI/ListGroupCard.dart';
-import '../widgets/chat/Model/GroupModel.dart';
-import '../widgets/chat/Screens/SelectContact.dart';
-import 'make_new_grup.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -25,6 +23,21 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   late TabController _controller;
   bool isLoading = true;
 
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 2, vsync: this, initialIndex: 0);
+    fetchChatsData();
+  }
+
+
   Future<void> fetchChatsData() async {
     try {
       var url = 'http://$ipUrl/users/$email/roomchat';
@@ -39,7 +52,7 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
               roomId: data['roomId'],
               targetId: data['targetId'] ?? 'nisrinawafa@gmail.com',
               roomName: data['roomName'] ?? 'test chat',
-              profilePicture: data['profilePicture'] ?? 'https://via.placeholder.com/150',
+              profilePicture: data['profilePicture'] ?? '',
               CMTime: data['CMTime'],
               currentMessage: data['currentMessage'],
               isGroup: data['isGroup'],
@@ -66,19 +79,6 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       });
       throw Exception('Failed to fetch chats data');
     }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TabController(length: 2, vsync: this, initialIndex: 0);
-    fetchChatsData();
   }
 
   @override

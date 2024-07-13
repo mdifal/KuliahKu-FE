@@ -211,15 +211,29 @@ class _IndividualPageState extends State<IndividualPage> {
                   size: 30,
                   color: white,
                 ),
-                CircleAvatar(
-                  child: SvgPicture.asset(
-                    image_person,
-                    color: white,
-                    height: 36,
-                    width: 36,
+                widget.chatModel.profilePicture == ''
+                    ? CircleAvatar(
+                  radius: 23,
+                  backgroundColor: greySoft,
+                  child: ClipOval(
+                      child: widget.chatModel.isGroup
+                          ? SvgPicture.asset(
+                        image_group,
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      )
+                          : SvgPicture.asset(
+                        image_person,
+                        fit: BoxFit.cover,
+                        width: 50,
+                        height: 50,
+                      )
                   ),
-                  radius: 20,
-                  backgroundColor: softBlue,
+                )
+                    : CircleAvatar(
+                  radius: 23,
+                  backgroundColor: greySoft,
                 ),
               ],
             ),

@@ -46,16 +46,30 @@ class ListChatCard extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            leading: CircleAvatar(
-              radius: 23,
-              child: SvgPicture.asset(
-                image_person,
-                fit: BoxFit.cover,
-                width: 35,
-                height: 35,
-              ),
-              backgroundColor: greySoft,
-            ),
+            leading: chatModel.profilePicture == ''
+                  ? CircleAvatar(
+                        radius: 23,
+                        backgroundColor: greySoft,
+                        child: ClipOval(
+                          child: chatModel.isGroup
+                          ? SvgPicture.asset(
+                            image_group,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                          )
+                              : SvgPicture.asset(
+                            image_person,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                          )
+                        ),
+                    )
+                    : CircleAvatar(
+                      radius: 23,
+                      backgroundColor: greySoft,
+                    ),
             title: Text(
               chatModel.roomName,
               style: TextStyle(
