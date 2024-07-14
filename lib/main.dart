@@ -29,7 +29,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    if (email  == null) {
+    if (email  == '') {
       return Scaffold(body: LandingPage());
     } else {
       return Scaffold(body: HomePage());
