@@ -16,18 +16,15 @@ class ListChatCard extends StatelessWidget {
 
   String formatCMTime(String cmTime) {
     DateTime now = DateTime.now();
+    DateTime yesterday = now.subtract(Duration(days: 1));
     DateTime date = DateTime.parse(cmTime);
-    Duration difference = now.difference(date);
 
-    if (difference.inDays == 0) {
-      // Tampilkan jam jika CMTime hari ini
+    if (DateFormat('dd/MMM/yyyy').format(date) == DateFormat('dd/MMM/yyyy').format(now)) {
       return DateFormat('HH:mm').format(date);
-    } else if (difference.inDays == 1) {
-      // Tampilkan 'Kemarin' jika CMTime adalah 1 hari sebelum hari ini
+    } else if (DateFormat('dd/MMM/yyyy').format(date) == DateFormat('dd/MMM/yyyy').format(yesterday)) {
       return 'Kemarin';
     } else {
-      // Tampilkan tanggal jika CMTime lebih dari 1 hari sebelum hari ini
-      return DateFormat('dd MMM yyyy').format(date);
+      return DateFormat('dd/MMM/yyyy').format(date);
     }
   }
 
@@ -80,7 +77,7 @@ class ListChatCard extends StatelessWidget {
             subtitle: Row(
               children: [
                 Text(
-                  chatModel.currentMessage,
+                  chatModel.currentMessage ?? '',
                   style: TextStyle(
                     fontSize: 13,
                   ),
@@ -88,7 +85,7 @@ class ListChatCard extends StatelessWidget {
               ],
             ),
             trailing:
-            Text(formatCMTime(chatModel.CMTime)),
+            Text(formatCMTime(chatModel.CMTime ?? '')),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 20, left: 20),

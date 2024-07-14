@@ -46,18 +46,21 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   void connect() async {
-    // Fetch initial chat messages
-    if (widget.chatModel.isGroup){
-      await fetchInitialGroupMessages();
-    } else {
-      await fetchInitialPersonalMessages();
+    if (widget.chatModel.roomId != null){
+      if (widget.chatModel.isGroup){
+        await fetchInitialGroupMessages();
+      } else {
+        await fetchInitialPersonalMessages();
+      }
     }
 
     socket = IO.io('http://$ipUrl', <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
+
     socket.connect();
+
     socket.onConnect((_) {
       print("Connected");
       socket.emit("signin", email);
@@ -66,8 +69,11 @@ class _IndividualPageState extends State<IndividualPage> {
         setMessage("destination", msg["content"]);
       });
     });
+
     socket.onConnectError((data) => print("Connect Error: $data"));
+
     socket.onDisconnect((_) => print("Disconnected"));
+
     print(socket.connected);
   }
 
@@ -110,10 +116,14 @@ class _IndividualPageState extends State<IndividualPage> {
             sender: data['senderId'],
             type: data['senderId'] == email ? 'source' : 'destination',
             message: data['content'],
-            dateTime: data['timestamp'].toString(),
+            dateTime: data['id'].toString(),
           );
-
-          messages.add(message);
+          try {
+            DateTime.parse(message.dateTime);
+            messages.add(message);
+          } catch (e) {
+            print("Invalid dateTime format: ${message.dateTime}");
+          }
         }
       });
 
@@ -127,7 +137,7 @@ class _IndividualPageState extends State<IndividualPage> {
 
   void sendMessage(String message) {
     DateTime now = DateTime.now();
-    String target;
+    String? target;
     if(widget.chatModel.isGroup){
       target = widget.chatModel.roomId;
     } else {
@@ -213,21 +223,21 @@ class _IndividualPageState extends State<IndividualPage> {
                 ),
                 widget.chatModel.profilePicture == ''
                     ? CircleAvatar(
-                  radius: 23,
+                  radius: 20,
                   backgroundColor: greySoft,
                   child: ClipOval(
                       child: widget.chatModel.isGroup
                           ? SvgPicture.asset(
                         image_group,
                         fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
+                        width: 38,
+                        height: 38,
                       )
                           : SvgPicture.asset(
                         image_person,
                         fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
+                        width: 38,
+                        height: 38,
                       )
                   ),
                 )

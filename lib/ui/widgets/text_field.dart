@@ -116,13 +116,15 @@ class CustomTextField extends StatelessWidget {
 class CustomTextFieldNoLabel extends StatelessWidget {
   final String? placeholder;
   final bool password;
-  final TextEditingController? controller; // Tambahkan properti controller
+  final TextEditingController? controller;
+  final void Function(String)? onSubmitted;
 
   const CustomTextFieldNoLabel({
     Key? key,
     this.placeholder,
     this.password = false,
-    this.controller, // Inisialisasi properti controller
+    this.controller,
+    this.onSubmitted,
   }) : super(key: key);
 
   @override
@@ -192,6 +194,7 @@ class CustomTextFieldNoLabel extends StatelessWidget {
             ),
                 enabled: true,
               ),
+              onSubmitted: onSubmitted,
             )
         ],
       ),

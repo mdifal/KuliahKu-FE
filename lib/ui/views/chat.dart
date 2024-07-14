@@ -22,61 +22,85 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
   late ChatModel sourchat;
   late TabController _controller;
   bool isLoading = true;
+  bool isEmpty = false;
 
 
   @override
   void dispose() {
     _controller.dispose();
+
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+
     _controller = TabController(length: 2, vsync: this, initialIndex: 0);
+
     fetchChatsData();
   }
 
-
   Future<void> fetchChatsData() async {
+    setState(() {
+      isLoading = true;
+      personalChats.clear();
+      groupChats.clear();
+    });
+
     try {
       var url = 'http://$ipUrl/users/$email/roomchat';
       var response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final List<dynamic> roomChat = json.decode(response.body);
-        setState(() {
-          for (var data in roomChat) {
-            print (data);
-            ChatModel chatModel = ChatModel(
-              roomId: data['roomId'],
-              targetId: data['targetId'] ?? 'nisrinawafa@gmail.com',
-              roomName: data['roomName'] ?? 'test chat',
-              profilePicture: data['profilePicture'] ?? '',
-              CMTime: data['CMTime'],
-              currentMessage: data['currentMessage'],
-              isGroup: data['isGroup'],
-            );
 
-            if (chatModel.isGroup) {
-              groupChats.add(chatModel);
-            } else {
-              personalChats.add(chatModel);
+        if (roomChat != []){
+          setState(() {
+            for (var data in roomChat) {
+              print (data);
+              ChatModel chatModel = ChatModel(
+                roomId: data['roomId'] ?? '',
+                targetId: data['targetId'] ?? '',
+                roomName: data['roomName'] ?? 'Unknown',
+                profilePicture: data['profilePicture'] ?? '',
+                CMTime: data['CMTime'],
+                currentMessage: data['currentMessage'],
+                isGroup: data['isGroup'],
+              );
+
+              if (chatModel.isGroup) {
+                groupChats.add(chatModel);
+              } else {
+                personalChats.add(chatModel);
+              }
             }
-          }
-          personalChats.sort((a, b) => DateTime.parse(b.CMTime).compareTo(DateTime.parse(a.CMTime)));
-          groupChats.sort((a, b) => DateTime.parse(b.CMTime).compareTo(DateTime.parse(a.CMTime)));
 
+            personalChats.sort((a, b) => DateTime.parse(b.CMTime ?? DateTime.now().toString()).compareTo(DateTime.parse(a.CMTime ?? DateTime.now().toString())));
+            groupChats.sort((a, b) => DateTime.parse(b.CMTime ?? DateTime.now().toString()).compareTo(DateTime.parse(a.CMTime ?? DateTime.now().toString())));
+
+            isLoading = false;
+          });
+        } else {
+          isLoading = false;
+          isEmpty = true;
+        }
+      } else {
+        print('Error fetching chats data');
+
+        setState(() {
           isLoading = false;
         });
-      } else {
+
         throw Exception('Failed to fetch chats data');
       }
     } catch (error) {
       print('Error fetching chats data: $error');
+
       setState(() {
         isLoading = false;
       });
+
       throw Exception('Failed to fetch chats data');
     }
   }
@@ -125,15 +149,15 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SelectContact(),
+                              builder: (context) => NewChatPage(),
                             ),
                           );
                         } else if (_controller.index == 1) {
                           print("Create new group");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const TambahGrupPage()),
-                            );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const TambahGrupPage()),
+                          );
                         }
                       },
                     ),
@@ -162,20 +186,35 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
           : TabBarView(
         controller: _controller,
         children: [
-          ListView.builder(
-            itemCount: personalChats.length,
-            itemBuilder: (context, index) => ListChatCard(
-              chatModel: personalChats[index],
+          personalChats.isEmpty
+              ? Center(child: Text("No Chats Yet, Begin One Now!"))
+              : NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              if (notification.metrics.pixels < notification.metrics.minScrollExtent && !isLoading) {
+
+                fetchChatsData();
+                return true;
+              }
+              return false; // Tidak menangani notifikasi
+            },
+            child: ListView.builder(
+              itemCount: personalChats.length,
+              itemBuilder: (context, index) => ListChatCard(
+                chatModel: personalChats[index],
+              ),
             ),
           ),
-          ListView.builder(
-            itemCount: groupChats.length,  // Corrected line
+          groupChats.isEmpty
+              ? Center(child: Text("No Groups Yet, Begin One Now!"))
+              : ListView.builder(
+            itemCount: groupChats.length,
             itemBuilder: (context, index) => ListChatCard(
               chatModel: groupChats[index],
             ),
           ),
         ],
       ),
+
     );
   }
 }

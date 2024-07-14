@@ -1,5 +1,5 @@
 class ChatModel {
-  String roomId;
+  String? roomId;
   String targetId;
   String roomName;
   String profilePicture = 'https://via.placeholder.com/150';
@@ -8,7 +8,7 @@ class ChatModel {
   bool isGroup = false;
   bool select = false;
   ChatModel({
-    required this.roomId,
+    this.roomId,
     required this.targetId,
     required this.roomName,
     this.profilePicture = 'https://via.placeholder.com/150',
