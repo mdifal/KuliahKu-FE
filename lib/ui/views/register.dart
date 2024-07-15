@@ -25,14 +25,14 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _confirmPasswordController = TextEditingController();
 
   Future<void> _registerUser() async {
-    String email = _emailController.text;
+    String gmail = _emailController.text;
     String password = _passwordController.text;
     String passwordConfirmation = _confirmPasswordController.text;
     String fullName = _fullNameController.text;
     String username = _usernameController.text;
 
     Map<String, dynamic> data = {
-      "email": email,
+      "email": gmail,
       "password": password,
       "password_confirmation": passwordConfirmation,
       "fullname": fullName,
@@ -59,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
         context,
         MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
       );
+      email = gmail;
     } else {
       showDialog(
           context: context,

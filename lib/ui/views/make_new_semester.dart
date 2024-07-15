@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
@@ -25,31 +26,59 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
   // Fungsi untuk menambahkan semester baru
   Future<void> _addNewSemester() async {
     try {
-      final url = Uri.parse('http://$ipUrl/users/$email/semesters');
-      final response = await http.post(
-        url,
+      final url = 'http://$ipUrl/users/$email/semesters';
+      var response = await http.post(
+        Uri.parse(url),
         body: json.encode({
           'semesterNumber': _selectedSemester, // Mengirim semester yang dipilih
           'startDate': _selectedStartDate.toString(),
           'endDate': _selectedEndDate.toString(),
-          'totalCredits': _numberOfSubjects,
+          'sks': _numberOfSubjects,
         }),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
       );
 
       if (response.statusCode == 201) {
         // Jika berhasil menambahkan semester
         print('Semester added successfully');
-        // Tampilkan pesan sukses atau navigasi ke halaman lain
+        // Navigasi ke halaman HomePage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
       } else {
         // Jika terjadi kesalahan saat menambahkan semester
         print('Failed to add semester');
-        // Tampilkan pesan kesalahan
+        _showErrorDialog('Failed to add semester');
       }
     } catch (error) {
       print('Error adding semester: $error');
-      // Tampilkan pesan kesalahan
+      _showErrorDialog('Error adding semester: $error');
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -82,7 +111,22 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                // Dropdown untuk memilih semester
+                CustomDateInput(
+                  label: 'Awal Semester',
+                  onChanged: (DateTime selectedDate) {
+                    setState(() {
+                      _selectedStartDate = selectedDate;
+                    });
+                  },
+                ),
+                CustomDateInput(
+                  label: 'Akhir Semester',
+                  onChanged: (DateTime selectedDate) {
+                    setState(() {
+                      _selectedEndDate = selectedDate;
+                    });
+                  },
+                ),
                 CustomDropdown(
                   label: 'Semester',
                   items: List.generate(8, (index) {
@@ -99,25 +143,6 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                     });
                   },
                 ),
-                const SizedBox(height: 20.0),
-                CustomDateInput(
-                  label: 'Awal Semester',
-                  onChanged: (DateTime selectedDate) {
-                    setState(() {
-                      _selectedStartDate = selectedDate;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20.0),
-                CustomDateInput(
-                  label: 'Akhir Semester',
-                  onChanged: (DateTime selectedDate) {
-                    setState(() {
-                      _selectedEndDate = selectedDate;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20.0),
                 CustomNumberInput(
                   label: 'Jumlah SKS',
                   onChanged: (int value) {
@@ -128,7 +153,7 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 30.0),
+            const SizedBox(height: 20.0),
             // Tombol untuk memulai semester
             CustomButton(
               label: 'Mulai',

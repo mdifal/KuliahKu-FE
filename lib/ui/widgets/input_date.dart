@@ -36,7 +36,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
         children: [
           Text(
             widget.label ?? 'Input Tanggal',
-            textAlign: TextAlign.center, // Center the label text
+            textAlign: TextAlign.left, // Center the label text
             style: TextStyle(
               color: black,
               fontFamily: 'Poppins',
@@ -44,7 +44,6 @@ class _CustomDateInputState extends State<CustomDateInput> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8), // Add spacing between the label and dropdowns
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -125,6 +124,7 @@ class _CustomDateInputState extends State<CustomDateInput> {
               ),
             ],
           ),
+          SizedBox(height: 8),
         ],
       ),
     );
