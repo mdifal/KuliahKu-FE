@@ -28,6 +28,7 @@ class _IndividualPageState extends State<IndividualPage> {
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
+  String ListGroupMember = '';
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _IndividualPageState extends State<IndividualPage> {
     });
 
     connect();
+    fetchGroupMembers();
   }
 
   void connect() async {
@@ -130,6 +132,31 @@ class _IndividualPageState extends State<IndividualPage> {
       WidgetsBinding.instance?.addPostFrameCallback((_) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       });
+    } else {
+      throw Exception('Failed to load chat messages');
+    }
+  }
+
+  Future<void> fetchGroupMembers() async {
+    final response = await http.get(Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/member'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> membersGroup = json.decode(response.body);
+      print(membersGroup);
+      setState(() {
+        List<String> memberNames = membersGroup
+            .where((member) => member.containsKey('fullname'))
+            .map((member) => (member['fullname'] as String).split(' ').first)
+            .toList();
+
+        if (memberNames.length > 4) {
+          memberNames = memberNames.sublist(0, 4);
+          memberNames.add('...');
+        }
+
+        ListGroupMember = memberNames.join(', ');
+      });
+      print(ListGroupMember);
     } else {
       throw Exception('Failed to load chat messages');
     }
@@ -249,7 +276,6 @@ class _IndividualPageState extends State<IndividualPage> {
             ),
           ),
           title: InkWell(
-            onTap: () {},
             child: Container(
               margin: EdgeInsets.all(6),
               child: Column(
@@ -264,6 +290,17 @@ class _IndividualPageState extends State<IndividualPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  widget.chatModel.isGroup
+                      ? ListGroupMember.isNotEmpty
+                  ? Text(
+                    ListGroupMember,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: white.withOpacity(0.8),
+                    ),
+                  )
+                      : SizedBox.shrink()
+                      : SizedBox.shrink()
                 ],
               ),
             ),
