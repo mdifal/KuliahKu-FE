@@ -220,107 +220,107 @@ class _TimerPageState extends State<TimerPage> {
           SizedBox(width: 8),
         ],
       ),
-
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 20),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.transparent,
-                    border: Border.all(
-                      color: mainColor,
-                      width: 8,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 20),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 250,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                      border: Border.all(
+                        color: mainColor,
+                        width: 8,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        _formattedTime(_seconds),
+                        style: TextStyle(fontSize: 40),
+                      ),
                     ),
                   ),
-                  child: Center(
-                    child: Text(
-                      _formattedTime(_seconds),
-                      style: TextStyle(fontSize: 40),
+                ],
+              ),
+              SizedBox(height: 40),
+              _isRunning || _seconds > 0
+                  ? Column(
+                children: [
+                  Text(
+                    'Mata Kuliah: $_selectedCourseLabel',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Jenis Belajar: $_selectedLearningType',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Text(
+                    'Topik: $_judulText',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ],
+              )
+                  : Column(
+                children: [
+                  CustomTextField(
+                    label: "Topik Belajar",
+                    password: false,
+                    controller: _judulController,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 0),
+                    child: CustomDropdown(
+                      label: "Mata Kuliah",
+                      placeholder: "Pilih mata kuliah",
+                      onChanged: (value) {
+                        setState(() {
+                          subjectId = value;
+                        });
+                      },
+                      isLoading: _isLoading,
+                      items: List.generate(matkul.length, (index) {
+                        return {
+                          'label': matkul[index],
+                          'value': index
+                        };
+                      }),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 40),
-            _isRunning || _seconds > 0
-                ? Column(
-              children: [
-                Text(
-                  'Mata Kuliah: $_selectedCourseLabel',
-                  style: TextStyle(fontSize: 20),
-                ),
-                Text(
-                  'Jenis Belajar: $_selectedLearningType',
-                  style: TextStyle(fontSize: 20),
-                ),
-                Text(
-                  'Topik: $_judulText',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            )
-                : Column(
-              children: [
-                CustomTextField(
-                  label: "Topik Belajar",
-                  password: false,
-                  controller: _judulController,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0),
-                  child: CustomDropdown(
-                    label: "Mata Kuliah",
-                    placeholder: "Pilih mata kuliah",
-                    onChanged: (value) {
-                      setState(() {
-                        subjectId = value;
-                      });
-                    },
-                    isLoading: _isLoading,
-                    items: List.generate(matkul.length, (index) {
-                      return {
-                        'label': matkul[index],
-                        'value': index
-                      };
-                    }),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if(_isFinish)
-                  CustomButton(
-                    backgroundColor: yellow,
-                    label: 'Simpan',
-                    textColor: white,
-                    onPressed: () {
-                      addDataToBackend();
-                    },
-                  ),
-                if (!_isFinish)
-                  CustomIconsButton(
-                    label: _isRunning ? 'Pause' : 'Start',
-                    iconData: _isRunning ? Icons.pause: Icons.play_arrow,
-                    onPressed: _isRunning ? _pauseTimer : _startTimer,
-                    textColor: mainColor,
-                    backgroundColor: white,
-                  ),
+                ],
+              ),
+              SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (_isFinish)
+                    CustomButton(
+                      backgroundColor: yellow,
+                      label: 'Simpan',
+                      textColor: white,
+                      onPressed: () {
+                        addDataToBackend();
+                      },
+                    ),
+                  if (!_isFinish)
+                    CustomIconsButton(
+                      label: _isRunning ? 'Pause' : 'Start',
+                      iconData: _isRunning ? Icons.pause : Icons.play_arrow,
+                      onPressed: _isRunning ? _pauseTimer : _startTimer,
+                      textColor: mainColor,
+                      backgroundColor: white,
+                    ),
                   if (_isRunning && !_isFinish)
                     CustomIconsButton(
                       label: 'Stop',
-                      iconData: Icons.stop ,
-                      onPressed: _stopTimer ,
+                      iconData: Icons.stop,
+                      onPressed: _stopTimer,
                       textColor: mainColor,
                       backgroundColor: white,
                     ),
@@ -332,9 +332,10 @@ class _TimerPageState extends State<TimerPage> {
                       textColor: mainColor,
                       backgroundColor: white,
                     ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

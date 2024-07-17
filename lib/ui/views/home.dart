@@ -47,7 +47,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
+      resizeToAvoidBottomInset: false, // Prevent the FloatingActionButton from moving when the keyboard is open
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(viewInsets: EdgeInsets.zero),
+        child: _pages[_selectedIndex],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
