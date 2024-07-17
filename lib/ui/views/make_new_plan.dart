@@ -43,7 +43,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
   }
 
   Future<void> _fetchData() async {
-    final url = 'http://$ipUrl/users/$email/jadwalKuliahNames/now';
+    final url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
 
     try {
       final response = await http.get(Uri.parse(url), headers: {

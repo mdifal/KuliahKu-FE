@@ -21,7 +21,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String _username = '';
   late String _fullname = '';
   late String _college = '';
-  late DateTime _dob;
+  late DateTime _dob = DateTime(2000, 1, 1); // Default value for _dob
   late ImagePicker _imagePicker;
   XFile? _imageFile;
 
@@ -56,13 +56,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         setState(() {
           _username = fetchedData['username'];
           _fullname = fetchedData['fullname'];
-          _college = fetchedData['college'];
-          _dob = DateTime.parse(fetchedData['dob']);
+          _college = fetchedData['college'] ?? '';
+          _dob = fetchedData['dob'] != null ? DateTime.parse(fetchedData['dob']) : DateTime(2000, 1, 1);
 
           _usernameController.text = _username;
           _fullnameController.text = _fullname;
           _collegeController.text = _college;
-          _dobController.text = DateFormat('yyyy-MM-dd').format(_dob);
+          _dobController.text = _dob != null ? DateFormat('yyyy-MM-dd').format(_dob) : '';
         });
       } else {
         throw Exception('Failed to fetch profile data');
@@ -72,7 +72,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       throw Exception('Failed to fetch profile data');
     }
   }
-
 
   Future<void> _ambilFoto() async {
     final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
@@ -203,7 +202,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             SizedBox(height: 10),
             buildEditableFormField(
               controller: _collegeController,
-              labelText: 'Collage',
+              labelText: 'College',
               prefixIcon: Icons.school,
               onChanged: (value) {
                 setState(() {

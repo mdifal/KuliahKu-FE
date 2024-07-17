@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
         print('Gagal login: $errorMessage');
 
         setState(() {
-          _errorMessage = errorMessage; // Atur pesan kesalahan untuk ditampilkan
+          _errorMessage = errorMessage;
         });
       } else {
         // Tangani kesalahan lainnya
