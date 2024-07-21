@@ -108,7 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Make the Column fit the content
+                  mainAxisSize:
+                      MainAxisSize.min, // Make the Column fit the content
                   children: [
                     MenuItem(
                       icon: Icons.file_copy,
@@ -117,7 +118,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const LaporanHasilBelajarPage()),
                         );
                       },
                     ),
@@ -129,7 +132,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                          MaterialPageRoute(
+                              builder: (context) => const EditProfilePage()),
                         );
                       },
                     ),
@@ -141,7 +145,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const EditPasswordPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const EditPasswordPage()),
                         );
                       },
                     ),
@@ -151,10 +156,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       text: 'Log Out',
                       color: facebookColor,
                       onTap: () {
-                        email = '';
+                        setState(() {
+                          email = '';
+                        });
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const LandingPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const LandingPage()),
                         );
                       },
                     ),
