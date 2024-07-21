@@ -95,7 +95,7 @@ class _TambahGrupPageState extends State<TambahGrupPage> {
       String namaGroup = namaGrupController.text;
       List<String> daftarAnggota = daftarEmailAnggota;
       File imageFile;
-      var url = 'http://$ipUrl:8001/groups/$email';
+      var url = 'http://$ipUrl/groups/$email';
       var request = http.MultipartRequest('POST', Uri.parse(url));
       
       if (_imageFile != null && _imageFile!.existsSync()) {
