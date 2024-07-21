@@ -4,6 +4,7 @@ import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/views/edit_password.dart';
 import 'package:kuliahku/ui/views/edit_profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuliahku/ui/views/landing.dart';
 import 'dart:convert';
 import 'package:kuliahku/ui/views/laporan_hasil_belajar.dart';
 
@@ -141,6 +142,19 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const EditPasswordPage()),
+                        );
+                      },
+                    ),
+                    Divider(),
+                    MenuItem(
+                      icon: Icons.logout_outlined,
+                      text: 'Log Out',
+                      color: facebookColor,
+                      onTap: () {
+                        email = '';
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LandingPage()),
                         );
                       },
                     ),
