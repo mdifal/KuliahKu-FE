@@ -151,7 +151,11 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
                             MaterialPageRoute(
                               builder: (context) => NewChatPage(),
                             ),
-                          );
+                          ).then((value) {
+                            if (value == true) {
+                              fetchChatsData();
+                            }
+                          });
                         } else if (_controller.index == 1) {
                           print("Create new group");
                           Navigator.push(

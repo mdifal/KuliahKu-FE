@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 _onItemTapped(2);
               },
-              icon: Icon(Icons.note_add_outlined,
+              icon: Icon(Icons.chat_outlined,
                   color: _selectedIndex == 2 ? Colors.yellow : Colors.white),
               tooltip: 'Jadwal',
             ),

@@ -38,7 +38,7 @@ class _TimerPageState extends State<TimerPage> {
   late String _selectedLearningType = 'Belajar Mandiri';
 
   int type = 0;
-  int subjectId = 0;
+  String subjectId = '';
 
   List<dynamic> matkul = <Meeting>[];
   bool _isLoading = true;
@@ -76,7 +76,7 @@ class _TimerPageState extends State<TimerPage> {
 
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl/users/$email/jadwalKuliahNames/now';
+    var url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
 
     try {
       var response = await http.get(
@@ -281,13 +281,13 @@ class _TimerPageState extends State<TimerPage> {
                       placeholder: "Pilih mata kuliah",
                       onChanged: (value) {
                         setState(() {
-                          subjectId = value;
+                          _selectedCourseId = matkul[value]['subjectId'];
                         });
                       },
                       isLoading: _isLoading,
                       items: List.generate(matkul.length, (index) {
                         return {
-                          'label': matkul[index],
+                          'label': matkul[index]['subject'],
                           'value': index
                         };
                       }),

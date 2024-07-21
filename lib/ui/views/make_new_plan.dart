@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/style.dart';
@@ -11,9 +9,9 @@ import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/input_date.dart';
 import 'package:kuliahku/ui/shared/global.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import '../widgets/time_field.dart';
+import 'calender.dart';
 
 class AddPlanPage extends StatefulWidget {
   const AddPlanPage({Key? key}) : super(key: key);
@@ -24,11 +22,10 @@ class AddPlanPage extends StatefulWidget {
 
 class _AddPlanPageState extends State<AddPlanPage> {
   int type = 0;
-  int subjectId = 0;
+  String subjectId = '';
   final TextEditingController _judulController = TextEditingController();
   late DateTime _selectedDeadline;
   late DateTime _selectedReminder;
-  String description = '';
   final TextEditingController _catatanController = TextEditingController();
   List<dynamic> meetings = [];
   FilePickerResult? _selectedFile;
@@ -70,11 +67,10 @@ class _AddPlanPageState extends State<AddPlanPage> {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      // File yang dipilih
-      final path = result.files.single.path;
-      print('File path: $path');
+      setState(() {
+        _selectedFile = result;
+      });
     } else {
-      // Pengguna membatalkan pemilihan file
       print('Tidak ada file yang dipilih');
     }
   }
@@ -84,7 +80,6 @@ class _AddPlanPageState extends State<AddPlanPage> {
       final url = 'http://$ipUrl/users/$email/rencanaMandiri';
       final request = http.MultipartRequest('POST', Uri.parse(url));
 
-      // Add selected file if available
       if (_selectedFile != null) {
         request.files.add(http.MultipartFile.fromBytes(
           'file',
@@ -93,9 +88,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
         ));
       }
 
-      // Add other form fields
       request.fields['type'] = type.toString();
-      request.fields['subjectId'] = meetings[subjectId];
+      request.fields['subjectId'] = subjectId;
       request.fields['title'] = _judulController.text;
       request.fields['dateReminder'] = DateFormat('yyyy-MM-dd').format(_selectedReminder);
       request.fields['timeReminder'] = DateFormat('HH:mm:ss').format(_selectedReminder);
@@ -103,12 +97,15 @@ class _AddPlanPageState extends State<AddPlanPage> {
       request.fields['timeDeadline'] = DateFormat('HH:mm:ss').format(_selectedDeadline);
       request.fields['notes'] = _catatanController.text;
 
-      // Send request to backend
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode == 200) {
         print('Rencana mandiri berhasil ditambahkan');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CalenderTaskandSchedulePage()),
+        );
       } else {
         print('Gagal menambahkan rencana mandiri: ${response.statusCode}');
       }
@@ -161,12 +158,12 @@ class _AddPlanPageState extends State<AddPlanPage> {
                   placeholder: "Pilih mata kuliah",
                   onChanged: (value) {
                     setState(() {
-                      subjectId = value;
+                      subjectId = meetings[value]['subjectId'];
                     });
                   },
                   isLoading: _isLoading,
                   items: List.generate(meetings.length, (index) {
-                    return {'label': meetings[index], 'value': index}; // Adjust as necessary
+                    return {'label': meetings[index]['subject'], 'value': index};
                   }),
                 ),
                 CustomTextField(
@@ -212,9 +209,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                 SizedBox(height: 10),
                 CustomUploadFileButton(
                   label: "Tambah Lampiran",
-                    onPressed: () async {
-                      _pickFile();
-                    }
+                  onPressed: _pickFile,
                 ),
                 if (_selectedFile != null)
                   Text(
