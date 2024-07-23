@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 20),
               Stack(
                 children: [
                   CircleAvatar(
@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontFamily: 'Poppins',
                 ),
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(20),
                 constraints: BoxConstraints(
