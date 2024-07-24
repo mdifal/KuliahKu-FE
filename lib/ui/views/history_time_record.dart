@@ -10,7 +10,9 @@ import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 
 class HistoryRecordPage extends StatefulWidget {
-  const HistoryRecordPage({super.key});
+  final String? urlApi;
+  const HistoryRecordPage({Key? key, this.urlApi})
+      : super(key: key);
 
   @override
   State<HistoryRecordPage> createState() => _HistoryRecordPageState();
@@ -23,7 +25,8 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
     _fetchData();
   }
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl/users/$email/time-records/semester/$idSemester';
+    print('ini link ${widget.urlApi}');
+    var url = '${widget.urlApi}';
 
     try {
       var response = await http.get(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/calender.dart';
 import 'package:kuliahku/ui/views/history_time_record.dart';
@@ -31,10 +32,10 @@ class _HomePageState extends State<HomePage> {
 
     _pages = [
       CalenderTaskandSchedulePage(calender: _calender),
-      HistoryRecordPage(),
+      HistoryRecordPage(urlApi: 'http://$ipUrl/users/$email/time-records/semester/$idSemester'),
       ChatPage(),
       ProfilePage(),
-      TimerPage(),
+      TimerPage(urlApi: 'http://$ipUrl/users/$email/time-records',),
     ];
   }
 

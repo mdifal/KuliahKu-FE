@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:kuliahku/ui/views/collab_plan/calender.dart';
+import 'package:kuliahku/ui/views/history_time_record.dart';
+import 'package:kuliahku/ui/views/timer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/widgets/chat/CustomUI/OwnMessageCard.dart';
@@ -47,9 +50,33 @@ class _IndividualPageState extends State<IndividualPage> {
     fetchGroupMembers();
   }
 
+  void onSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TimerPage(urlApi: 'http://$ipUrl/users/$email/time-records',)),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CalenderCollabPlanPage(groupId:widget.chatModel.roomId)),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HistoryRecordPage(urlApi:
+                        'http://$ipUrl/users/$email/time-records/semester/$idSemester')),
+        );
+        break;
+    }
+  }
+
   void connect() async {
-    if (widget.chatModel.roomId != null){
-      if (widget.chatModel.isGroup){
+    if (widget.chatModel.roomId != null) {
+      if (widget.chatModel.isGroup) {
         await fetchInitialGroupMessages();
       } else {
         await fetchInitialPersonalMessages();
@@ -80,7 +107,8 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   Future<void> fetchInitialPersonalMessages() async {
-    final response = await http.get(Uri.parse('http://$ipUrl/privateChats/${widget.chatModel.roomId}/chats'));
+    final response = await http.get(Uri.parse(
+        'http://$ipUrl/privateChats/${widget.chatModel.roomId}/chats'));
 
     if (response.statusCode == 200) {
       final List<dynamic> chatData = json.decode(response.body);
@@ -107,7 +135,8 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   Future<void> fetchInitialGroupMessages() async {
-    final response = await http.get(Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/chats'));
+    final response = await http.get(
+        Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/chats'));
 
     if (response.statusCode == 200) {
       final List<dynamic> chatData = json.decode(response.body);
@@ -138,7 +167,8 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   Future<void> fetchGroupMembers() async {
-    final response = await http.get(Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/member'));
+    final response = await http.get(
+        Uri.parse('http://$ipUrl/groups/${widget.chatModel.roomId}/member'));
 
     if (response.statusCode == 200) {
       final List<dynamic> membersGroup = json.decode(response.body);
@@ -165,14 +195,14 @@ class _IndividualPageState extends State<IndividualPage> {
   void sendMessage(String message) {
     DateTime now = DateTime.now();
     String? target;
-    if(widget.chatModel.isGroup){
+    if (widget.chatModel.isGroup) {
       target = widget.chatModel.roomId;
     } else {
       target = widget.chatModel.targetId;
     }
     print("Sending message: $message to $target timestamp: $now");
     setMessage("source", message);
-    if(widget.chatModel.isGroup){
+    if (widget.chatModel.isGroup) {
       socket.emit("chat", {
         "senderId": email,
         "content": message,
@@ -187,7 +217,6 @@ class _IndividualPageState extends State<IndividualPage> {
         "timestamp": now.toString(),
       });
     }
-
   }
 
   void setMessage(String type, String message) {
@@ -250,61 +279,70 @@ class _IndividualPageState extends State<IndividualPage> {
                 ),
                 widget.chatModel.profilePicture == ''
                     ? CircleAvatar(
-                  radius: 20,
-                  backgroundColor: greySoft,
-                  child: ClipOval(
-                      child: widget.chatModel.isGroup
-                          ? SvgPicture.asset(
-                        image_group,
-                        fit: BoxFit.cover,
-                        width: 38,
-                        height: 38,
+                        radius: 20,
+                        backgroundColor: greySoft,
+                        child: ClipOval(
+                            child: widget.chatModel.isGroup
+                                ? SvgPicture.asset(
+                                    image_group,
+                                    fit: BoxFit.cover,
+                                    width: 38,
+                                    height: 38,
+                                  )
+                                : SvgPicture.asset(
+                                    image_person,
+                                    fit: BoxFit.cover,
+                                    width: 38,
+                                    height: 38,
+                                  )),
                       )
-                          : SvgPicture.asset(
-                        image_person,
-                        fit: BoxFit.cover,
-                        width: 38,
-                        height: 38,
-                      )
-                  ),
-                )
                     : CircleAvatar(
-                  radius: 23,
-                  backgroundColor: greySoft,
-                ),
+                        radius: 23,
+                        backgroundColor: greySoft,
+                      ),
               ],
             ),
           ),
           title: InkWell(
-            child: Container(
-              margin: EdgeInsets.all(6),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chatModel.roomName,
-                    style: TextStyle(
-                      fontSize: 18.5,
-                      color: white,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Container(
+            margin: EdgeInsets.all(6),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.chatModel.roomName,
+                  style: TextStyle(
+                    fontSize: 18.5,
+                    color: white,
+                    fontWeight: FontWeight.bold,
                   ),
-                  widget.chatModel.isGroup
-                      ? ListGroupMember.isNotEmpty
-                  ? Text(
-                    ListGroupMember,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: white.withOpacity(0.8),
-                    ),
-                  )
-                      : SizedBox.shrink()
-                      : SizedBox.shrink()
-                ],
-              ),
+                ),
+                widget.chatModel.isGroup
+                    ? ListGroupMember.isNotEmpty
+                        ? Text(
+                            ListGroupMember,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: white.withOpacity(0.8),
+                            ),
+                          )
+                        : SizedBox.shrink()
+                    : SizedBox.shrink(),
+              ],
             ),
-          ),
+          )),
+          actions: [
+            PopupMenuButton<int>(
+              icon: Icon(Icons.more_vert, color: white),
+              onSelected: (item) => onSelected(context, item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(value: 0, child: Text('Timer')),
+                PopupMenuItem<int>(value: 1, child: Text('Collab Plan')),
+                PopupMenuItem<int>(value: 2, child: Text('History Time Record')),
+              ],
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -318,7 +356,8 @@ class _IndividualPageState extends State<IndividualPage> {
                 controller: _scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
-                  DateTime currentDate = DateTime.parse(messages[index].dateTime);
+                  DateTime currentDate =
+                      DateTime.parse(messages[index].dateTime);
                   DateTime? previousDate;
                   if (index > 0) {
                     previousDate = DateTime.parse(messages[index - 1].dateTime);
@@ -342,7 +381,8 @@ class _IndividualPageState extends State<IndividualPage> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 13),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 13),
                                 child: Text(
                                   getFormattedDate(currentDate),
                                   style: TextStyle(
@@ -398,19 +438,20 @@ class _IndividualPageState extends State<IndividualPage> {
                           border: InputBorder.none,
                           hintText: "Type a message",
                           hintStyle: TextStyle(color: greySoft),
-                          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 20),
                           suffixIcon: IconButton(
                             icon: Icon(Icons.send),
                             onPressed: sendButton
                                 ? () {
-                              sendMessage(
-                                _controller.text.trim(),
-                              );
-                              _controller.clear();
-                              setState(() {
-                                sendButton = false;
-                              });
-                            }
+                                    sendMessage(
+                                      _controller.text.trim(),
+                                    );
+                                    _controller.clear();
+                                    setState(() {
+                                      sendButton = false;
+                                    });
+                                  }
                                 : null,
                           ),
                         ),
@@ -425,7 +466,13 @@ class _IndividualPageState extends State<IndividualPage> {
                     ),
                     child: CircleAvatar(
                       radius: 25,
-                      backgroundColor: greySoft,
+                      backgroundColor: mainColor,
+                      child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.add,
+                            color: white,
+                          )),
                     ),
                   ),
                 ],
@@ -437,4 +484,3 @@ class _IndividualPageState extends State<IndividualPage> {
     );
   }
 }
-

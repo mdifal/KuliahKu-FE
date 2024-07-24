@@ -14,7 +14,8 @@ import '../widgets/text_field.dart';
 import 'history_time_record.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({Key? key}) : super(key: key);
+  final String? urlApi;
+  const TimerPage({Key? key, this.urlApi});
 
   @override
   _TimerPageState createState() => _TimerPageState();
@@ -74,7 +75,6 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-
   Future<void> _fetchData() async {
     var url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
 
@@ -114,7 +114,7 @@ class _TimerPageState extends State<TimerPage> {
         'startTime': DateFormat('HH:mm:ss').format(_startTime),
         'endTime': DateFormat('HH:mm:ss').format(_endTime),
         'subject': _selectedCourseId,
-        'title' : _judulController.text,
+        'title': _judulController.text,
         'type': _selectedLearningTypeId,
         'time_records': _formattedTime(_seconds),
       };
@@ -141,7 +141,8 @@ class _TimerPageState extends State<TimerPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage(initialIndex:1)),
+          MaterialPageRoute(
+              builder: (context) => const HomePage(initialIndex: 1)),
         );
       } else {
         throw Exception('Failed to add time record');
@@ -159,8 +160,7 @@ class _TimerPageState extends State<TimerPage> {
     });
     setState(() {
       _isRunning = true;
-      if(_seconds<=0)
-        _startTime = DateTime.now();
+      if (_seconds <= 0) _startTime = DateTime.now();
     });
   }
 
@@ -213,7 +213,12 @@ class _TimerPageState extends State<TimerPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const HistoryRecordPage()),
+                MaterialPageRoute(
+                  builder: (context) => HistoryRecordPage(
+                    urlApi:
+                        'http://$ipUrl/users/$email/time-records/semester/$idSemester',
+                  ),
+                ),
               );
             },
           ),
@@ -252,49 +257,49 @@ class _TimerPageState extends State<TimerPage> {
               SizedBox(height: 40),
               _isRunning || _seconds > 0
                   ? Column(
-                children: [
-                  Text(
-                    'Mata Kuliah: $_selectedCourseLabel',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Jenis Belajar: $_selectedLearningType',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Topik: $_judulText',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ],
-              )
+                      children: [
+                        Text(
+                          'Mata Kuliah: $_selectedCourseLabel',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          'Jenis Belajar: $_selectedLearningType',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          'Topik: $_judulText',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    )
                   : Column(
-                children: [
-                  CustomTextField(
-                    label: "Topik Belajar",
-                    password: false,
-                    controller: _judulController,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 0),
-                    child: CustomDropdown(
-                      label: "Mata Kuliah",
-                      placeholder: "Pilih mata kuliah",
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedCourseId = matkul[value]['subjectId'];
-                        });
-                      },
-                      isLoading: _isLoading,
-                      items: List.generate(matkul.length, (index) {
-                        return {
-                          'label': matkul[index]['subject'],
-                          'value': index
-                        };
-                      }),
+                      children: [
+                        CustomTextField(
+                          label: "Topik Belajar",
+                          password: false,
+                          controller: _judulController,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 0),
+                          child: CustomDropdown(
+                            label: "Mata Kuliah",
+                            placeholder: "Pilih mata kuliah",
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCourseId = matkul[value]['subjectId'];
+                              });
+                            },
+                            isLoading: _isLoading,
+                            items: List.generate(matkul.length, (index) {
+                              return {
+                                'label': matkul[index]['subject'],
+                                'value': index
+                              };
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
               SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
