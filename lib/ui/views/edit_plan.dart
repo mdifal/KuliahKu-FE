@@ -16,12 +16,14 @@ import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../widgets/editable_form_field.dart';
 import 'calender.dart';
 
 class UpdateTaskPage extends StatefulWidget {
   final String id;
+  final Map<String, dynamic> plan;
 
-  const UpdateTaskPage({Key? key, required this.id}) : super(key: key);
+  const UpdateTaskPage({Key? key, required this.id, required this.plan}) : super(key: key);
 
   @override
   State<UpdateTaskPage> createState() => _UpdateTaskPageState();
@@ -36,17 +38,22 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
   final TextEditingController _catatanController = TextEditingController();
   List<dynamic> meetings = [];
   FilePickerResult? _selectedFile;
-  bool _isLoading = true;
+  bool _isLoadingMatkul = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
+    _fetchDataMatkul();
     _selectedDeadline = DateTime.now();
     _selectedReminder = DateTime.now();
+    type = widget.plan['type'] == 'Mengerjakan Tugas' ? 1 : 2 ;
+    _selectedReminder = widget.plan['dateTimeReminder'];
+    _selectedDeadline = widget.plan['dateTimeDeadline'];
+    _catatanController.text = widget.plan['notes'];
+    _judulController.text = widget.plan['title'];
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchDataMatkul() async {
     final url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
 
     try {
@@ -58,15 +65,15 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
           meetings = jsonResponse['data'];
-          _isLoading = false;
+          _isLoadingMatkul = false;
         });
       } else {
         print('Request failed with status: ${response.statusCode}');
-        setState(() => _isLoading = false);
+        setState(() => _isLoadingMatkul = false);
       }
     } catch (e) {
       print('Error: $e');
-      setState(() => _isLoading = false);
+      setState(() => _isLoadingMatkul = false);
     }
   }
 
@@ -82,52 +89,69 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
     }
   }
 
-  Future<void> addPlanToBackend() async {
-    try {
-      final url = 'http://$ipUrl/users/$email/rencanaMandiri';
-      final request = http.MultipartRequest('POST', Uri.parse(url));
+  Future<void> _updateTask() async {
+    print (subjectId);
+    Map<String, dynamic> requestBody = {
+      'type': type != 0 ? type : widget.plan['type'],
+      'subjectId': subjectId != '' ? subjectId : widget.plan['subjectId'] ?? 'abcde',
+      'title': _judulController.text,
+      'dateReminder': DateFormat('yyyy-MM-dd').format(_selectedReminder),
+      'timeReminder': DateFormat('HH:mm:ss').format(_selectedReminder),
+      'dateDeadline': DateFormat('yyyy-MM-dd').format(_selectedDeadline),
+      'timeDeadline': DateFormat('HH:mm:ss').format(_selectedDeadline),
+      'notes': _catatanController.text,
+    };
 
-      if (_selectedFile != null && _selectedFile!.files.isNotEmpty) {
-        final fileBytes = _selectedFile!.files.first.bytes;
-        if (fileBytes != null) {
-          request.files.add(http.MultipartFile.fromBytes(
-            'file',
-            fileBytes,
-            filename: _selectedFile!.files.first.name,
-          ));
-        } else {
-          print('File bytes are null');
-        }
-      } else {
-        print('No file selected');
-      }
-
-      request.fields['type'] = type.toString();
-      request.fields['subjectId'] = subjectId;
-      request.fields['title'] = _judulController.text;
-      request.fields['dateReminder'] = DateFormat('yyyy-MM-dd').format(_selectedReminder);
-      request.fields['timeReminder'] = DateFormat('HH:mm:ss').format(_selectedReminder);
-      request.fields['dateDeadline'] = DateFormat('yyyy-MM-dd').format(_selectedDeadline);
-      request.fields['timeDeadline'] = DateFormat('HH:mm:ss').format(_selectedDeadline);
-      request.fields['notes'] = _catatanController.text;
-
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      if (response.statusCode == 200) {
-        print('Rencana mandiri berhasil ditambahkan');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CalenderTaskandSchedulePage()),
-        );
-      } else {
-        print('Gagal menambahkan rencana mandiri: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Terjadi kesalahan: $error');
+    var url =
+        'http://$ipUrl/users/$email/rencanaMandiri/update/${widget.id}';
+    var response = await http.put(
+      Uri.parse(url),
+      body: json.encode(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+    );
+    Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    String statusCode = jsonResponse['statusCode'];
+    String message = jsonResponse['message'];
+    if (statusCode == "200") {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Update Tugas Berhasil'),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          });
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Update Tugas Gagal'),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +159,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Tambah Tugas',
+            'Update Tugas',
             style: TextStyle(
               color: white,
               fontFamily: 'Poppins',
@@ -145,7 +169,8 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
           ),
           backgroundColor: darkBlue,
         ),
-        body: SingleChildScrollView(
+        body:
+        SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -157,7 +182,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
               children: [
                 CustomDropdown(
                   label: "Apa yang akan kamu kerjakan",
-                  placeholder: "Pilih jenis belajar",
+                  placeholder: widget.plan['type'],
                   onChanged: (value) {
                     setState(() {
                       type = value;
@@ -170,13 +195,13 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                 ),
                 CustomDropdown(
                   label: "Mata Kuliah",
-                  placeholder: "Pilih mata kuliah",
+                  placeholder: widget.plan['subject'],
                   onChanged: (value) {
                     setState(() {
                       subjectId = meetings[value]['subjectId'];
                     });
                   },
-                  isLoading: _isLoading,
+                  isLoading: _isLoadingMatkul,
                   items: List.generate(meetings.length, (index) {
                     return {'label': meetings[index]['subject'], 'value': index};
                   }),
@@ -238,7 +263,7 @@ class _UpdateTaskPageState extends State<UpdateTaskPage> {
                     label: "Simpan",
                     backgroundColor: yellow,
                     textColor: black,
-                    onPressed: addPlanToBackend,
+                    onPressed: _updateTask,
                   ),
                 ),
               ],
