@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
-import 'package:kuliahku/ui/views/edit_task.dart';
+import 'package:kuliahku/ui/views/edit_plan.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,16 +21,8 @@ class DetailPlanPage extends StatefulWidget {
 }
 
 class _DetailPlanPageState extends State<DetailPlanPage> {
-  late String id = '';
-  late String title = '';
-  late String type = '';
-  late String subject = '';
-  late DateTime dateTimeReminder = DateTime.now();
-  late DateTime dateTimeDeadline = DateTime.now();
-  late String notes = '';
-  late int color = 0;
-  late String fileUrl = '';
-
+  late Map<String, dynamic> plan = {};
+  bool _isLoading = true;
 
   @override
   void didChangeDependencies() {
@@ -54,21 +46,29 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
         print('detail $jsonResponse');
         setState(() {
           Map<String, dynamic> data = jsonResponse['data'];
-          id = data['id'];
-          title = data['title'];
-          type = data['type'];
-          subject = data['subject'];
-          dateTimeReminder = DateTime.parse(data['dateTimeReminder']);
-          dateTimeDeadline = DateTime.parse(data['dateTimeDeadline']);
-          notes = data['notes'];
-          color = data['color'];
-          fileUrl = data['fileUrl'] ?? '';
+          plan['id'] = data['id'];
+          plan['title'] = data['title'];
+          plan['type'] = data['type'];
+          plan['subject'] = data['subject'];
+          plan['subjectId'] = data['subjectId'];
+          plan['dateTimeReminder'] = DateTime.parse(data['dateTimeReminder']);
+          plan['dateTimeDeadline'] = DateTime.parse(data['dateTimeDeadline']);
+          plan['notes'] = data['notes'];
+          plan['color'] = data['color'];
+          plan['fileUrl'] = data['fileUrl'] ?? '';
+
+          _isLoading = false;
         });
+
+        print ('ini plan: $plan');
+
       } else {
         print('Request failed with status: ${response.statusCode}');
+        setState(() => _isLoading = false);
       }
     } catch (e) {
       print('Error: $e');
+      setState(() => _isLoading = false);
     }
   }
 
@@ -130,15 +130,15 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => UpdateTaskPage(id: widget.idTask),
+        builder: (context) => UpdateTaskPage(id: widget.idTask, plan: plan),
       ),
     );
   }
 
   void _openFile(String url) async {
     // Implement file opening logic, for example using url_launcher package
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
     } else {
       throw 'Could not launch $url';
     }
@@ -166,7 +166,8 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
           ),
         ),
       ),
-      body: Container(
+      body: _isLoading ? Center(child: CircularProgressIndicator())
+          : Container(
         padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
         child: ListView(
           children: [
@@ -178,7 +179,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        plan['title'],
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
@@ -186,7 +187,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                       ),
                       SizedBox(height: 4), // Menambahkan jarak kecil antara title dan type
                       Text(
-                        type,
+                        plan['type'],
                         style: TextStyle(
                           fontSize: 16,
                         ),
@@ -217,9 +218,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap:isActiveSemester? updateTask :() {
-                                  
-                                },
+                                onTap: updateTask,
                               ),
                             ),
                           ),
@@ -248,9 +247,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: isActiveSemester? deleteTask :() {
-                                  
-                                },
+                                onTap: deleteTask,
                               ),
                             ),
                           ),
@@ -265,8 +262,8 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDateBox('Deadline', dateTimeDeadline),
-                _buildDateBox('Reminder', dateTimeReminder),
+                _buildDateBox('Deadline', plan['dateTimeDeadline']),
+                _buildDateBox('Reminder', plan['dateTimeReminder']),
               ],
             ),
             SizedBox(height: 5),
@@ -279,7 +276,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                   fontSize: 16,
                 ),
               ),
-              subtitle: Text(subject, style: TextStyle(fontSize: 14)),
+              subtitle: Text(plan['subject'], style: TextStyle(fontSize: 14)),
               contentPadding: EdgeInsets.symmetric(vertical: 2),
             ),
             ListTile(
@@ -291,10 +288,10 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                   fontSize: 16,
                 ),
               ),
-              subtitle: Text(notes, style: TextStyle(fontSize: 14)),
+              subtitle: Text(plan['notes'], style: TextStyle(fontSize: 14)),
               contentPadding: EdgeInsets.symmetric(vertical: 2),
             ),
-            if (fileUrl.isNotEmpty)
+            if (plan['fileUrl'].isNotEmpty)
               ListTile(
                 leading: Icon(Icons.attach_file, color: mainColor),
                 title: Text(
@@ -304,10 +301,10 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                     fontSize: 16,
                   ),
                 ),
-                subtitle: Text(fileUrl, style: TextStyle(fontSize: 14)),
+                subtitle: Text(plan['fileUrl'], style: TextStyle(fontSize: 14)),
                 onTap: () {
                   // Open file URL or download file
-                  _openFile(fileUrl);
+                  _openFile(plan['fileUrl']);
                 },
                 contentPadding: EdgeInsets.symmetric(vertical: 2),
               ),
