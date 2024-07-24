@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../widgets/button.dart';
+import '../widgets/editable_form_field.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -260,41 +261,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildEditableFormField({
-    required TextEditingController controller,
-    required String labelText,
-    required IconData prefixIcon,
-    required Function(String) onChanged,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: Stack(
-        children: [
-          TextFormField(
-            controller: controller,
-            onChanged: onChanged,
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(),
-              labelText: labelText,
-              prefixIcon: Icon(prefixIcon),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            bottom: 0,
-            child: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                // Implement edit functionality here
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
