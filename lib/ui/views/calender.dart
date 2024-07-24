@@ -56,7 +56,8 @@ class _CalenderTaskandSchedulePageState
       timeSemester =
           prefs.getString('timeSemester') ?? activeSemester.time;
       SemesterId = prefs.getString('SemesterId') ?? activeSemester.id;
-      idSemester = SemesterId; 
+      idSemester = SemesterId;
+      idActiveSemester = prefs.getString('SemesterId') ?? activeSemester.id;
     });
   }
 
@@ -96,6 +97,13 @@ class _CalenderTaskandSchedulePageState
       titleSemester = selectedItem.title;
       timeSemester = selectedItem.time;
       isLoading = true;
+      print('id semester $idSemester dan activeid smester $idActiveSemester');
+      if(idSemester == idActiveSemester){
+        isActiveSemester = true;
+      }
+      else{
+        isActiveSemester = false;
+      }
     });
     await _saveSemester();
     await _fetchData();
@@ -219,7 +227,7 @@ class _CalenderTaskandSchedulePageState
                 ),
                 Row(
                   children: [
-                    Container(
+                    isActiveSemester? Container(
                       decoration: BoxDecoration(
                         color: mainColor,
                         borderRadius: BorderRadius.circular(5),
@@ -250,6 +258,34 @@ class _CalenderTaskandSchedulePageState
                                               : tambahJadwalPage(),
                                     ),
                                   );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ) : Container(
+                      decoration: BoxDecoration(
+                        color: greySoft,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      width: 25,
+                      height: 25,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Center(
+                            child: Icon(
+                              Icons.add,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
                                 },
                               ),
                             ),

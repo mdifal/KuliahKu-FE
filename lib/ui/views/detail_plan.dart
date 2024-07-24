@@ -198,7 +198,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: mainColor,
+                        color: isActiveSemester? mainColor : greySoft,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       width: 25,
@@ -217,7 +217,9 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: updateTask,
+                                onTap:isActiveSemester? updateTask :() {
+                                  
+                                },
                               ),
                             ),
                           ),
@@ -227,7 +229,7 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                     SizedBox(width: 10),
                     Container(
                       decoration: BoxDecoration(
-                        color: mainColor,
+                        color: isActiveSemester? mainColor : greySoft,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       width: 25,
@@ -246,7 +248,9 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: deleteTask,
+                                onTap: isActiveSemester? deleteTask :() {
+                                  
+                                },
                               ),
                             ),
                           ),

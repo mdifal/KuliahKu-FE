@@ -210,7 +210,7 @@ class _DetailScheduleState extends State<DetailSchedule> {
                   ],
                 ),
               ),
-              Positioned(
+              isActiveSemester? Positioned(
                 right: 0,
                 child: PopupMenuButton<String>(
                   itemBuilder: (BuildContext context) =>
@@ -239,7 +239,7 @@ class _DetailScheduleState extends State<DetailSchedule> {
                   },
                   icon: Icon(Icons.more_vert, color: Colors.grey),
                 ),
-              ),
+              ) : Container(),
             ],
           ),
           SizedBox(height: 15),
