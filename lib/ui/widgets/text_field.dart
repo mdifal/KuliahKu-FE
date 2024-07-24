@@ -86,7 +86,7 @@ class CustomTextField extends StatelessWidget {
                 hintText: placeholder,
                 hintStyle: TextStyle(
                   fontSize: 12,
-                  color: grey,
+                  color: black,
                   fontWeight: FontWeight.w600,
                 ),
                 contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
