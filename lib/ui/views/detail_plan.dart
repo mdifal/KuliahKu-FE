@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/edit_plan.dart';
+import 'package:kuliahku/ui/views/timer.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -145,9 +146,24 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
   }
 
   void deleteTask() async {
-    await delete(); // Menghapus data
-    Navigator.pop(context); // Kembali ke halaman sebelumnya
-    _fetchData(); // Memperbarui data setelah kembali
+    await delete();
+    Navigator.pop(context);
+    _fetchData();
+  }
+
+
+  void pushToTimer() {
+    print ('masuk sini');
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TimerPage(
+            subject: plan['subject'],
+            subjectId: plan['subjectId'],
+            topik: plan['title']
+        ),
+      ),
+    );
   }
 
   String formatDateTime(DateTime dateTime) {
@@ -314,7 +330,16 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
               backgroundColor: yellow,
               textColor: black,
               onPressed: () {
-                // Tambahkan logika untuk mulai merekam
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TimerPage(
+                        subject: plan['subject'],
+                        subjectId: plan['subjectId'],
+                        topik: plan['title']
+                    ),
+                  ),
+                );
               },
             ),
           ],
@@ -380,4 +405,5 @@ class _DetailPlanPageState extends State<DetailPlanPage> {
     ];
     return months[month - 1];
   }
+
 }

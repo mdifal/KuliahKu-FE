@@ -9,6 +9,7 @@ class CustomDropdown extends StatefulWidget {
   final ValueChanged<int>? onChanged;
   final int? initialValue;
   final bool isLoading;
+  final bool? disable;
 
   const CustomDropdown({
     Key? key,
@@ -18,6 +19,7 @@ class CustomDropdown extends StatefulWidget {
     this.onChanged,
     this.initialValue,
     this.isLoading = false,
+    this.disable = false,
   }) : super(key: key);
 
   @override
@@ -40,18 +42,19 @@ class _CustomDropdownState extends State<CustomDropdown> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              widget.label!,
-              style: TextStyle(
-                color: black,
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+          if (widget.label != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                widget.label!,
+                style: TextStyle(
+                  color: black,
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
           DropdownButtonFormField2<int>(
             value: selectedValue,
             decoration: InputDecoration(
@@ -59,6 +62,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
+              enabled: !widget.disable!, // Disable input decoration
             ),
             hint: Text(
               widget.placeholder ?? '',
@@ -81,7 +85,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               }
               return null;
             },
-            onChanged: widget.isLoading
+            onChanged: widget.disable! || widget.isLoading
                 ? null
                 : (value) {
               setState(() {
@@ -111,7 +115,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               )
                   : Icon(
                 Icons.arrow_drop_down,
-                color: grey,
+                color: widget.disable! ? Colors.grey : grey,
               ),
               iconSize: 24,
             ),

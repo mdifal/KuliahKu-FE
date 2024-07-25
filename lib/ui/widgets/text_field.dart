@@ -6,14 +6,16 @@ class CustomTextField extends StatelessWidget {
   final String? label;
   final String? placeholder;
   final bool password;
-  final TextEditingController? controller; // Tambahkan properti controller
+  final TextEditingController? controller;
+  final bool? disable;
 
   const CustomTextField({
     Key? key,
     this.placeholder,
     this.label,
     this.password = false,
-    this.controller, // Inisialisasi properti controller
+    this.controller,
+    this.disable = false,
   }) : super(key: key);
 
   @override
@@ -82,7 +84,7 @@ class CustomTextField extends StatelessWidget {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: secondaryColor,
+                fillColor: disable! ? greySoft : secondaryColor,
                 hintText: placeholder,
                 hintStyle: TextStyle(
                   fontSize: 12,
@@ -106,6 +108,7 @@ class CustomTextField extends StatelessWidget {
                   ),
                 ),
               ),
+              enabled: !disable!,
             )
         ],
       ),

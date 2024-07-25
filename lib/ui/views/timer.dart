@@ -15,7 +15,12 @@ import 'history_time_record.dart';
 
 class TimerPage extends StatefulWidget {
   final String? urlApi;
-  const TimerPage({Key? key, this.urlApi});
+  final String? topik;
+  final String? subjectId;
+  final String? subject;
+
+  const TimerPage({Key? key, this.urlApi, this.topik, this.subjectId, this.subject});
+
 
   @override
   _TimerPageState createState() => _TimerPageState();
@@ -44,6 +49,9 @@ class _TimerPageState extends State<TimerPage> {
   List<dynamic> matkul = <Meeting>[];
   bool _isLoading = true;
 
+
+  bool _isTask = false;
+
   String _formattedTime(int seconds) {
     int hours = seconds ~/ 3600;
     int minutes = (seconds ~/ 60) % 60;
@@ -66,13 +74,30 @@ class _TimerPageState extends State<TimerPage> {
   void initState() {
     super.initState();
     _timer = Timer(Duration.zero, () {});
-    _fetchData();
+
 
     _judulController.addListener(() {
       setState(() {
         _judulText = _judulController.text;
       });
     });
+
+    if (widget.subjectId != null && widget.topik != null){
+      _isTask = true;
+      _isLoading = false;
+
+      _selectedLearningTypeId = 1;
+      _selectedLearningType = 'Mengerjakan Tugas';
+
+      _judulController.text = widget.topik ?? '';
+      _judulText = _judulController.text;
+
+      _selectedCourseId = widget.subjectId ?? '';
+      _selectedCourseLabel = widget.subject ?? '';
+    } else {
+      _fetchData();
+    }
+
   }
 
   Future<void> _fetchData() async {
@@ -142,7 +167,7 @@ class _TimerPageState extends State<TimerPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const HomePage(initialIndex: 1)),
+              builder: (context) => const HistoryRecordPage()),
         );
       } else {
         throw Exception('Failed to add time record');
@@ -276,14 +301,17 @@ class _TimerPageState extends State<TimerPage> {
                       children: [
                         CustomTextField(
                           label: "Topik Belajar",
+                          placeholder: _isTask ? widget.topik : "",
                           password: false,
+                          disable: _isTask,
                           controller: _judulController,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 0),
                           child: CustomDropdown(
                             label: "Mata Kuliah",
-                            placeholder: "Pilih mata kuliah",
+                            placeholder: _isTask ? widget.subject : "Pilih mata kuliah",
+                            disable: _isTask,
                             onChanged: (value) {
                               setState(() {
                                 _selectedCourseId = matkul[value]['subjectId'];
