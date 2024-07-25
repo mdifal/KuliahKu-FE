@@ -14,7 +14,7 @@ class ListChatCard extends StatelessWidget {
   }) : super(key: key);
   final ChatModel chatModel;
 
-  String formatCMTime(String cmTime) {
+  String formatedCMTime(String cmTime) {
     DateTime now = DateTime.now();
     DateTime yesterday = now.subtract(Duration(days: 1));
     DateTime date = DateTime.parse(cmTime);
@@ -26,6 +26,16 @@ class ListChatCard extends StatelessWidget {
     } else {
       return DateFormat('dd/MMM/yyyy').format(date);
     }
+  }
+
+  String formatedCurrentMessage(String currentMessage) {
+    String message = currentMessage.split('\n')[0];
+
+    if (message.length > 45) {
+      message = message.substring(0, 35) + '....';
+    }
+
+    return message;
   }
 
 
@@ -77,7 +87,7 @@ class ListChatCard extends StatelessWidget {
             subtitle: Row(
               children: [
                 Text(
-                  chatModel.currentMessage ?? '',
+                  formatedCurrentMessage(chatModel.currentMessage ?? ''),
                   style: TextStyle(
                     fontSize: 13,
                   ),
@@ -85,7 +95,7 @@ class ListChatCard extends StatelessWidget {
               ],
             ),
             trailing:
-            Text(formatCMTime(chatModel.CMTime ?? '')),
+            Text(formatedCMTime(chatModel.CMTime ?? '')),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 20, left: 20),
