@@ -31,11 +31,21 @@ class ListChatCard extends StatelessWidget {
   String formatedCurrentMessage(String currentMessage) {
     String message = currentMessage.split('\n')[0];
 
-    if (message.length > 45) {
+    if (message.length > 35) {
       message = message.substring(0, 35) + '....';
     }
 
     return message;
+  }
+
+  String formatedRoomName(String roomName) {
+    String name = roomName;
+
+    if (name.length > 20) {
+      name = name.substring(0, 20) + '....';
+    }
+
+    return name;
   }
 
 
@@ -78,7 +88,7 @@ class ListChatCard extends StatelessWidget {
                       backgroundColor: greySoft,
                     ),
             title: Text(
-              chatModel.roomName,
+              formatedRoomName(chatModel.roomName),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
