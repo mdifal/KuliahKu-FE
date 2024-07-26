@@ -46,7 +46,7 @@ class _CustomNumberInputState extends State<CustomNumberInput> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.label ?? 'Input Number',
+            widget.label ?? '',
             style: TextStyle(
               color: black,
               fontFamily: 'Poppins',

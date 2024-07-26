@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/images.dart';
+import '../widgets/CardLaporan.dart';
+import 'add_score.dart';
 import 'edit_password.dart';
-import 'edit_profile.dart'; 
+import 'edit_profile.dart';
 
 class LaporanHasilBelajarPage extends StatefulWidget {
   const LaporanHasilBelajarPage({Key? key}) : super(key: key);
@@ -15,13 +16,60 @@ class LaporanHasilBelajarPage extends StatefulWidget {
 
 class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
 
+  final List<Map<String, dynamic>> laporanItems = [
+    {
+      'matkul': 'Laporan pembelajaran',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit profile',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit Password',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Laporan pembelajaran',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit profile',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit Password',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Laporan pembelajaran',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit profile',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+    {
+      'matkul': 'Edit Password',
+      'jamBelajar': '80/90',
+      'color': facebookColor,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            SizedBox(width: 8),
             Text(
               'Laporan Hasil Belajar',
               style: TextStyle(
@@ -32,9 +80,45 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
             ),
           ],
         ),
+        actions: [
+          Container(
+            decoration: BoxDecoration(
+              color: mainColor,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            width: 25,
+            height: 25,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: Icon(
+                    Icons.add,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                ),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const InputNilaiPage(laporanItems: laporanItems)),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 30),
+        ],
       ),
       body: SafeArea(
-        child: ListView(
+        child: Column(
           children: <Widget>[
             SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -48,10 +132,10 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
               child: Text(
                 'Cek laporan belajarmu!',
                 style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Poppins',
-                    color: darkBlue,
-                    fontWeight: FontWeight.w900
+                  fontSize: 18,
+                  fontFamily: 'Poppins',
+                  color: darkBlue,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
             ),
@@ -170,111 +254,25 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
               ),
             ),
             Expanded(
-              child: Container(
+              child: Padding(
                 padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min, // Make the Column fit the content
-                  children: [
-                    MenuItem(
-                      matkul: 'Laporan pembelajaran',
-                      jamBelajar: '80/90',
-                      color: facebookColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LaporanHasilBelajarPage()),
-                        );
-                      },
-                    ),
-                    Divider(),
-                    MenuItem(
-                      matkul: 'Edit profile',
-                      jamBelajar: '80/90',
-                      color: facebookColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                        );
-                      },
-                    ),
-                    Divider(),
-                    MenuItem(
-                      matkul: 'Edit Password',
-                      jamBelajar: '80/90',
-                      color: facebookColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const EditPasswordPage()),
-                        );
-                      },
-                    ),
-                  ],
+                child: ListView.builder(
+                  itemCount: laporanItems.length,
+                  itemBuilder: (context, index) {
+                    final item = laporanItems[index];
+                    return Column(
+                      children: [
+                        LaporanItem(
+                          matkul: item['matkul'],
+                          jamBelajar: item['jamBelajar'],
+                          color: item['color'],
+                        ),
+                        Divider(),
+                      ],
+                    );
+                  },
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MenuItem extends StatelessWidget {
-  final String matkul;
-  final String jamBelajar;
-  final Color color;
-  final VoidCallback onTap;
-
-  const MenuItem({
-    required this.matkul,
-    required this.jamBelajar,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14.0),
-        child: Row(
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: color,
-                border: Border.all(
-                  color: blackSoft,
-                  width: 1,
-                ),
-              ),
-            ),
-            SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  matkul,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: black,
-                  ),
-                ),
-                Text(
-                  jamBelajar,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: black,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
