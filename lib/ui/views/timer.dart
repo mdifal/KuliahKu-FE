@@ -146,7 +146,7 @@ class _TimerPageState extends State<TimerPage> {
         'time_records': _formattedTime(_seconds),
       };
 
-      String url = 'http://$ipUrl/users/$email/time-records';
+      String url = '${widget.urlApi}';
       var response = await http.post(
         Uri.parse(url),
         headers: {
