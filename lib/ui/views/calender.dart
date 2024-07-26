@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/make_new_plan.dart';
 import 'package:kuliahku/ui/views/make_new_schedule.dart';
+import 'package:kuliahku/ui/views/make_new_semester.dart';
 import 'package:kuliahku/ui/widgets/calender_schedule.dart';
 import 'package:kuliahku/ui/widgets/calender_task.dart';
 import 'package:kuliahku/ui/shared/global.dart';
@@ -31,7 +32,6 @@ class _CalenderTaskandSchedulePageState
   late String _calender = 'task';
   late bool isLoading = true;
   late Semester activeSemester;
-  late bool anyActiveSemester;
   List<Semester> semesters = <Semester>[];
 
   @override
@@ -68,19 +68,6 @@ class _CalenderTaskandSchedulePageState
     await _fetchData();
     _loadCalender();
     _loadSemester();
-    if (anyActiveSemester == false){
-      Widget build(BuildContext context) {
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: Text('test')
-    );
-  }
-    }
   }
 
   Future<void> _saveCalender(String value) async {
@@ -126,6 +113,103 @@ class _CalenderTaskandSchedulePageState
     });
   }
 
+  Widget contentBox(BuildContext context) {
+  return Container(
+    padding: EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      shape: BoxShape.rectangle,
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 10),
+          blurRadius: 10,
+        ),
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  Icon(Icons.warning, size: 50, color: Colors.red),
+                  SizedBox(height: 15),
+                  Text(
+                    "Anda Tidak Memiliki Semester Aktif",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Ayo buat semester agar Anda dapat menggunakan aplikasi KuliahKu dengan optimal!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'Tutup',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => 
+                      AddNewSemesterPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'Buat Semester',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
   Semester _getActiveSemester(List<Semester> semesters) {
     final now = DateTime.now();
 
@@ -134,11 +218,26 @@ class _CalenderTaskandSchedulePageState
       final endDate = dateFormat.parse(semester.time.split(' - ')[1]);
 
       if (now.isAfter(startDate) && now.isBefore(endDate)) {
-        anyActiveSemester = true;
+        print('ada semester aktif');
         return semester;
       }
     }
-    anyActiveSemester = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: contentBox(context),
+        );
+      },
+    );
+  });
+  print('agadada semester aktif');
     return semesters[0];
   }
 
