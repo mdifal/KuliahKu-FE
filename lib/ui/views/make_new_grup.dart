@@ -9,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/images.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/widgets/chat/CustomUI/ContactCard.dart';
+import 'package:kuliahku/ui/widgets/chat/Model/ContactModel.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,12 +31,68 @@ class _TambahGrupPageState extends State<TambahGrupPage> {
   File? _imageFile;
   String errorText = '';
   List<String> daftarEmailAnggota = [];
+  late List<ContactModel> contacts;
+  late List<ContactModel> filteredContacts;
+  TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
+  bool isFound = true;
+
+  Future<void> fetchUsersData() async {
+  try {
+    final query = searchController.text.toLowerCase();
+    var url = 'http://$ipUrl/users/search?email=$query';
+    var response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> ListContact = json.decode(response.body);
+      setState(() {
+        contacts = ListContact.map((data) {
+          return ContactModel(
+            name: data['fullname'] ?? 'unknown',
+            icon: data['profilePict'] ?? '',
+            email: data['id'],
+          );
+        }).toList();
+        filteredContacts = contacts;
+        isFound = true;
+      });
+      tambahAnggota();
+    } else {
+      setState(() {isFound = false;});
+      
+      throw Exception('Failed to fetch chats data');
+    }
+  } catch (error) {
+    print('Error fetching chats data: $error');
+    throw Exception('Failed to fetch chats data');
+  }
+}
+
 
   @override
   void initState() {
     super.initState();
     _imagePicker = ImagePicker();
+    contacts = [];
+    filteredContacts = [];
+    searchController.addListener(() {
+      // Hapus listener ini jika Anda hanya ingin memanggil saat submitted.
+    });
   }
+
+  void filterContacts() {
+    final query = searchController.text.toLowerCase();
+    setState(() {
+      filteredContacts = contacts.where((contact) {
+        return contact.name.toLowerCase().contains(query) || contact.email.toLowerCase().contains(query);
+      }).toList();
+    });
+  }
+
+  void onSearchSubmitted(String query) {
+    fetchUsersData();
+  }
+
 
   Future<void> _ambilFoto() async {
     final picker = ImagePicker();
@@ -53,7 +111,7 @@ class _TambahGrupPageState extends State<TambahGrupPage> {
   }
 
   void tambahAnggota() {
-    final _email = namaAnggotaController.text;
+    final _email = searchController.text;
     if (_email.isEmpty) {
       setState(() {
         errorText = 'Email tidak boleh kosong';
@@ -286,47 +344,30 @@ class _TambahGrupPageState extends State<TambahGrupPage> {
               color: Colors.grey,
               thickness: 0.5,
             ),
-            TextField(
-              controller: namaAnggotaController,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.black,
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              decoration: BoxDecoration(
+                color: white,
+                borderRadius: BorderRadius.circular(15),
               ),
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: tambahAnggota,
-                  color: mainColor,
-                  iconSize: 18,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Masukkan Email Temanmu!",
-                hintStyle: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w600,
-                ),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: secondaryColor,
-                    width: 1,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CustomTextFieldNoLabel(
+                      password: false,
+                      placeholder: "Search",
+                      controller: searchController,
+                      onSubmitted: onSearchSubmitted, // Tambahkan ini
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(
-                    color: mainColor,
-                    width: 1,
-                  ),
-                ),
-                errorText: errorText.isNotEmpty ? errorText : null,
+                  Icon(Icons.search, color: Colors.grey),
+                ],
               ),
             ),
-            SizedBox(height: 8.0),
+            isFound == false
+                  ? Center(child: Text('Teman Anda Tidak Ditemukan !'))
+                  : Text(''),
+            SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
