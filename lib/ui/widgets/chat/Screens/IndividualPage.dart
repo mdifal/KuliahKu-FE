@@ -55,7 +55,7 @@ class _IndividualPageState extends State<IndividualPage> {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TimerPage(urlApi: 'http://$ipUrl/users/$email/time-records',)),
+          MaterialPageRoute(builder: (context) => TimerPage(urlApi: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records', urlApiHistory: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/semester/$idSemesterGroup', urlApiMataKuliah: 'http://$ipUrl/groups/${widget.chatModel.roomId}/jadwalKuliahList/now',)),
         );
         break;
       case 1:
@@ -68,7 +68,7 @@ class _IndividualPageState extends State<IndividualPage> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HistoryRecordPage(urlApi:
-                        'http://$ipUrl/users/$email/time-records/semester/$idSemester')),
+                        'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/semester/$idSemesterGroup')),
         );
         break;
     }

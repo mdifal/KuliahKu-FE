@@ -36,7 +36,7 @@ void initState() {
   }
 
   Future<void> _fetchData() async {
-  var url = 'http://$ipUrl/groups/${widget.groupId}/plans';
+  var url = 'http://$ipUrl/groups/${widget.groupId}/plans/semester/$idSemesterGroup';
 
   try {
     var response = await http.get(

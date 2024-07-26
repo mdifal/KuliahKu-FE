@@ -12,7 +12,9 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class tambahJadwalPage extends StatefulWidget {
-  const tambahJadwalPage({Key? key}) : super(key: key);
+  final String? urlApi;
+
+  const tambahJadwalPage({Key? key, this.urlApi});
 
   @override
   State<tambahJadwalPage> createState() => _tambahJadwalPageState();
@@ -54,7 +56,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
     print(data);
 
     String body = jsonEncode(data);
-    var url = 'http://$ipUrl/users/$email/jadwalKuliah';
+    var url = '${widget.urlApi}';
     var response = await http.post(
       Uri.parse(url),
       body: body,

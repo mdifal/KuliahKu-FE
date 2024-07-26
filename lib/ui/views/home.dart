@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
       HistoryRecordPage(urlApi: 'http://$ipUrl/users/$email/time-records/semester/$idSemester'),
       ChatPage(),
       ProfilePage(),
-      TimerPage(urlApi: 'http://$ipUrl/users/$email/time-records',),
+      TimerPage(urlApi: 'http://$ipUrl/users/$email/time-records', urlApiHistory: 'http://$ipUrl/users/$email/time-records/semester/$idSemester', urlApiMataKuliah: 'http://$ipUrl/users/$email/jadwalKuliahList/now',),
     ];
   }
 

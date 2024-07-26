@@ -8,3 +8,6 @@ const String ipUrl = 'goldenrod-careful-lettuce.glitch.me';
 String idSemester = '';
 String idActiveSemester = '';
 bool isActiveSemester = true;
+String idSemesterGroup = '';
+String idActiveSemesterGroup = '';
+bool isActiveSemesterGroup = true;

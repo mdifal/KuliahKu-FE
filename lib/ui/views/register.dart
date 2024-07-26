@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (statusCode == "200") {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddNewSemesterPage()),
+        MaterialPageRoute(builder: (context) => AddNewSemesterPage(urlApi: 'http://$ipUrl/users/$email/semesters',)),
       );
       email = gmail;
     } else {

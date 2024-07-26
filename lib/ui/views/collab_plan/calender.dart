@@ -9,6 +9,7 @@ import 'package:kuliahku/ui/views/make_new_plan.dart';
 import 'package:kuliahku/ui/views/make_new_schedule.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuliahku/ui/views/make_new_semester.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CalenderCollabPlanPage extends StatefulWidget {
@@ -22,8 +23,7 @@ class CalenderCollabPlanPage extends StatefulWidget {
       _CalenderTaskandSchedulePageState();
 }
 
-class _CalenderTaskandSchedulePageState
-    extends State<CalenderCollabPlanPage> {
+class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
   DateFormat dateFormat = DateFormat('d MMMM yyyy');
   String titleSemester = '';
   String timeSemester = '';
@@ -32,12 +32,12 @@ class _CalenderTaskandSchedulePageState
   late String _calender = 'task';
   late bool isLoading = true;
   late Semester activeSemester;
+  bool anyActiveSemester = false;
   List<Semester> semesters = <Semester>[];
 
   @override
   void initState() {
     super.initState();
-    
   }
 
   Future<void> _loadCalender() async {
@@ -53,11 +53,11 @@ class _CalenderTaskandSchedulePageState
     activeSemester = _getActiveSemester(semesters);
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      titleSemester = prefs.getString('titleSemester') ?? activeSemester.title;
-      timeSemester =
-          prefs.getString('timeSemester') ?? activeSemester.time;
-      SemesterId = prefs.getString('SemesterId') ?? activeSemester.id;
-      idSemester = SemesterId; 
+      titleSemester = activeSemester.title;
+      timeSemester = activeSemester.time ;
+      SemesterId = activeSemester.id;
+      idSemesterGroup = SemesterId;
+      idActiveSemesterGroup = SemesterId;
     });
   }
 
@@ -91,12 +91,18 @@ class _CalenderTaskandSchedulePageState
 
   void ubahsemester(String id) async {
     setState(() {
-      idSemester = id;
+      idSemesterGroup = id;
       final selectedItem = semesters.firstWhere((item) => item.id == id);
       SemesterId = selectedItem.id;
       titleSemester = selectedItem.title;
       timeSemester = selectedItem.time;
       isLoading = true;
+      if(idSemesterGroup == idActiveSemesterGroup){
+        isActiveSemesterGroup = true;
+      }
+      else{
+        isActiveSemesterGroup = false;
+      }
     });
     await _saveSemester();
     await _fetchData();
@@ -113,9 +119,15 @@ class _CalenderTaskandSchedulePageState
       final endDate = dateFormat.parse(semester.time.split(' - ')[1]);
 
       if (now.isAfter(startDate) && now.isBefore(endDate)) {
+        setState(() {
+          anyActiveSemester = true;
+        });
         return semester;
       }
     }
+    setState(() {
+      anyActiveSemester = false;
+    });
     return semesters[0];
   }
 
@@ -124,7 +136,7 @@ class _CalenderTaskandSchedulePageState
   }
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl/users/$email/semesters';
+    var url = 'http://$ipUrl/groups/${widget.groupId}/semesters';
 
     try {
       var response = await http.get(
@@ -137,7 +149,7 @@ class _CalenderTaskandSchedulePageState
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        List<dynamic> dataSemester = jsonResponse['semesters'];
+        List<dynamic> dataSemester = jsonResponse['data'];
         List<Semester> fetchedSemesters = <Semester>[];
 
         print('ini semester $dataSemester');
@@ -165,6 +177,104 @@ class _CalenderTaskandSchedulePageState
 
   @override
   Widget build(BuildContext context) {
+    Widget contentBox(context) {
+      return Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 10),
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Center(child: Text("Anda belum memiliki semester")),
+                      SizedBox(height: 5)
+                    ],
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 15),
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Tutup',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddNewSemesterPage(
+                                    urlApi:
+                                        'http://$ipUrl/groups/${widget.groupId}/semesters',
+                                  )),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Buat Semester',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                )),
+          ],
+        ),
+      );
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!anyActiveSemester) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: contentBox(context),
+            );
+          },
+        );
+      }
+    });
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -220,7 +330,7 @@ class _CalenderTaskandSchedulePageState
                 ),
                 Row(
                   children: [
-                    Container(
+                    isActiveSemesterGroup?Container(
                       decoration: BoxDecoration(
                         color: mainColor,
                         borderRadius: BorderRadius.circular(5),
@@ -247,10 +357,47 @@ class _CalenderTaskandSchedulePageState
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           calender is CalenderTaskCollabPlan
-                                              ? AddPlanPage()
-                                              : tambahJadwalPage(),
+                                              ? AddPlanPage(
+                                                  urlApi:
+                                                      'http://$ipUrl/groups/${widget.groupId}/plans',
+                                                  urlApiMataKuliah:
+                                                      'http://$ipUrl/groups/${widget.groupId}/jadwalKuliahList/now',
+                                                )
+                                              : tambahJadwalPage(
+                                                  urlApi:
+                                                      'http://$ipUrl/groups/${widget.groupId}/schedules',
+                                                ),
                                     ),
                                   );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ) : Container(
+                      decoration: BoxDecoration(
+                        color: greySoft,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      width: 25,
+                      height: 25,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Center(
+                            child: Icon(
+                              Icons.add,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                
                                 },
                               ),
                             ),

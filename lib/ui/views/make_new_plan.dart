@@ -14,7 +14,10 @@ import '../widgets/time_field.dart';
 import 'calender.dart';
 
 class AddPlanPage extends StatefulWidget {
-  const AddPlanPage({Key? key}) : super(key: key);
+  final String? urlApi;
+  final String? urlApiMataKuliah;
+
+  const AddPlanPage({Key? key, this.urlApi, this.urlApiMataKuliah});
 
   @override
   State<AddPlanPage> createState() => _AddPlanPageState();
@@ -40,7 +43,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
   }
 
   Future<void> _fetchData() async {
-    final url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
+    final url = '${widget.urlApiMataKuliah}';
 
     try {
       final response = await http.get(Uri.parse(url), headers: {
@@ -77,7 +80,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
   Future<void> addPlanToBackend() async {
     try {
-      final url = 'http://$ipUrl/users/$email/rencanaMandiri';
+      final url = '${widget.urlApi}';
       final request = http.MultipartRequest('POST', Uri.parse(url));
 
       if (_selectedFile != null && _selectedFile!.files.isNotEmpty) {

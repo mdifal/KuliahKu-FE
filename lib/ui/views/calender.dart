@@ -31,6 +31,7 @@ class _CalenderTaskandSchedulePageState
   late String _calender = 'task';
   late bool isLoading = true;
   late Semester activeSemester;
+  late bool anyActiveSemester;
   List<Semester> semesters = <Semester>[];
 
   @override
@@ -67,6 +68,19 @@ class _CalenderTaskandSchedulePageState
     await _fetchData();
     _loadCalender();
     _loadSemester();
+    if (anyActiveSemester == false){
+      Widget build(BuildContext context) {
+
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Text('test')
+    );
+  }
+    }
   }
 
   Future<void> _saveCalender(String value) async {
@@ -120,9 +134,11 @@ class _CalenderTaskandSchedulePageState
       final endDate = dateFormat.parse(semester.time.split(' - ')[1]);
 
       if (now.isAfter(startDate) && now.isBefore(endDate)) {
+        anyActiveSemester = true;
         return semester;
       }
     }
+    anyActiveSemester = false;
     return semesters[0];
   }
 
@@ -254,8 +270,8 @@ class _CalenderTaskandSchedulePageState
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           calender is CalenderTask
-                                              ? AddPlanPage()
-                                              : tambahJadwalPage(),
+                                              ? AddPlanPage(urlApi: 'http://$ipUrl/users/$email/rencanaMandiri', urlApiMataKuliah: 'http://$ipUrl/users/$email/jadwalKuliahList/now',)
+                                              : tambahJadwalPage(urlApi: 'http://$ipUrl/users/$email/jadwalKuliah',),
                                     ),
                                   );
                                 },

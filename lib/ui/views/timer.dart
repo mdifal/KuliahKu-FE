@@ -15,11 +15,13 @@ import 'history_time_record.dart';
 
 class TimerPage extends StatefulWidget {
   final String? urlApi;
+  final String? urlApiHistory;
+  final String? urlApiMataKuliah;
   final String? topik;
   final String? subjectId;
   final String? subject;
 
-  const TimerPage({Key? key, this.urlApi, this.topik, this.subjectId, this.subject});
+  const TimerPage({Key? key, this.urlApi, this.urlApiHistory, this.urlApiMataKuliah, this.topik, this.subjectId, this.subject});
 
 
   @override
@@ -101,7 +103,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl/users/$email/jadwalKuliahList/now';
+    var url = '${widget.urlApiMataKuliah}';
 
     try {
       var response = await http.get(
@@ -157,6 +159,7 @@ class _TimerPageState extends State<TimerPage> {
 
       if (response.statusCode == 201) {
         print('Time record added successfully');
+        print('test ${widget.urlApiHistory}');
 
         setState(() {
           _isFinish = false;
@@ -167,7 +170,7 @@ class _TimerPageState extends State<TimerPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const HistoryRecordPage()),
+              builder: (context) => HistoryRecordPage(urlApi: '${widget.urlApiHistory}'),)
         );
       } else {
         throw Exception('Failed to add time record');

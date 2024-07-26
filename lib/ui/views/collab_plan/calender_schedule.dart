@@ -46,7 +46,7 @@ class _CalenderScheduleState extends State<CalenderScheduleCollabPlan> {
 
   Future<void> _fetchData() async {
     var url =
-        'http://$ipUrl/users/$email/jadwalKuliah/semester/$idSemester?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
+        'http://$ipUrl/groups/${widget.groupId}/schedules/semester/$idSemesterGroup?firstDayWeek=$firstDayOfWeek&lastDayWeek=$lastDayOfWeek';
 
     try {
       var response = await http.get(
