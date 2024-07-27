@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../shared/style.dart';
 
 class InputNilaiItem extends StatefulWidget {
   final String matkul;
   final String jamBelajar;
   final Color color;
+  final Function(String) onGradeSelected;
 
   const InputNilaiItem({
     required this.matkul,
     required this.jamBelajar,
     required this.color,
+    required this.onGradeSelected,
   });
 
   @override
@@ -87,13 +88,14 @@ class _InputNilaiItemState extends State<InputNilaiItem> {
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Center(child: Text(value, style: TextStyle( fontSize: 15),)),
+                        child: Center(child: Text(value, style: TextStyle(fontSize: 15))),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedGrade = newValue;
                       });
+                      widget.onGradeSelected(newValue!);
                     },
                   ),
                 ),

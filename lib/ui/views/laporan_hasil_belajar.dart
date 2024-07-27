@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/images.dart';
-import '../widgets/CardLaporan.dart';
+import '../shared/global.dart';
+import '../widgets/card_laporan.dart';
 import 'add_score.dart';
-import 'edit_password.dart';
-import 'edit_profile.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LaporanHasilBelajarPage extends StatefulWidget {
   const LaporanHasilBelajarPage({Key? key}) : super(key: key);
@@ -15,54 +16,65 @@ class LaporanHasilBelajarPage extends StatefulWidget {
 }
 
 class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
+  late List<dynamic> laporanItems = [];
+  late String expectedHours = '';
+  late String actualHours = '';
+  late String totalSKS = '';
+  late String StartProductiveHour = '';
+  late String EndProductiveHour = '';
+  bool _isLoading = true;
+  bool _hasEnteredGrade = false;
 
-  final List<Map<String, dynamic>> laporanItems = [
-    {
-      'matkul': 'Laporan pembelajaran',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit profile',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit Password',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Laporan pembelajaran',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit profile',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit Password',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Laporan pembelajaran',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit profile',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-    {
-      'matkul': 'Edit Password',
-      'jamBelajar': '80/90',
-      'color': facebookColor,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchLaporanData();
+  }
+
+  Future<void> fetchLaporanData() async {
+    try {
+      var url = 'http://$ipUrl/users/$email/learning-report/semester/$idSemester';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final fetchedData = jsonResponse['data'];
+
+        setState(() {
+          expectedHours = fetchedData['hourExpected'].toString();
+          actualHours = fetchedData['hourImplemented'].toString();
+          totalSKS = fetchedData['totalSKS'].toString();
+          laporanItems = fetchedData['mataKuliah'];
+          StartProductiveHour = fetchedData['productiveTime']['startTime'];
+          EndProductiveHour = fetchedData['productiveTime']['endTime'];
+
+          _isLoading = false;
+        });
+
+        if (laporanItems[1]['grade'] != null){
+          setState(() {
+            _hasEnteredGrade = true;
+          });
+        }
+
+        print(laporanItems);
+
+      } else {
+        throw Exception('Failed to fetch profile data');
+      }
+    } catch (error) {
+      print('Error fetching profile data: $error');
+      throw Exception('Failed to fetch profile data');
+    }
+  }
+
+  String formatedJamBelajar(String actual, String expected) {
+    String jamBelajar;
+
+    jamBelajar = actual + '/' + expected;
+
+    return jamBelajar;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +117,7 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const InputNilaiPage(laporanItems: laporanItems)),
+                          MaterialPageRoute(builder: (context) =>  InputNilaiPage(laporanItems: laporanItems)),
                         );
                       },
                     ),
@@ -173,11 +185,15 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                             ),
                             children: [
                               TextSpan(
-                                text: '859',
+                                text: actualHours,
                                 style: TextStyle(fontSize: 25),
                               ),
                               TextSpan(
-                                text: '/900',
+                                text: '/',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              TextSpan(
+                                text: expectedHours,
                                 style: TextStyle(fontSize: 16),
                               ),
                             ],
@@ -210,7 +226,7 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                             ),
                             children: [
                               TextSpan(
-                                text: '20',
+                                text: totalSKS,
                                 style: TextStyle(fontSize: 25),
                               ),
                               TextSpan(
@@ -237,15 +253,29 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 5),
-                        Text(
-                          '08.00 - 10.00',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Poppins',
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        RichText(
                           textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: StartProductiveHour,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              TextSpan(
+                                text: '-',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              TextSpan(
+                                text: EndProductiveHour,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -256,22 +286,28 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
-                child: ListView.builder(
-                  itemCount: laporanItems.length,
-                  itemBuilder: (context, index) {
-                    final item = laporanItems[index];
-                    return Column(
-                      children: [
-                        LaporanItem(
-                          matkul: item['matkul'],
-                          jamBelajar: item['jamBelajar'],
-                          color: item['color'],
-                        ),
-                        Divider(),
-                      ],
-                    );
-                  },
-                ),
+                child:
+
+                laporanItems.isEmpty || laporanItems == [] ?
+                  Center(child: Text("No Schedule Yet, Create new!"))
+                    : ListView.builder(
+                        itemCount: laporanItems.length,
+                        itemBuilder: (context, index) {
+                          final item = laporanItems[index]['dataMatakuliah'];
+                          return Column(
+                            children: [
+                              LaporanItem(
+                                matkul: item['subjectName'],
+                                jamBelajar: formatedJamBelajar(laporanItems[index]['hourImplemented'].toString(), laporanItems[index]['hourExpected'].toString()),
+                                color: Color(item['subjectColor']),
+                                nilai: 'A',
+                                text: 'Nilai Matematika anda A dengan capaian waktu belajar 89/90. Nilai yang sempurna! Pertahankan!',
+                              ),
+                              Divider(),
+                            ],
+                          );
+                        },
+                      ),
               ),
             ),
           ],
