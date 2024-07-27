@@ -114,101 +114,104 @@ class _CalenderTaskandSchedulePageState
   }
 
   Widget contentBox(BuildContext context) {
-  return Container(
-    padding: EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      shape: BoxShape.rectangle,
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black26,
-          offset: Offset(0, 10),
-          blurRadius: 10,
+    return Semantics(
+      label: "Dialog to create a new semester",
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 10),
+              blurRadius: 10,
+            ),
+          ],
         ),
-      ],
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Stack(
-          children: [
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Icon(Icons.warning_sharp, size: 50, color: Colors.red),
+                      SizedBox(height: 15),
+                      Text(
+                        "Anda Tidak Memiliki Semester Aktif",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Ayo buat semester agar Anda dapat menggunakan aplikasi KuliahKu dengan optimal!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             Align(
-              alignment: Alignment.center,
-              child: Column(
+              alignment: Alignment.bottomRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Icon(Icons.warning, size: 50, color: Colors.red),
-                  SizedBox(height: 15),
-                  Text(
-                    "Anda Tidak Memiliki Semester Aktif",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Tutup',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Ayo buat semester agar Anda dapat menggunakan aplikasi KuliahKu dengan optimal!",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16),
+                  SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => 
+                          AddNewSemesterPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Buat Semester',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
-                  SizedBox(height: 20),
                 ],
               ),
             ),
           ],
         ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Tutup',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => 
-                      AddNewSemesterPage(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Buat Semester',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
 
   Semester _getActiveSemester(List<Semester> semesters) {
     final now = DateTime.now();
@@ -237,7 +240,7 @@ class _CalenderTaskandSchedulePageState
       },
     );
   });
-  print('agadada semester aktif');
+  print('gada semester aktif');
     return semesters[0];
   }
 
