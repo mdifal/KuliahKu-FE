@@ -32,7 +32,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
   final TextEditingController _catatanController = TextEditingController();
   List<dynamic> meetings = [];
   FilePickerResult? _selectedFile;
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _isFetchingData = true;
 
   @override
   void initState() {
@@ -54,15 +55,15 @@ class _AddPlanPageState extends State<AddPlanPage> {
         final jsonResponse = jsonDecode(response.body);
         setState(() {
           meetings = jsonResponse['data'];
-          _isLoading = false;
+          _isFetchingData = false;
         });
       } else {
         print('Request failed with status: ${response.statusCode}');
-        setState(() => _isLoading = false);
+        setState(() => _isFetchingData = false);
       }
     } catch (e) {
       print('Error: $e');
-      setState(() => _isLoading = false);
+      setState(() => _isFetchingData = false);
     }
   }
 
@@ -79,6 +80,15 @@ class _AddPlanPageState extends State<AddPlanPage> {
   }
 
   Future<void> addPlanToBackend() async {
+    if (type == 0 || subjectId.isEmpty || _judulController.text.isEmpty || _selectedDeadline == null || _selectedReminder == null) {
+      _showErrorDialog('Please fill in all required fields.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final url = '${widget.urlApi}';
       final request = http.MultipartRequest('POST', Uri.parse(url));
@@ -112,18 +122,60 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
       if (response.statusCode == 200) {
         print('Rencana mandiri berhasil ditambahkan');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CalenderTaskandSchedulePage()),
-        );
+        Navigator.pop(context);
       } else {
         print('Gagal menambahkan rencana mandiri: ${response.statusCode}');
+        _showErrorDialog('Error adding plan: ${response.statusCode}');
       }
     } catch (error) {
       print('Terjadi kesalahan: $error');
+      _showErrorDialog('Error adding plan: $error');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Check Your Inputs',
+            style: TextStyle(
+                color: black,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600
+            ),
+          ),
+          content: Text(
+            message,
+            style: TextStyle(color: black), // Customize content color
+          ),
+          backgroundColor: white, // Customize dialog background color
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: mainColor, // Customize button background color
+              ),
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                    color: white,
+                    fontWeight: FontWeight.w400
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +193,9 @@ class _AddPlanPageState extends State<AddPlanPage> {
           ),
           backgroundColor: darkBlue,
         ),
-        body: SingleChildScrollView(
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -172,7 +226,7 @@ class _AddPlanPageState extends State<AddPlanPage> {
                       subjectId = meetings[value]['subjectId'];
                     });
                   },
-                  isLoading: _isLoading,
+                  isLoading: _isFetchingData,
                   items: List.generate(meetings.length, (index) {
                     return {'label': meetings[index]['subject'], 'value': index};
                   }),
@@ -249,6 +303,23 @@ class _AddPlanPageState extends State<AddPlanPage> {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: mainColor, // header background color
+            hintColor: mainColor, // selection color
+            colorScheme: ColorScheme.light(
+              primary: mainColor, // header text and indicator color
+              onPrimary: white, // header text color
+              onSurface: black, // body text color
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     ).then((time) {
       if (time != null) onSave(time);
     });
@@ -260,6 +331,23 @@ class _AddPlanPageState extends State<AddPlanPage> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: mainColor,
+            hintColor: mainColor,
+            colorScheme: ColorScheme.light(
+              primary: mainColor,
+              onPrimary: white,
+              onSurface: black,
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     ).then((date) {
       if (date != null) onSave(date);
     });

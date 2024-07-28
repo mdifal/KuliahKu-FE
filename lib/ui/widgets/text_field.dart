@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:passwordfield/passwordfield.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? label;
@@ -28,7 +29,7 @@ class CustomTextField extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(
               bottom: 8.0,
-            ), // Tambahkan margin bawah pada teks
+            ),
             child: Text(
               label!,
               style: TextStyle(
@@ -41,7 +42,7 @@ class CustomTextField extends StatelessWidget {
           ),
           if (password)
             PasswordField(
-              controller: controller, // Gunakan controller untuk PasswordField
+              controller: controller,
               passwordDecoration: PasswordDecoration(
                 inputPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 1),
                 hintStyle: TextStyle(
@@ -77,7 +78,7 @@ class CustomTextField extends StatelessWidget {
             )
           else
             TextField(
-              controller: controller, // Gunakan controller untuk TextField
+              controller: controller,
               style: TextStyle(
                 fontSize: 12,
                 color: black,
@@ -109,12 +110,16 @@ class CustomTextField extends StatelessWidget {
                 ),
               ),
               enabled: !disable!,
+              inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@#$%^&*()_+!\- =[\]{};"|,:.<>/?]*')),
+              ],
             )
         ],
       ),
     );
   }
 }
+
 
 class CustomTextFieldNoLabel extends StatelessWidget {
   final String? placeholder;

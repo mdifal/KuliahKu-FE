@@ -54,7 +54,7 @@ class _NewChatPageState extends State<NewChatPage> {
     contacts = [];
     filteredContacts = [];
     searchController.addListener(() {
-      // Hapus listener ini jika Anda hanya ingin memanggil saat submitted.
+
     });
   }
 

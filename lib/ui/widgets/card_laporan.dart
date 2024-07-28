@@ -24,13 +24,13 @@ class LaporanItem extends StatelessWidget {
     Map<String, Color> gradeColors = {
       'A': cardGreen,
       'AB': cardGreen,
-      'B': cardGreen,
-      'BC': cardGreen,
-      'C': cardGreen,
-      'CD': cardGreen,
-      'D': cardGreen,
-      'DE': cardGreen,
-      'E': cardGreen,
+      'B': cardYellow,
+      'BC': cardYellow,
+      'C': cardOrange,
+      'CD': cardOrange,
+      'D': cardRed,
+      'DE': cardRed,
+      'E': failed,
     };
 
     return gradeColors[grade] ?? mainColor;

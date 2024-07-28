@@ -129,7 +129,10 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
           SizedBox(width: 30),
         ],
       ),
-      body: SafeArea(
+      body:
+      _isLoading ?
+      Center(child: CircularProgressIndicator())
+      : SafeArea(
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -296,13 +299,19 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                           final item = laporanItems[index]['dataMatakuliah'];
                           return Column(
                             children: [
+                              _hasEnteredGrade ?
                               LaporanItem(
                                 matkul: item['subjectName'],
                                 jamBelajar: formatedJamBelajar(laporanItems[index]['hourImplemented'].toString(), laporanItems[index]['hourExpected'].toString()),
                                 color: Color(item['subjectColor']),
                                 nilai: 'A',
                                 text: 'Nilai Matematika anda A dengan capaian waktu belajar 89/90. Nilai yang sempurna! Pertahankan!',
-                              ),
+                              )
+                                : LaporanItem(
+                                    matkul: item['subjectName'],
+                                    jamBelajar: formatedJamBelajar(laporanItems[index]['hourImplemented'].toString(), laporanItems[index]['hourExpected'].toString()),
+                                    color: Color(item['subjectColor']),
+                                  ),
                               Divider(),
                             ],
                           );
