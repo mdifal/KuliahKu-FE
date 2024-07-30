@@ -37,7 +37,6 @@ class _CalenderTaskandSchedulePageState
   @override
   void initState() {
     super.initState();
-    
   }
 
   Future<void> _loadCalender() async {
@@ -54,8 +53,7 @@ class _CalenderTaskandSchedulePageState
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       titleSemester = prefs.getString('titleSemester') ?? activeSemester.title;
-      timeSemester =
-          prefs.getString('timeSemester') ?? activeSemester.time;
+      timeSemester = prefs.getString('timeSemester') ?? activeSemester.time;
       SemesterId = prefs.getString('SemesterId') ?? activeSemester.id;
       idSemester = SemesterId;
       idActiveSemester = prefs.getString('SemesterId') ?? activeSemester.id;
@@ -99,10 +97,9 @@ class _CalenderTaskandSchedulePageState
       timeSemester = selectedItem.time;
       isLoading = true;
       print('id semester $idSemester dan activeid smester $idActiveSemester');
-      if(idSemester == idActiveSemester){
+      if (idSemester == idActiveSemester) {
         isActiveSemester = true;
-      }
-      else{
+      } else {
         isActiveSemester = false;
       }
     });
@@ -188,8 +185,7 @@ class _CalenderTaskandSchedulePageState
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => 
-                          AddNewSemesterPage(),
+                          builder: (context) => AddNewSemesterPage(),
                         ),
                       );
                     },
@@ -226,21 +222,21 @@ class _CalenderTaskandSchedulePageState
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: contentBox(context),
-        );
-      },
-    );
-  });
-  print('gada semester aktif');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: contentBox(context),
+          );
+        },
+      );
+    });
+    print('gada semester aktif');
     return semesters[0];
   }
 
@@ -315,6 +311,13 @@ class _CalenderTaskandSchedulePageState
                     ),
                     SizedBox(width: 5),
                     PopupMenuButton<Semester>(
+                      initialValue: semesters.isNotEmpty
+                          ? semesters.firstWhere(
+                              (semester) => semester.id == idSemester,
+                              orElse: () => semesters
+                                  .first,
+                            )
+                          : null,
                       itemBuilder: (BuildContext context) =>
                           _getSemester().map((Semester item) {
                         return PopupMenuItem<Semester>(
@@ -345,72 +348,81 @@ class _CalenderTaskandSchedulePageState
                 ),
                 Row(
                   children: [
-                    isActiveSemester? Container(
-                      decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 25,
-                      height: 25,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.add,
-                              size: 16,
-                              color: Colors.white,
+                    isActiveSemester
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: mainColor,
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                          ),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          calender is CalenderTask
-                                              ? AddPlanPage(urlApi: 'http://$ipUrl/users/$email/rencanaMandiri', urlApiMataKuliah: 'http://$ipUrl/users/$email/jadwalKuliahList/now',)
-                                              : tambahJadwalPage(urlApi: 'http://$ipUrl/users/$email/jadwalKuliah',),
+                            width: 25,
+                            height: 25,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Center(
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                calender is CalenderTask
+                                                    ? AddPlanPage(
+                                                        urlApi:
+                                                            'http://$ipUrl/users/$email/rencanaMandiri',
+                                                        urlApiMataKuliah:
+                                                            'http://$ipUrl/users/$email/jadwalKuliahList/now',
+                                                      )
+                                                    : tambahJadwalPage(
+                                                        urlApi:
+                                                            'http://$ipUrl/users/$email/jadwalKuliah',
+                                                      ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: greySoft,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            width: 25,
+                            height: 25,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Center(
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ) : Container(
-                      decoration: BoxDecoration(
-                        color: greySoft,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 25,
-                      height: 25,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.add,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     SizedBox(width: 5),
                     Container(
                       decoration: BoxDecoration(
