@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
@@ -21,8 +22,9 @@ class tambahJadwalPage extends StatefulWidget {
 }
 
 class _tambahJadwalPageState extends State<tambahJadwalPage> {
-  late DateTime startTime;
-  late DateTime endTime;
+  late DateTime dateTimeNow;
+  late TimeOfDay? startTime;
+  late TimeOfDay? endTime;
   late String startTimeString;
   late String endTimeString;
   late int selectedColor;
@@ -77,6 +79,11 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           backgroundColor: success,
         ),
       );
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(initialIndex: 0,calender: 'schedule',))
+        );
     } else {
       showTopSnackBar(
         Overlay.of(context),
@@ -91,55 +98,60 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
   @override
   void initState() {
     super.initState();
-    startTime = DateTime.now();
-    endTime = DateTime.now();
+    dateTimeNow = DateTime.now();
+    startTime = TimeOfDay.fromDateTime(dateTimeNow);
+    endTime = TimeOfDay.fromDateTime(dateTimeNow);
     updateStartTime(startTime);
     updateEndTime(endTime);
   }
 
-  void updateStartTime(DateTime dateTime) {
-    setState(() {
-      startTimeString = DateFormat('HH:mm:ss').format(dateTime);
-    });
-  }
+void updateStartTime(TimeOfDay? timeOfDay) {
+  if (timeOfDay == null) return;
 
-  void updateEndTime(DateTime dateTime) {
-    setState(() {
-      endTimeString = DateFormat('HH:mm:ss').format(dateTime);
-    });
-  }
+  final now = DateTime.now();
+  final dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
 
-  void _showStartTimePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return TimePicker(
-          onSave: (time) {
-            setState(() {
-              startTime = time;
-              updateStartTime(startTime);
-            });
-          },
-        );
-      },
-    );
-  }
+  setState(() {
+    startTimeString = DateFormat('HH:mm:ss').format(dateTime);
+  });
+}
 
-  void _showEndTimePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext builder) {
-        return TimePicker(
-          onSave: (time) {
-            setState(() {
-              endTime = time;
-              updateEndTime(endTime);
-            });
-          },
-        );
-      },
-    );
-  }
+void updateEndTime(TimeOfDay? timeOfDay) {
+  if (timeOfDay == null) return;
+
+  final now = DateTime.now();
+  final dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+
+  setState(() {
+    endTimeString = DateFormat('HH:mm:ss').format(dateTime);
+  });
+}
+  // void _showStartTimePicker(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext builder) {
+  //       return showTimePicker(context: context,
+  //                       initialTime: startTime ?? TimeOfDay.now(),
+  //                       initialEntryMode: TimePickerEntryMode.dial);
+  //     },
+  //   );
+  // }
+
+  // void _showEndTimePicker(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext builder) {
+  //       return TimePicker(
+  //         onSave: (time) {
+  //           setState(() {
+  //             endTime = time;
+  //             updateEndTime(endTime);
+  //           });
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -198,8 +210,6 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
                     {'label': 'Rabu', 'value': 3},
                     {'label': 'Kamis', 'value': 4},
                     {'label': 'Jumat', 'value': 5},
-                    {'label': 'Sabtu', 'value': 6},
-                    {'label': 'Minggu', 'value': 0},
                   ],
                   label: 'Hari ',
                   placeholder: 'Pilih Hari',
@@ -215,15 +225,33 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
                     CustomOutlineButton(
                         label: 'Jam Mulai',
                         value: startTimeString,
-                        onPressed: () {
-                          _showStartTimePicker(context);
-                        }),
+                        onPressed: () async {
+                      final TimeOfDay? time = await showTimePicker(
+                        context: context,
+                        initialTime: startTime ?? TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.dial,
+                        
+                      );
+                      setState(() {
+                        startTime = time;
+                        updateStartTime(startTime);
+                      });
+                    },),
                     CustomOutlineButton(
                         label: 'Jam Selesai',
                         value: endTimeString,
-                        onPressed: () {
-                          _showEndTimePicker(context);
-                        })
+                       onPressed: () async {
+                      final TimeOfDay? time = await showTimePicker(
+                        context: context,
+                        initialTime: startTime ?? TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.dial,
+                        
+                      );
+                      setState(() {
+                        endTime = time;
+                        updateEndTime(endTime);
+                      });
+                    },),
                   ],
                 ),
                 CustomTextField(
