@@ -1,18 +1,16 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/widgets/card_history.dart';
-import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 
 class HistoryRecordPage extends StatefulWidget {
   final String? urlApi;
-  const HistoryRecordPage({Key? key, this.urlApi})
-      : super(key: key);
+  const HistoryRecordPage({Key? key, this.urlApi}) : super(key: key);
 
   @override
   State<HistoryRecordPage> createState() => _HistoryRecordPageState();
@@ -20,10 +18,14 @@ class HistoryRecordPage extends StatefulWidget {
 
 class _HistoryRecordPageState extends State<HistoryRecordPage> {
   List<HistoryRecord> histories = <HistoryRecord>[];
+  bool isLoading = true; // Add isLoading state
+
+  @override
   void initState() {
     super.initState();
     _fetchData();
   }
+
   Future<void> _fetchData() async {
     print('ini link ${widget.urlApi}');
     var url = '${widget.urlApi}';
@@ -39,11 +41,12 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print('data : $jsonResponse');
         List<dynamic> dataHistory = jsonResponse['data'];
         List<HistoryRecord> fetchedHistories = <HistoryRecord>[];
         for (var data in dataHistory) {
           String subject = data['subject'];
-          String title =  data['title'];
+          String title = data['title'];
           int time = data['time'];
           int color = data['color'];
           String type = data['type'];
@@ -51,66 +54,76 @@ class _HistoryRecordPageState extends State<HistoryRecordPage> {
         }
         setState(() {
           histories = fetchedHistories;
+          isLoading = false; // Set isLoading to false after data is fetched
         });
-        
       } else {
-        print('hai Request failed with status: ${response.statusCode}');
+        print('Request failed with status: ${response.statusCode}');
+        setState(() {
+          isLoading = false; // Set isLoading to false if the request fails
+        });
       }
     } catch (e) {
       print('Error: $e');
+      setState(() {
+        isLoading = false; // Set isLoading to false if an error occurs
+      });
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            title: Row(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: white,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(width: 8),
-                Text(
-                  'History Time Record',
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: white,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-          ),
-          body: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
+            SizedBox(width: 8),
+            Text(
+              'History Time Record',
+            ),
+          ],
+        ),
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(), // Show loading indicator
+            )
+          : SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: Column(
+                  children: histories.map((history) {
+                    return Column(
+                      children: [
+                        CardHistory(
+                          type: history.type,
+                          title: history.title,
+                          mataKuliah: history.subject,
+                          time: history.time,
+                          color: history.color,
+                        ),
+                        SizedBox(height: 16),
+                      ],
+                    );
+                  }).toList(),
                 ),
               ),
-              child: Column(
-                children: histories.map((history) {
-              return Column(
-                children: [
-                  CardHistory(
-                    type: history.type,
-                    title: history.title,
-                    mataKuliah: history.subject,
-                    time: history.time,
-                    color: history.color,
-                  ),
-                  SizedBox(height: 16),
-                ],
-              );
-            }).toList(),
-              ),
             ),
-          )),
     );
   }
 }
