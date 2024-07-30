@@ -166,11 +166,12 @@ class _TimerPageState extends State<TimerPage> {
           _isRunning = false;
           _seconds = 0;
         });
-
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => HistoryRecordPage(urlApi: '${widget.urlApiHistory}'),)
+              builder: (context) => (widget.urlApiHistory?.contains('users') ?? false)
+        ? HomePage(initialIndex: 1)
+        : HistoryRecordPage(urlApi: widget.urlApiHistory),)
         );
       } else {
         throw Exception('Failed to add time record');
