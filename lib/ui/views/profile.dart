@@ -61,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Stack(
                 children: [
                   CircleAvatar(
@@ -158,6 +158,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       onTap: () {
                         setState(() {
                           email = '';
+                          idSemester = '';
+                          idActiveSemester = '';
+                          isActiveSemester = true;
+                          idSemesterGroup = '';
+                          idActiveSemesterGroup = '';
+                          isActiveSemesterGroup = true;
                         });
                         Navigator.push(
                           context,
