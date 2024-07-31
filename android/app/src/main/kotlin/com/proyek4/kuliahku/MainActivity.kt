@@ -1,4 +1,4 @@
-package com.kuliahku.sda
+package com.kuliahku.proyek4
 
 import io.flutter.embedding.android.FlutterActivity
 

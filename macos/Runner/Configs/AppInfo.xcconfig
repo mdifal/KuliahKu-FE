@@ -8,7 +8,7 @@
 PRODUCT_NAME = kuliahku
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.kuliahku.sda
+PRODUCT_BUNDLE_IDENTIFIER = com.kuliahku.proyek4
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.proyek4. All rights reserved.

@@ -32,11 +32,14 @@ class _IndividualPageState extends State<IndividualPage> {
   ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
   String ListGroupMember = '';
+  late List<dynamic> groupMembers = [];
 
   @override
   void initState() {
     super.initState();
     print("ini id chat: ${widget.chatModel.roomId}");
+
+    fetchGroupMembers();
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
@@ -47,7 +50,6 @@ class _IndividualPageState extends State<IndividualPage> {
     });
 
     connect();
-    fetchGroupMembers();
   }
 
   void onSelected(BuildContext context, int item) {
@@ -173,6 +175,7 @@ class _IndividualPageState extends State<IndividualPage> {
     if (response.statusCode == 200) {
       final List<dynamic> membersGroup = json.decode(response.body);
       print(membersGroup);
+      groupMembers = membersGroup;
       setState(() {
         List<String> memberNames = membersGroup
             .where((member) => member.containsKey('fullname'))
@@ -351,13 +354,14 @@ class _IndividualPageState extends State<IndividualPage> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
+              child: groupMembers.isNotEmpty || !widget.chatModel.isGroup?
+              ListView.builder(
                 shrinkWrap: true,
                 controller: _scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   DateTime currentDate =
-                      DateTime.parse(messages[index].dateTime);
+                  DateTime.parse(messages[index].dateTime);
                   DateTime? previousDate;
                   if (index > 0) {
                     previousDate = DateTime.parse(messages[index - 1].dateTime);
@@ -402,7 +406,8 @@ class _IndividualPageState extends State<IndividualPage> {
                         )
                       else
                         ReplyCard(
-                          sender: widget.chatModel.roomName,
+                          sender: widget.chatModel.isGroup ? groupMembers
+                              .firstWhere((member) => member['email'] == messages[index].sender)['fullname'] ?? '' : '',
                           message: messages[index].message,
                           time: currentDate.toString().substring(11, 16),
                           isGroup: widget.chatModel.isGroup,
@@ -410,7 +415,7 @@ class _IndividualPageState extends State<IndividualPage> {
                     ],
                   );
                 },
-              ),
+              ) : SizedBox.shrink(),
             ),
             Container(
               height: 70,
