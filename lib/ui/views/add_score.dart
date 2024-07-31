@@ -19,6 +19,12 @@ class InputNilaiPage extends StatefulWidget {
 
 class _InputNilaiPageState extends State<InputNilaiPage> {
   final TextEditingController ipSemesterController = TextEditingController();
+  late List<dynamic> addScoreItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   String formatedJamBelajar(String actual, String expected) {
     String jamBelajar;
@@ -28,24 +34,40 @@ class _InputNilaiPageState extends State<InputNilaiPage> {
     return jamBelajar;
   }
 
-
   void _updateGrade(int index, String grade) {
     setState(() {
-      widget.laporanItems[index]['grade'] = grade;
+      widget.laporanItems[index]['dataMatakuliah']['grade'] = grade;
     });
     print(widget.laporanItems);
   }
 
+  void _formattingGrade(List<dynamic> list) {
+    addScoreItems = List.generate(list.length, (index) => {});
+
+    for (var index = 0; index < list.length; index++) {
+      var data = list[index];
+      print(data['dataMatakuliah']['subjectId']);
+
+      setState(() {
+        addScoreItems[index]['subjectId'] = data['dataMatakuliah']['subjectId'];
+        addScoreItems[index]['grade'] = data['dataMatakuliah']['grade'];
+      });
+    }
+
+  }
+
   Future<void> _addScore() async {
     try {
+      _formattingGrade(widget.laporanItems);
+
       Map<String, dynamic> data = {
-        "username": ipSemesterController.text,
-        "password": widget.laporanItems,
+        "ip": ipSemesterController.text,
+        "grades": addScoreItems,
       };
       print(data);
 
       var response = await http.post(
-        Uri.parse('http://$ipUrl/post'),
+        Uri.parse('http://$ipUrl/users/$email/nilai/semester/$idSemester'),
         body: json.encode(data),
         headers: {
           'Content-Type': 'application/json',

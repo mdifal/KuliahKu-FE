@@ -40,6 +40,8 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
         final jsonResponse = json.decode(response.body);
         final fetchedData = jsonResponse['data'];
 
+        print(fetchedData);
+
         setState(() {
           expectedHours = fetchedData['hourExpected'].toString();
           actualHours = fetchedData['hourImplemented'].toString();
@@ -50,14 +52,16 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
 
           _isLoading = false;
         });
+        print (laporanItems);
 
-        if (laporanItems[1]['grade'] != null){
+        if (laporanItems[1]['dataMatakuliah']['subjectGrade'] != null){
           setState(() {
             _hasEnteredGrade = true;
           });
         }
 
         print(laporanItems);
+        print(_hasEnteredGrade);
 
       } else {
         throw Exception('Failed to fetch profile data');
@@ -69,6 +73,14 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
   }
 
   String formatedJamBelajar(String actual, String expected) {
+    String jamBelajar;
+
+    jamBelajar = actual + '/' + expected;
+
+    return jamBelajar;
+  }
+
+  String formatedText(String actual, String expected) {
     String jamBelajar;
 
     jamBelajar = actual + '/' + expected;
@@ -266,7 +278,7 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                             ),
                             children: [
                               TextSpan(
-                                text: StartProductiveHour,
+                                text: StartProductiveHour ,
                                 style: TextStyle(fontSize: 18),
                               ),
                               TextSpan(
@@ -304,7 +316,7 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                                 matkul: item['subjectName'],
                                 jamBelajar: formatedJamBelajar(laporanItems[index]['hourImplemented'].toString(), laporanItems[index]['hourExpected'].toString()),
                                 color: Color(item['subjectColor']),
-                                nilai: 'A',
+                                nilai: item['subjectGrade'],
                                 text: 'Nilai Matematika anda A dengan capaian waktu belajar 89/90. Nilai yang sempurna! Pertahankan!',
                               )
                                 : LaporanItem(
