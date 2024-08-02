@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/collab_plan/calender.dart';
 import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
@@ -14,8 +15,9 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class tambahJadwalPage extends StatefulWidget {
   final String? urlApi;
+  final String? subGroupId;
 
-  const tambahJadwalPage({Key? key, this.urlApi});
+  const tambahJadwalPage({Key? key, this.urlApi, this.subGroupId});
 
   @override
   State<tambahJadwalPage> createState() => _tambahJadwalPageState();
@@ -44,8 +46,10 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
     String ruangan = _ruanganController.text;
     int hari = selectedDay;
     int warna = selectedColor;
+    String? subgroupId = widget.subGroupId ?? '';
+    Map<String, dynamic> data;
 
-    Map<String, dynamic> data = {
+    data = {
       "color": warna,
       "day": hari,
       "dosen": dosen,
@@ -54,9 +58,10 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
       "startTime": jamMulai,
       "subject": mataKuliah,
       "sks" : sks,
+      "subgroupId" :subgroupId
+    
     };
     print(data);
-
     String body = jsonEncode(data);
     var url = '${widget.urlApi}';
     var response = await http.post(
@@ -79,11 +84,19 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           backgroundColor: success,
         ),
       );
-      Navigator.push(
+      if(subgroupId == null){
+        Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => HomePage(initialIndex: 0,calender: 'schedule',))
         );
+      }else{
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CalenderCollabPlanPage(calender: 'schedule', groupId: IdGroup ))
+        );
+      }
     } else {
       showTopSnackBar(
         Overlay.of(context),

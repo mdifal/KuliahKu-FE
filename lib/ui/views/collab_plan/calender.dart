@@ -10,6 +10,7 @@ import 'package:kuliahku/ui/views/make_new_schedule.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/views/make_new_semester.dart';
+import 'package:kuliahku/ui/views/make_new_subgroup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CalenderCollabPlanPage extends StatefulWidget {
@@ -25,14 +26,13 @@ class CalenderCollabPlanPage extends StatefulWidget {
 
 class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
   DateFormat dateFormat = DateFormat('d MMMM yyyy');
-  String titleSemester = '';
-  String timeSemester = '';
-  String SemesterId = '';
+  String nameSubgroup = '';
+  String subgroupId = '';
   late Widget calender;
   late String _calender = 'task';
   late bool isLoading = true;
-  late Semester activeSemester;
-  List<Semester> semesters = <Semester>[];
+  late Subgroup? activeSubgroup;
+  List<Subgroup> subgroups = <Subgroup>[];
 
   @override
   void initState() {
@@ -44,68 +44,6 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
     setState(() {
       _calender = prefs.getString('calender') ?? 'task';
       _updateCalenderWidget();
-      isLoading = false;
-    });
-  }
-
-  Future<void> _loadSemester() async {
-    activeSemester = _getActiveSemester(semesters);
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      titleSemester = activeSemester.title;
-      timeSemester = activeSemester.time ;
-      SemesterId = activeSemester.id;
-      idSemesterGroup = SemesterId;
-      idActiveSemesterGroup = SemesterId;
-    });
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    await _fetchData();
-    _loadCalender();
-    _loadSemester();
-  }
-
-  Future<void> _saveCalender(String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('calender', value);
-  }
-
-  Future<void> _saveSemester() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('titleSemester', titleSemester);
-    await prefs.setString('timeSemester', timeSemester);
-    await prefs.setString('SemesterId', SemesterId);
-  }
-
-  void _updateCalenderWidget() {
-    if (_calender == 'schedule') {
-      calender = CalenderScheduleCollabPlan(groupId: widget.groupId);
-    } else {
-      calender = CalenderTaskCollabPlan(groupId: widget.groupId);
-    }
-  }
-
-  void ubahsemester(String id) async {
-    setState(() {
-      idSemesterGroup = id;
-      final selectedItem = semesters.firstWhere((item) => item.id == id);
-      SemesterId = selectedItem.id;
-      titleSemester = selectedItem.title;
-      timeSemester = selectedItem.time;
-      isLoading = true;
-      if(idSemesterGroup == idActiveSemesterGroup){
-        isActiveSemesterGroup = true;
-      }
-      else{
-        isActiveSemesterGroup = false;
-      }
-    });
-    await _saveSemester();
-    await _fetchData();
-    setState(() {
       isLoading = false;
     });
   }
@@ -139,7 +77,7 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
                       Icon(Icons.warning_sharp, size: 50, color: Colors.red),
                       SizedBox(height: 15),
                       Text(
-                        "Anda Tidak Memiliki Semester Aktif",
+                        "Anda Tidak Memiliki Sub Group",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
@@ -148,7 +86,7 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "Ayo buat semester agar Anda dapat menggunakan aplikasi KuliahKu dengan optimal!",
+                        "Ayo buat subgroup untuk dapat menggunakan fitur CollabPlan!",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -159,49 +97,29 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
               ],
             ),
             Align(
-              alignment: Alignment.bottomRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+              alignment: Alignment.bottomCenter,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => addSubgroupPage(
+                        groupId: widget.groupId,
                       ),
                     ),
-                    child: Text(
-                      'Tutup',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => 
-                          AddNewSemesterPage(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      'Buat Semester',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
+                ),
+                child: Text(
+                  'Buat Subgroup',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],
@@ -210,41 +128,86 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
     );
   }
 
-  Semester _getActiveSemester(List<Semester> semesters) {
-    final now = DateTime.now();
-
-    for (final semester in semesters) {
-      final startDate = dateFormat.parse(semester.time.split(' - ')[0]);
-      final endDate = dateFormat.parse(semester.time.split(' - ')[1]);
-
-      if (now.isAfter(startDate) && now.isBefore(endDate)) {
-        return semester;
-      }
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: contentBox(context),
+  Future<void> _loadSubgroup() async {
+    activeSubgroup = subgroups.isNotEmpty
+        ? (IdSubgroup == ''
+            ? subgroups[0]
+            : subgroups.firstWhere((subgroup) => subgroup.id == IdSubgroup,
+                orElse: () => subgroups[0]))
+        : null;
+    if (activeSubgroup == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: contentBox(context),
+            );
+          },
         );
-      },
-    );
-  });
-    return semesters[0];
+      });
+    }
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nameSubgroup = activeSubgroup!.name;
+      subgroupId = activeSubgroup!.id;
+      IdSubgroup = subgroupId;
+    });
   }
 
-  List<Semester> _getSemester() {
-    return semesters;
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    await _fetchData();
+    await _loadSubgroup();
+    _loadCalender();
+  }
+
+  Future<void> _saveCalender(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('calender', value);
+  }
+
+  Future<void> _saveSubgroup() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('nameSubgroup', nameSubgroup);
+    await prefs.setString('subGroupId', subgroupId);
+  }
+
+  void _updateCalenderWidget() {
+    if (_calender == 'schedule') {
+      calender = CalenderScheduleCollabPlan(groupId: widget.groupId);
+    } else {
+      calender = CalenderTaskCollabPlan(groupId: widget.groupId);
+    }
+  }
+
+  void ubahsubgroup(String id) async {
+    setState(() {
+      IdSubgroup = id;
+      final selectedItem = subgroups.firstWhere((item) => item.id == id);
+      subgroupId = selectedItem.id;
+      nameSubgroup = selectedItem.name;
+      isLoading = true;
+    });
+    await _saveSubgroup();
+    await _fetchData();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  List<Subgroup> _getSubgroup() {
+    return subgroups;
   }
 
   Future<void> _fetchData() async {
-    var url = 'http://$ipUrl/groups/${widget.groupId}/semesters';
+    var url = 'http://$ipUrl/groups/${widget.groupId}/subgroups';
 
     try {
       var response = await http.get(
@@ -257,23 +220,18 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        List<dynamic> dataSemester = jsonResponse['data'];
-        List<Semester> fetchedSemesters = <Semester>[];
+        List<dynamic> dataSubgroup = jsonResponse['data'];
+        List<Subgroup> fetchedSubgroups = <Subgroup>[];
 
-        print('ini semester $dataSemester');
-        for (var data in dataSemester) {
+        print('data subgroup $dataSubgroup');
+        for (var data in dataSubgroup) {
           String id = data['id'] ?? '';
-          String semesterName = 'Semester ${data['semesterNumber']}';
-          DateTime endDate = DateTime.parse(data['endDate']);
-          DateTime startDate = DateTime.parse(data['startDate']);
-          String formattedEndDate = dateFormat.format(endDate);
-          String formattedStartDate = dateFormat.format(startDate);
-          String timeSemester = '$formattedStartDate - $formattedEndDate';
+          String subgroupName = data['name'];
 
-          fetchedSemesters.add(Semester(id, semesterName, timeSemester));
+          fetchedSubgroups.add(Subgroup(id, subgroupName));
         }
         setState(() {
-          semesters = fetchedSemesters;
+          subgroups = fetchedSubgroups;
         });
       } else {
         print('Request failed with status: ${response.statusCode}');
@@ -299,36 +257,57 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          titleSemester,
+                          nameSubgroup,
                           style: TextStyle(fontSize: 17),
-                        ),
-                        Text(
-                          timeSemester,
-                          style: TextStyle(fontSize: 13),
                         ),
                       ],
                     ),
                     SizedBox(width: 5),
-                    PopupMenuButton<Semester>(
-                      itemBuilder: (BuildContext context) =>
-                          _getSemester().map((Semester item) {
-                        return PopupMenuItem<Semester>(
-                          value: item,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    PopupMenuButton<dynamic>(
+                      initialValue: subgroups.isNotEmpty
+                          ? subgroups.firstWhere(
+                              (subgroup) => subgroup.id == IdSubgroup,
+                              orElse: () => subgroups.first,
+                            )
+                          : null,
+                      itemBuilder: (BuildContext context) => [
+                        ..._getSubgroup().map((Subgroup item) {
+                          return PopupMenuItem<Subgroup>(
+                            value: item,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(item.name),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        PopupMenuItem<dynamic>(
+                          value: 'add',
+                          child: Row(
                             children: [
-                              Text(item.title),
-                              Text(item.time,
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey)),
+                              Icon(Icons.add, color: Colors.blue),
+                              SizedBox(width: 8),
+                              Text('Add Subgroup'),
                             ],
                           ),
-                        );
-                      }).toList(),
-                      onSelected: (Semester value) {
-                        setState(() {
-                          ubahsemester(value.id);
-                        });
+                        ),
+                      ],
+                      onSelected: (dynamic value) {
+                        if (value is Subgroup) {
+                          setState(() {
+                            ubahsubgroup(value.id);
+                          });
+                        } else if (value == 'add') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => addSubgroupPage(
+                                  groupId: widget
+                                      .groupId), // Replace with your actual page
+                            ),
+                          );
+                        }
                       },
                       icon: Icon(
                         Icons.keyboard_arrow_down,
@@ -340,81 +319,82 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
                 ),
                 Row(
                   children: [
-                    isActiveSemesterGroup?Container(
-                      decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 25,
-                      height: 25,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.add,
-                              size: 16,
-                              color: Colors.white,
+                    isActiveSemesterGroup
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: mainColor,
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                          ),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          calender is CalenderTaskCollabPlan
-                                              ? AddPlanPage(
-                                                  urlApi:
-                                                      'http://$ipUrl/groups/${widget.groupId}/plans',
-                                                  urlApiMataKuliah:
-                                                      'http://$ipUrl/groups/${widget.groupId}/jadwalKuliahList/now',
-                                                )
-                                              : tambahJadwalPage(
-                                                  urlApi:
-                                                      'http://$ipUrl/groups/${widget.groupId}/schedules',
-                                                ),
+                            width: 25,
+                            height: 25,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Center(
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => calender
+                                                    is CalenderTaskCollabPlan
+                                                ? AddPlanPage(
+                                                    urlApi:
+                                                        'http://$ipUrl/groups/${widget.groupId}/plans',
+                                                    urlApiMataKuliah:
+                                                        'http://$ipUrl/groups/${widget.groupId}/schedulesList/subgroups/$IdSubgroup/',
+                                                  )
+                                                : tambahJadwalPage(
+                                                    urlApi:
+                                                        'http://$ipUrl/groups/${widget.groupId}/schedules',
+                                                    subGroupId: IdSubgroup,
+                                                  ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: greySoft,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            width: 25,
+                            height: 25,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Center(
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ) : Container(
-                      decoration: BoxDecoration(
-                        color: greySoft,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      width: 25,
-                      height: 25,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.add,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: () {
-                                
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     SizedBox(width: 5),
                     Container(
                       decoration: BoxDecoration(
@@ -483,10 +463,9 @@ class _CalenderTaskandSchedulePageState extends State<CalenderCollabPlanPage> {
   }
 }
 
-class Semester {
-  final String title;
-  final String time;
+class Subgroup {
+  final String name;
   final String id;
 
-  Semester(this.id, this.title, this.time);
+  Subgroup(this.id, this.name);
 }

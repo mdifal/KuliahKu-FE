@@ -37,6 +37,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   void initState() {
     super.initState();
+    IdGroup = '${widget.chatModel.roomId}';
     print("ini id chat: ${widget.chatModel.roomId}");
 
     fetchGroupMembers();
@@ -57,7 +58,7 @@ class _IndividualPageState extends State<IndividualPage> {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TimerPage(urlApi: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records', urlApiHistory: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/semester/$idSemesterGroup', urlApiMataKuliah: 'http://$ipUrl/groups/${widget.chatModel.roomId}/jadwalKuliahList/now',)),
+          MaterialPageRoute(builder: (context) => TimerPage(urlApi: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records', urlApiHistory: 'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/subgroup/$IdSubgroup', urlApiMataKuliah: 'http://$ipUrl/groups/${widget.chatModel.roomId}/schedulesList/subgroups/$IdSubgroup/',)),
         );
         break;
       case 1:
@@ -70,7 +71,7 @@ class _IndividualPageState extends State<IndividualPage> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HistoryRecordPage(urlApi:
-                        'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/semester/$idSemesterGroup')),
+                        'http://$ipUrl/groups/${widget.chatModel.roomId}/time-records/subgroup/$IdSubgroup')),
         );
         break;
     }
@@ -335,17 +336,19 @@ class _IndividualPageState extends State<IndividualPage> {
               ],
             ),
           )),
-          actions: [
-            PopupMenuButton<int>(
-              icon: Icon(Icons.more_vert, color: white),
-              onSelected: (item) => onSelected(context, item),
-              itemBuilder: (context) => [
-                PopupMenuItem<int>(value: 0, child: Text('Timer')),
-                PopupMenuItem<int>(value: 1, child: Text('Collab Plan')),
-                PopupMenuItem<int>(value: 2, child: Text('History Time Record')),
-              ],
-            ),
+          actions: widget.chatModel.isGroup
+    ? [
+        PopupMenuButton<int>(
+          icon: Icon(Icons.more_vert, color: white),
+          onSelected: (item) => onSelected(context, item),
+          itemBuilder: (context) => [
+            PopupMenuItem<int>(value: 0, child: Text('Timer')),
+            PopupMenuItem<int>(value: 1, child: Text('Collab Plan')),
+            PopupMenuItem<int>(value: 2, child: Text('History Time Record')),
           ],
+        ),
+      ]
+    : [],
         ),
       ),
       body: Container(

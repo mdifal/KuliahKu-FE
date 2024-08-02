@@ -11,3 +11,5 @@ bool isActiveSemester = true;
 String idSemesterGroup = '';
 String idActiveSemesterGroup = '';
 bool isActiveSemesterGroup = true;
+String IdSubgroup = '';
+String IdGroup = '';
