@@ -50,13 +50,11 @@ class _CalenderTaskandSchedulePageState
 
   Future<void> _loadSemester() async {
     activeSemester = _getActiveSemester(semesters);
-    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      titleSemester = prefs.getString('titleSemester') ?? activeSemester.title;
-      timeSemester = prefs.getString('timeSemester') ?? activeSemester.time;
-      SemesterId = prefs.getString('SemesterId') ?? activeSemester.id;
-      idSemester = SemesterId;
-      idActiveSemester = prefs.getString('SemesterId') ?? activeSemester.id;
+      titleSemester = activeSemester.title;
+      timeSemester = activeSemester.time;
+      SemesterId = activeSemester.id;
+      idSemester = activeSemester.id;
     });
   }
 
@@ -217,6 +215,7 @@ class _CalenderTaskandSchedulePageState
       final endDate = dateFormat.parse(semester.time.split(' - ')[1]);
 
       if (now.isAfter(startDate) && now.isBefore(endDate)) {
+        idActiveSemester = semester.id;
         print('ada semester aktif');
         return semester;
       }
@@ -258,6 +257,7 @@ class _CalenderTaskandSchedulePageState
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        print('ini dat calender $jsonResponse');
         List<dynamic> dataSemester = jsonResponse['semesters'];
         List<Semester> fetchedSemesters = <Semester>[];
 

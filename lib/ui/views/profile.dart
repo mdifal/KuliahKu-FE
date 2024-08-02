@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/views/landing.dart';
 import 'dart:convert';
 import 'package:kuliahku/ui/views/laporan_hasil_belajar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -155,15 +156,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.logout_outlined,
                       text: 'Log Out',
                       color: facebookColor,
-                      onTap: () {
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('idSemester');
+                        await prefs.remove('idActiveSemester');
+                        await prefs.remove('isActiveSemester');
+                        await prefs.remove('idSemesterGroup');
+                        await prefs.remove('idActiveSemesterGroup');
+                        await prefs.remove('isActiveSemesterGroup');
+                        await prefs.remove('email');
                         setState(() {
-                          email = '';
                           idSemester = '';
                           idActiveSemester = '';
                           isActiveSemester = true;
                           idSemesterGroup = '';
                           idActiveSemesterGroup = '';
                           isActiveSemesterGroup = true;
+                          email = '';
                         });
                         Navigator.push(
                           context,

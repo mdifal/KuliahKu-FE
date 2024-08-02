@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage(initialIndex: 0, calender: 'task',)),
         );
       } else if (response.statusCode == 401) {
         final responseData = json.decode(response.body);
