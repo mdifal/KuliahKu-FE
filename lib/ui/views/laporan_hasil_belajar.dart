@@ -317,7 +317,7 @@ class _LaporanHasilBelajarPageState extends State<LaporanHasilBelajarPage> {
                                 jamBelajar: formatedJamBelajar(laporanItems[index]['hourImplemented'].toString(), laporanItems[index]['hourExpected'].toString()),
                                 color: Color(item['subjectColor']),
                                 nilai: item['subjectGrade'],
-                                text: 'Nilai Matematika anda A dengan capaian waktu belajar 89/90. Nilai yang sempurna! Pertahankan!',
+                                text: laporanItems[index]['subjectNotes'],
                               )
                                 : LaporanItem(
                                     matkul: item['subjectName'],

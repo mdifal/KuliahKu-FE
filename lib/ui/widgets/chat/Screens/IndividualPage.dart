@@ -448,20 +448,7 @@ class _IndividualPageState extends State<IndividualPage> {
                           hintStyle: TextStyle(color: greySoft),
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 15, horizontal: 20),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.send),
-                            onPressed: sendButton
-                                ? () {
-                                    sendMessage(
-                                      _controller.text.trim(),
-                                    );
-                                    _controller.clear();
-                                    setState(() {
-                                      sendButton = false;
-                                    });
-                                  }
-                                : null,
-                          ),
+
                         ),
                       ),
                     ),
@@ -476,11 +463,20 @@ class _IndividualPageState extends State<IndividualPage> {
                       radius: 25,
                       backgroundColor: mainColor,
                       child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.add,
-                            color: white,
-                          )),
+
+                        icon: Icon(Icons.send),
+                        onPressed: sendButton
+                          ? () {
+                            sendMessage(
+                              _controller.text.trim(),
+                            );
+                            _controller.clear();
+                            setState(() {
+                              sendButton = false;
+                            });
+                          }
+                            : null,
+                      ),
                     ),
                   ),
                 ],
