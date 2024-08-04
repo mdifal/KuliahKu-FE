@@ -13,8 +13,9 @@ import 'package:http/http.dart' as http;
 
 class UpdateSchedulePage extends StatefulWidget {
   final String id;
+  final String? urlApi;
 
-  const UpdateSchedulePage({Key? key, required this.id}) : super(key: key);
+  const UpdateSchedulePage({Key? key, this.urlApi, required this.id});
 
   @override
   State<UpdateSchedulePage> createState() => _UpdateSchedulePageState();
@@ -58,7 +59,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
 
     String body = jsonEncode(data);
     var url =
-        'http://$ipUrl/users/$email/jadwalKuliah/update/${widget.id}';
+        '${widget.urlApi}';
     var response = await http.put(
       Uri.parse(url),
       body: body,
@@ -124,7 +125,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
           "Access-Control-Allow-Origin": "*"
         },
       );
-
+      print('masuk');
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         Map<String, dynamic> data = jsonResponse['data'];
