@@ -84,7 +84,7 @@ class _tambahJadwalPageState extends State<tambahJadwalPage> {
           backgroundColor: success,
         ),
       );
-      if(subgroupId == null){
+      if(subgroupId == ''){
         Navigator.push(
           context,
           MaterialPageRoute(
