@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 class Meeting {
-  Meeting(this.id, this.eventName, this.from, this.to, this.background, this.dosen, this.sks, this.ruangan, this.isAllDay, this.day);
+  Meeting(this.id, this.eventName, this.from, this.to, this.background, this.dosen, this.sks, this.ruangan, this.isAllDay, this.day, this.isGroup);
   String id;
   String eventName;
   DateTime from;
@@ -12,4 +12,5 @@ class Meeting {
   String ruangan;
   bool isAllDay;
   String day;
+  bool isGroup;
 }

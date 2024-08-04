@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/collab_plan/calender.dart';
 import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
@@ -12,10 +13,12 @@ import 'package:kuliahku/ui/widgets/time_field.dart';
 import 'package:http/http.dart' as http;
 
 class UpdateSchedulePage extends StatefulWidget {
-  final String id;
   final String? urlApi;
+  final String? urlApiDetail;
+  final String? GroupId;
 
-  const UpdateSchedulePage({Key? key, this.urlApi, required this.id});
+  const UpdateSchedulePage(
+      {Key? key, this.urlApi, this.urlApiDetail, this.GroupId});
 
   @override
   State<UpdateSchedulePage> createState() => _UpdateSchedulePageState();
@@ -58,8 +61,7 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
     };
 
     String body = jsonEncode(data);
-    var url =
-        '${widget.urlApi}';
+    var url = '${widget.urlApi}';
     var response = await http.put(
       Uri.parse(url),
       body: body,
@@ -85,7 +87,16 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
                     Navigator.of(context).pop();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage(calender: 'schedule',)),
+                      MaterialPageRoute(
+                        builder: (context) {
+                          if (widget.urlApi!.contains('groups')) {
+                            return CalenderCollabPlanPage(
+                                calender: 'schedule', groupId: widget.GroupId);
+                          } else {
+                            return HomePage(calender: 'schedule');
+                          }
+                        },
+                      ),
                     );
                   },
                   child: Text('OK'),
@@ -114,9 +125,9 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
   }
 
   Future<void> _fetchData() async {
-    var url =
-        'http://$ipUrl/users/$email/jadwalKuliah/detail/${widget.id}';
+    var url = '${widget.urlApiDetail}';
 
+    print('link $url');
     try {
       var response = await http.get(
         Uri.parse(url),
@@ -125,11 +136,9 @@ class _UpdateSchedulePageState extends State<UpdateSchedulePage> {
           "Access-Control-Allow-Origin": "*"
         },
       );
-      print('masuk');
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         Map<String, dynamic> data = jsonResponse['data'];
-        print('ini data $data');
         setState(() {
           _mataKuliahController.text = data['subject'] ?? '';
           _dosenController.text = data['dosen'] ?? '';

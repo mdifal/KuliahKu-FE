@@ -57,6 +57,7 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         List<dynamic> dataTugas = jsonResponse['data'];
+        print('data jadwla $dataTugas');
         List<Meeting> fetchedMeetings = <Meeting>[];
         for (var data in dataTugas) {
           String id = data['id'] ?? '';
@@ -68,9 +69,10 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
           DateTime endTime = DateTime.parse(data['endTime']);
           Color color = Color(data['color']);
           String day = data['day'];
+          bool isGroup = data['isGroup'] ?? false;
 
           fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
-              dosen, sks, ruangan, false, day));
+              dosen, sks, ruangan, false, day, isGroup));
         }
         setState(() {
           meetings = fetchedMeetings;
