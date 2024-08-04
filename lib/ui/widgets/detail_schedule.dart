@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kuliahku/ui/shared/global.dart';
 import 'package:kuliahku/ui/shared/style.dart';
+import 'package:kuliahku/ui/views/collab_plan/calender.dart';
 import 'package:kuliahku/ui/views/edit_schedule.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:kuliahku/ui/widgets/calender_schedule.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class DetailSchedule extends StatefulWidget {
   final Meeting meeting;
-  const DetailSchedule({super.key, required this.meeting});
+  final String? GroupId;
+  const DetailSchedule({super.key, required this.meeting, this.GroupId});
 
   @override
   State<DetailSchedule> createState() => _DetailScheduleState();
@@ -23,14 +27,20 @@ class _DetailScheduleState extends State<DetailSchedule> {
       MaterialPageRoute(
         builder: (context) => UpdateSchedulePage(
           id: id,
+          urlApi: 'http://$ipUrl/groups/${widget.GroupId}/schedules/$id',
         ),
       ),
     );
   }
 
   Future<void> deleteSchedule(String id) async {
-    var url = 'http://$ipUrl/users/$email/jadwalKuliah/delete/$id';
-
+    var url = '';
+    if (widget.GroupId == null) {
+      url = 'http://$ipUrl/users/$email/jadwalKuliah/delete/$id';
+    } else {
+      url = 'http://$ipUrl/groups/${widget.GroupId}/schedules/$id';
+    }
+    print('url $url');
     try {
       var response = await http.delete(
         Uri.parse(url),
@@ -41,39 +51,8 @@ class _DetailScheduleState extends State<DetailSchedule> {
       );
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        String message = jsonResponse['message'];
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: Text(message),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK', style: TextStyle(color: Colors.blue)),
-                  ),
-                ],
-              );
-            });
       } else {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content:
-                    Text('Request failed with status: ${response.statusCode}'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK', style: TextStyle(color: Colors.blue)),
-                  ),
-                ],
-              );
-            });
+        print('Request failed with status: ${response.statusCode}');
       }
     } catch (e) {
       print('Error: $e');
@@ -210,36 +189,38 @@ class _DetailScheduleState extends State<DetailSchedule> {
                   ],
                 ),
               ),
-              isActiveSemester? Positioned(
-                right: 0,
-                child: PopupMenuButton<String>(
-                  itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'update',
-                      child: Text('Update'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'delete',
-                      child: Text('Delete'),
-                    ),
-                  ],
-                  onSelected: (String value) {
-                    switch (value) {
-                      case 'update':
-                        Navigator.of(context).pop();
-                        updateSchedule(meeting.id);
-                        break;
-                      case 'delete':
-                        Navigator.of(context).pop();
-                        deleteSchedule(meeting.id);
-                        didChangeDependencies();
-                        break;
-                    }
-                  },
-                  icon: Icon(Icons.more_vert, color: Colors.grey),
-                ),
-              ) : Container(),
+              isActiveSemester
+                  ? Positioned(
+                      right: 0,
+                      child: PopupMenuButton<String>(
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'update',
+                            child: Text('Update'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                        ],
+                        onSelected: (String value) {
+                          switch (value) {
+                            case 'update':
+                              Navigator.of(context).pop();
+                              updateSchedule(meeting.id);
+                              break;
+                            case 'delete':
+                              Navigator.of(context).pop();
+                              deleteSchedule(meeting.id);
+                              didChangeDependencies();
+                              break;
+                          }
+                        },
+                        icon: Icon(Icons.more_vert, color: Colors.grey),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
           SizedBox(height: 15),

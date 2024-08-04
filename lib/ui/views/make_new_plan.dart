@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/collab_plan/calender.dart';
+import 'package:kuliahku/ui/views/home.dart';
 import 'package:kuliahku/ui/widgets/dropdown.dart';
 import 'package:kuliahku/ui/widgets/text_field.dart';
 import 'package:kuliahku/ui/widgets/button.dart';
@@ -124,11 +125,19 @@ class _AddPlanPageState extends State<AddPlanPage> {
 
       if (response.statusCode == 200) {
         print('Rencana mandiri berhasil ditambahkan');
-        Navigator.push(
+        if(widget.urlApi!.contains('groups')){
+          Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CalenderCollabPlanPage(calender: 'task', groupId: IdGroup ))
         );
+        }else{
+          Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(initialIndex: 0,calender: 'task',))
+        );
+        }
       } else {
         print('Gagal menambahkan rencana mandiri: ${response.statusCode}');
         _showErrorDialog('Error adding plan: ${response.statusCode}');

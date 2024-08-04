@@ -97,7 +97,7 @@ class _CalenderScheduleState extends State<CalenderSchedule> {
                 return DetailSchedule(meeting: meeting);
               },
             ).then((_) {
-              didChangeDependencies();
+               _fetchData();
             });
           }
         },
