@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -7,12 +8,15 @@ import 'package:kuliahku/ui/shared/style.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../widgets/button.dart';
 import '../widgets/editable_form_field.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({Key? key}) : super(key: key);
+  final Stream<Uint8List>? profilePictureStream;
+
+  const EditProfilePage({Key? key, this.profilePictureStream}) :  super(key: key);
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -24,7 +28,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String _college = '';
   late DateTime _dob = DateTime(2000, 1, 1); // Default value for _dob
   late ImagePicker _imagePicker;
-  XFile? _imageFile;
+  XFile? _newImageFile;
+  XFile? _profileImageFile;
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _fullnameController = TextEditingController();
@@ -43,8 +48,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     _imagePicker = ImagePicker();
-    fetchProfileData();
+    _fetchInitialData();
   }
+
+  // New method to handle asynchronous work
+  Future<void> _fetchInitialData() async {
+    try {
+      await fetchProfileData();
+      await _updateProfilePictureFromStream();
+    } catch (e) {
+      // Handle or log error if needed
+      print('Error during initial data fetch: $e');
+    }
+  }
+
+  Future<void> _updateProfilePictureFromStream() async {
+    if (widget.profilePictureStream != null) {
+      try {
+        // Convert the stream to a broadcast stream if it's not already
+        final broadcastStream = widget.profilePictureStream!.asBroadcastStream();
+        final xFile = await streamToXFile(broadcastStream);
+        if (xFile != null) {
+          setState(() {
+            _profileImageFile = xFile;
+          });
+        }
+      } catch (e) {
+        print('Error updating profile picture from stream: $e');
+      }
+    }
+  }
+
 
   Future<void> fetchProfileData() async {
     try {
@@ -77,23 +111,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _ambilFoto() async {
     final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _imageFile = pickedFile;
+      _newImageFile = pickedFile;
     });
   }
 
   Future<void> _simpanPerubahan() async {
     try {
       var url = 'http://$ipUrl/profile/edit/$email';
-      var response = await http.put(
-        Uri.parse(url),
-        body: jsonEncode({
-          'username': _username,
-          'fullname': _fullname,
-          'college': _college,
-          'dob': _dob.toString(),
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
+
+      var request = http.MultipartRequest('PUT', Uri.parse(url));
+      request.fields['username'] = _username;
+      request.fields['fullname'] = _fullname;
+      request.fields['college'] = _college;
+      request.fields['dob'] = _dob.toString();
+
+      if (_newImageFile != null) {
+        var file = await http.MultipartFile.fromPath('profilePic', _newImageFile!.path);
+        request.files.add(file);
+      }
+
+      var response = await request.send();
 
       if (response.statusCode == 200) {
         _showStatusMessage('Changes saved successfully');
@@ -106,6 +143,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
       throw Exception('Failed to save profile changes');
     }
   }
+
+  Future<XFile?> streamToXFile(Stream<Uint8List> stream) async {
+    try {
+      // Get the temporary directory
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}/temp_image_${DateTime.now().millisecondsSinceEpoch}.png';
+
+      // Create a file
+      final file = File(filePath);
+
+      // Write stream data to file
+      final sink = file.openWrite();
+      await for (var chunk in stream) {
+        sink.add(chunk);
+      }
+      await sink.flush();
+      await sink.close();
+
+      // Return an XFile instance
+      return XFile(filePath);
+    } catch (e) {
+      print('Error converting stream to XFile: $e');
+      return null;
+    }
+  }
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -160,9 +223,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundColor: softBlue,
-                    backgroundImage: _imageFile != null
-                        ? FileImage(File(_imageFile!.path))
+                    backgroundImage: _newImageFile != null
+                        ? FileImage(File(_newImageFile!.path))
+                        : _profileImageFile != null
+                        ? FileImage(File(_profileImageFile!.path))
                         : null,
                   ),
                   Positioned(
@@ -236,7 +300,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       bottomNavigationBar: Container(
         padding: EdgeInsets.all(20),
-        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,

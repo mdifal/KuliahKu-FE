@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/shared/global.dart';
@@ -19,10 +21,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late String _username = '';
   late String _fullname = '';
+  Stream<Uint8List>? profilePictureStream;
 
   @override
   void initState() {
     super.initState();
+    fetchProfilePicture();
     fetchProfileData();
   }
 
@@ -47,6 +51,30 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchProfilePicture() async {
+    try {
+      var url = 'http://$ipUrl/profile/edit/$email/profilePicture';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        if (bytes.isNotEmpty) {
+          setState(() {
+            profilePictureStream = Stream.value(Uint8List.fromList(bytes));
+          });
+        } else {
+          throw Exception('Empty image data');
+        }
+      } else {
+        throw Exception('Failed to fetch profile picture. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching profile picture: $error');
+      throw Exception('Failed to fetch profile picture');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -63,15 +91,39 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 10),
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: softBlue,
-                    // backgroundImage: AssetImage(''),
-                  ),
-                ],
+              StreamBuilder<Uint8List>(
+                stream: profilePictureStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircleAvatar(
+                      radius: 50,
+                      backgroundColor: softBlue,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    );
+                  } else if (!snapshot.hasData) {
+                    return CircleAvatar(
+                      radius: 50,
+                      backgroundColor: softBlue,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    );
+                  } else {
+                    return CircleAvatar(
+                      radius: 50,
+                      backgroundColor: softBlue,
+                      backgroundImage: MemoryImage(snapshot.data!),
+                    );
+                  }
+                },
               ),
+
               SizedBox(height: 20),
               Text(
                 _fullname,
@@ -109,8 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 child: Column(
-                  mainAxisSize:
-                      MainAxisSize.min, // Make the Column fit the content
+                  mainAxisSize: MainAxisSize.min, // Make the Column fit the content
                   children: [
                     MenuItem(
                       icon: Icons.file_copy,
@@ -121,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const LaporanHasilBelajarPage()),
+                              const LaporanHasilBelajarPage()),
                         );
                       },
                     ),
@@ -134,9 +185,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const EditProfilePage()),
+                              builder: (context) => EditProfilePage(profilePictureStream: profilePictureStream,)),
                         );
                       },
+                      enabled: profilePictureStream != null,
                     ),
                     Divider(),
                     MenuItem(
@@ -198,18 +250,20 @@ class MenuItem extends StatelessWidget {
   final String text;
   final Color color;
   final VoidCallback onTap;
+  final bool enabled;
 
   const MenuItem({
     required this.icon,
     required this.text,
     required this.color,
     required this.onTap,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Row(
