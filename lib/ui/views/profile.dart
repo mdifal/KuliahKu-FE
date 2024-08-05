@@ -22,6 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late String _username = '';
   late String _fullname = '';
   Stream<Uint8List>? profilePictureStream;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -41,12 +42,20 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _fullname = fetchedData['fullname'];
           _username = fetchedData['username'];
+
+          isLoading = false;
         });
       } else {
+        setState(() {
+          isLoading = false;
+        });
         throw Exception('Failed to fetch profile data');
       }
     } catch (error) {
       print('Error fetching profile data: $error');
+      setState(() {
+        isLoading = false;
+      });
       throw Exception('Failed to fetch profile data');
     }
   }
@@ -125,21 +134,34 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               SizedBox(height: 20),
-              Text(
-                _fullname,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                _username,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: grey,
-                  fontFamily: 'Poppins',
+              isLoading ?
+              Container(
+                width: 30,
+                height: 30,
+                child: Center(child: CircularProgressIndicator()),
+              )
+              : Container(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min, // Make the Column fit the content
+                    children: [
+                      Text(
+                        _fullname,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        _username,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: grey,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ]
                 ),
               ),
               SizedBox(height: 40),
@@ -185,10 +207,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EditProfilePage(profilePictureStream: profilePictureStream,)),
+                              builder: (context) => EditProfilePage()),
                         );
                       },
-                      enabled: profilePictureStream != null,
                     ),
                     Divider(),
                     MenuItem(

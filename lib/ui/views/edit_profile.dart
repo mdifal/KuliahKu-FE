@@ -14,9 +14,8 @@ import '../widgets/button.dart';
 import '../widgets/editable_form_field.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final Stream<Uint8List>? profilePictureStream;
 
-  const EditProfilePage({Key? key, this.profilePictureStream}) :  super(key: key);
+  const EditProfilePage({Key? key}) :  super(key: key);
 
   @override
   _EditProfilePageState createState() => _EditProfilePageState();
@@ -29,7 +28,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late DateTime _dob = DateTime(2000, 1, 1); // Default value for _dob
   late ImagePicker _imagePicker;
   XFile? _newImageFile;
-  XFile? _profileImageFile;
+  Stream<Uint8List>? profilePictureStream;
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _fullnameController = TextEditingController();
@@ -37,6 +36,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   TextEditingController _dobController = TextEditingController();
 
   String _statusMessage = '';
+
+  bool isLoading = false;
 
   void _showStatusMessage(String message) {
     setState(() {
@@ -55,27 +56,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<void> _fetchInitialData() async {
     try {
       await fetchProfileData();
-      await _updateProfilePictureFromStream();
+      await fetchProfilePicture();
     } catch (e) {
-      // Handle or log error if needed
       print('Error during initial data fetch: $e');
     }
   }
 
-  Future<void> _updateProfilePictureFromStream() async {
-    if (widget.profilePictureStream != null) {
-      try {
-        // Convert the stream to a broadcast stream if it's not already
-        final broadcastStream = widget.profilePictureStream!.asBroadcastStream();
-        final xFile = await streamToXFile(broadcastStream);
-        if (xFile != null) {
+  Future<void> fetchProfilePicture() async {
+    try {
+      var url = 'http://$ipUrl/profile/edit/$email/profilePicture';
+      var response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        if (bytes.isNotEmpty) {
           setState(() {
-            _profileImageFile = xFile;
+            profilePictureStream = Stream.value(Uint8List.fromList(bytes));
           });
+        } else {
+          throw Exception('Empty image data');
         }
-      } catch (e) {
-        print('Error updating profile picture from stream: $e');
+      } else {
+        throw Exception('Failed to fetch profile picture. Status code: ${response.statusCode}');
       }
+    } catch (error) {
+      print('Error fetching profile picture: $error');
+      throw Exception('Failed to fetch profile picture');
     }
   }
 
@@ -117,6 +123,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _simpanPerubahan() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       var url = 'http://$ipUrl/profile/edit/$email';
 
       var request = http.MultipartRequest('PUT', Uri.parse(url));
@@ -138,8 +148,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         throw Exception('Failed to save profile changes');
       }
+
+      setState(() {
+        isLoading = false;
+      });
     } catch (error) {
       print('Error saving profile changes: $error');
+      setState(() {
+        isLoading = false;
+      });
       throw Exception('Failed to save profile changes');
     }
   }
@@ -198,6 +215,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, true); // Pass `true` to ensure the previous page reloads
+          },
+        ),
         title: Row(
           children: [
             SizedBox(width: 8),
@@ -212,6 +235,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ],
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -221,14 +245,44 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Center(
               child: Stack(
                 children: [
+                  _newImageFile != null
+                  ?
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: _newImageFile != null
-                        ? FileImage(File(_newImageFile!.path))
-                        : _profileImageFile != null
-                        ? FileImage(File(_profileImageFile!.path))
-                        : null,
-                  ),
+                    backgroundImage: FileImage(File(_newImageFile!.path)),
+                  )
+                  : StreamBuilder<Uint8List>(
+                      stream: profilePictureStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircleAvatar(
+                            radius: 50,
+                            backgroundColor: softBlue,
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          );
+                        } else if (!snapshot.hasData) {
+                          return CircleAvatar(
+                            radius: 50,
+                            backgroundColor: softBlue,
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          );
+                        } else {
+                          return CircleAvatar(
+                            radius: 50,
+                            backgroundColor: softBlue,
+                            backgroundImage: MemoryImage(snapshot.data!),
+                          );
+                        }
+                      },
+                    ),
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -314,6 +368,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+              ),
+            if (isLoading)
+              Container(
+                width: 20,
+                height: 30,
+                child: Center(child: CircularProgressIndicator()),
               ),
             SizedBox(height: 10),
             CustomButton(
