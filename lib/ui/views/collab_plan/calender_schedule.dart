@@ -2,17 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:kuliahku/ui/shared/global.dart';
+import 'package:kuliahku/ui/shared/style.dart';
 import 'package:kuliahku/ui/views/edit_schedule.dart';
 import 'package:kuliahku/ui/widgets/calender/schedule.dart';
 import 'package:kuliahku/ui/widgets/calender/schedule_data_source.dart';
 import 'package:kuliahku/ui/widgets/detail_schedule.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:http/http.dart' as http;
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CalenderScheduleCollabPlan extends StatefulWidget {
   final String? groupId;
-  const CalenderScheduleCollabPlan({Key? key,this.groupId})
-      : super(key: key);
+  const CalenderScheduleCollabPlan({Key? key, this.groupId}) : super(key: key);
 
   @override
   State<CalenderScheduleCollabPlan> createState() => _CalenderScheduleState();
@@ -59,6 +61,7 @@ class _CalenderScheduleState extends State<CalenderScheduleCollabPlan> {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         List<dynamic> dataTugas = jsonResponse['data'];
+        print('jadwal $dataTugas');
         List<Meeting> fetchedMeetings = <Meeting>[];
         for (var data in dataTugas) {
           String id = data['id'] ?? '';
@@ -70,9 +73,10 @@ class _CalenderScheduleState extends State<CalenderScheduleCollabPlan> {
           DateTime endTime = DateTime.parse(data['endTime']);
           Color color = Color(data['color']);
           String day = data['day'];
+          bool isGroup = data['isGroup'] ?? false;
 
           fetchedMeetings.add(Meeting(id, subject, startTime, endTime, color,
-              dosen, sks, ruangan, false, day));
+              dosen, sks, ruangan, false, day, isGroup));
         }
         setState(() {
           meetings = fetchedMeetings;
@@ -96,10 +100,10 @@ class _CalenderScheduleState extends State<CalenderScheduleCollabPlan> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return DetailSchedule(meeting: meeting);
+                return DetailSchedule(meeting: meeting, GroupId: IdGroup);
               },
-            ).then((_) {
-              didChangeDependencies();
+            ).then((result) {
+              _fetchData();
             });
           }
         },

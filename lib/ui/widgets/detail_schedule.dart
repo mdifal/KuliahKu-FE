@@ -21,14 +21,38 @@ class DetailSchedule extends StatefulWidget {
 }
 
 class _DetailScheduleState extends State<DetailSchedule> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print('INI gRUP ID ${widget.GroupId}');
+  }
+
   void updateSchedule(String id) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => UpdateSchedulePage(
-          id: id,
-          urlApi: 'http://$ipUrl/groups/${widget.GroupId}/schedules/$id',
-        ),
+        builder: (context) {
+          String urlApi;
+          String urlApiDetail;
+
+          if (widget.GroupId == null) {
+            urlApi = 'http://$ipUrl/users/$email/jadwalKuliah/update/$id';
+            urlApiDetail =
+                'http://$ipUrl/users/$email/jadwalKuliah/detail/$id';
+          } else {
+            urlApi =
+                'http://$ipUrl/groups/${widget.GroupId}/schedules/$id';
+            urlApiDetail =
+                'http://$ipUrl/group/${widget.GroupId}/schedules/detail/$id';
+          }
+
+          return UpdateSchedulePage(
+            urlApi: urlApi,
+            urlApiDetail: urlApiDetail,
+            GroupId: widget.GroupId,
+          );
+        },
       ),
     );
   }
@@ -190,36 +214,38 @@ class _DetailScheduleState extends State<DetailSchedule> {
                 ),
               ),
               isActiveSemester
-                  ? Positioned(
-                      right: 0,
-                      child: PopupMenuButton<String>(
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'update',
-                            child: Text('Update'),
+                  ? (meeting.isGroup == false
+                      ? Positioned(
+                          right: 0,
+                          child: PopupMenuButton<String>(
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<String>>[
+                              const PopupMenuItem<String>(
+                                value: 'update',
+                                child: Text('Update'),
+                              ),
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              ),
+                            ],
+                            onSelected: (String value) {
+                              switch (value) {
+                                case 'update':
+                                  Navigator.of(context).pop();
+                                  updateSchedule(meeting.id);
+                                  break;
+                                case 'delete':
+                                  Navigator.of(context).pop();
+                                  deleteSchedule(meeting.id);
+                                  didChangeDependencies();
+                                  break;
+                              }
+                            },
+                            icon: Icon(Icons.more_vert, color: Colors.grey),
                           ),
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                        ],
-                        onSelected: (String value) {
-                          switch (value) {
-                            case 'update':
-                              Navigator.of(context).pop();
-                              updateSchedule(meeting.id);
-                              break;
-                            case 'delete':
-                              Navigator.of(context).pop();
-                              deleteSchedule(meeting.id);
-                              didChangeDependencies();
-                              break;
-                          }
-                        },
-                        icon: Icon(Icons.more_vert, color: Colors.grey),
-                      ),
-                    )
+                        )
+                      : Container())
                   : Container(),
             ],
           ),
