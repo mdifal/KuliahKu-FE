@@ -11,7 +11,6 @@ import 'package:kuliahku/ui/widgets/number_input_field.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuliahku/ui/shared/global.dart';
 
-
 class AddNewSemesterPage extends StatefulWidget {
   const AddNewSemesterPage({Key? key}) : super(key: key);
 
@@ -22,7 +21,6 @@ class AddNewSemesterPage extends StatefulWidget {
 class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
   DateTime? _selectedStartDate;
   DateTime? _selectedEndDate;
-  int _numberOfSubjects = 0;
   int _selectedSemester = 1;
   DateFormat dateFormat = DateFormat('d MMMM yyyy');
   List<Semester> semesters = [];
@@ -120,10 +118,6 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
       _showErrorDialog('Tanggal akhir semester tidak boleh sebelum tanggal awal semester');
       return;
     }
-    if (_numberOfSubjects <= 0 || _numberOfSubjects > 40) {
-      _showErrorDialog('Jumlah SKS harus di antara 1 dan 40');
-      return;
-    }
     if (semesters.any((semester) => semester.semesterName == 'Semester $_selectedSemester')) {
       _showErrorDialog('Semester ini sudah ada');
       return;
@@ -136,8 +130,8 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
         body: json.encode({
           'semesterNumber': _selectedSemester, // Mengirim semester yang dipilih
           'startDate': _selectedStartDate.toString(),
+          'sks':'2',
           'endDate': _selectedEndDate.toString(),
-          'sks': _numberOfSubjects,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -147,15 +141,12 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
       );
 
       if (response.statusCode == 201) {
-        // Jika berhasil menambahkan semester
         print('Semester added successfully');
-        // Navigasi ke halaman HomePage
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage(initialIndex: 0)),
         );
       } else {
-        // Jika terjadi kesalahan saat menambahkan semester
         print('Failed to add semester');
         _showErrorDialog('Failed to add semester');
       }
@@ -205,11 +196,25 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+    // Extract the semester numbers already present
+    List<int> existingSemesterNumbers = semesters
+        .map((semester) => int.parse(semester.semesterName.replaceAll('Semester ', '')))
+        .toList();
+
+    // Create a list of available semesters, excluding the existing ones
+    List<Map<String, dynamic>> availableSemesters = List.generate(8, (index) {
+      final semesterNumber = index + 1;
+      return {
+        'label': 'Semester $semesterNumber',
+        'value': semesterNumber,
+      };
+    }).where((semester) => !existingSemesterNumbers.contains(semester['value'])).toList();
+
     return Scaffold(
       backgroundColor: white,
+
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -238,26 +243,11 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                 const SizedBox(height: 20.0),
                 CustomDropdown(
                   label: 'Semester',
-                  items: List.generate(8, (index) {
-                    final semester = index + 1;
-                    return {
-                      'label': 'Semester $semester',
-                      'value': semester
-                    };
-                  }),
+                  items: availableSemesters,
                   placeholder: 'Pilih Semester',
                   onChanged: (value) {
                     setState(() {
                       _selectedSemester = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 10.0),
-                CustomNumberInput(
-                  label: 'Jumlah SKS',
-                  onChanged: (int value) {
-                    setState(() {
-                      _numberOfSubjects = value;
                     });
                   },
                 ),
@@ -293,7 +283,6 @@ class _AddNewSemesterPageState extends State<AddNewSemesterPage> {
                     ),
                   ],
                 ),
-
               ],
             ),
             const SizedBox(height: 20.0),
